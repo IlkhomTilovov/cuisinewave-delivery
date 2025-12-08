@@ -2,7 +2,8 @@ import { Layout } from '@/components/layout/Layout';
 import { HeroSection } from '@/components/home/HeroSection';
 import { CategoriesSection } from '@/components/home/CategoriesSection';
 import { PopularDishes } from '@/components/home/PopularDishes';
-import { PromoSection } from '@/components/home/PromoSection';
+import { AboutSection } from '@/components/home/AboutSection';
+import { ReservationBanner } from '@/components/home/ReservationBanner';
 
 const Index = () => {
   return (
@@ -10,7 +11,8 @@ const Index = () => {
       <HeroSection />
       <CategoriesSection />
       <PopularDishes />
-      <PromoSection />
+      <AboutSection />
+      <ReservationBanner />
     </Layout>
   );
 };

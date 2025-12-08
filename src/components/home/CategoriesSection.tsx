@@ -1,103 +1,78 @@
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight } from 'lucide-react';
 
-const categoryIcons: Record<string, string> = {
-  'fast-food': '🍔',
-  'milliy-taomlar': '🍲',
-  'desertlar': '🍰',
-  'ichimliklar': '🥤',
-  'salatlar': '🥗',
-  'sho\'rvalar': '🍜',
-};
+const categories = [
+  {
+    id: 'fast-food',
+    name: 'Fast Food',
+    description: 'Tez va mazali taomlar',
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1200&auto=format&fit=crop',
+    slug: 'fast-food',
+  },
+  {
+    id: 'milliy-taomlar',
+    name: 'Milliy Taomlar',
+    description: 'An\'anaviy lazzatlar',
+    image: 'https://images.unsplash.com/photo-1547424850-82a4454f3ccd?q=80&w=1200&auto=format&fit=crop',
+    slug: 'milliy-taomlar',
+  },
+];
 
 export function CategoriesSection() {
-  const { data: categories, isLoading } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true });
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
   return (
-    <section className="py-16 lg:py-24 bg-muted/30">
+    <section className="py-24 lg:py-32 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+      
       <div className="container">
-        <div className="text-center mb-12">
-          <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-16">
+          <h2 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4 animate-fade-in title-underline">
             Kategoriyalar
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-xl mx-auto mt-6 animate-fade-in stagger-1">
             Tanlang va zavqlaning – milliy taomlardan fast foodgacha
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-40 rounded-2xl" />
-            ))}
-          </div>
-        ) : categories && categories.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {categories.map((category, index) => (
-              <Link
-                key={category.id}
-                to={`/menu?category=${category.slug}`}
-                className="category-card group animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="text-5xl mb-4">
-                  {categoryIcons[category.slug] || '🍽️'}
-                </div>
-                <h3 className="font-semibold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
-                  {category.name_uz || category.name}
-                </h3>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                  Ko'rish
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </div>
-                
-                {/* Decorative gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {[
-              { name: 'Fast Food', slug: 'fast-food', icon: '🍔' },
-              { name: 'Milliy Taomlar', slug: 'milliy-taomlar', icon: '🍲' },
-              { name: 'Desertlar', slug: 'desertlar', icon: '🍰' },
-              { name: 'Ichimliklar', slug: 'ichimliklar', icon: '🥤' },
-            ].map((category, index) => (
-              <Link
-                key={category.slug}
-                to={`/menu?category=${category.slug}`}
-                className="category-card group animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="text-5xl mb-4">{category.icon}</div>
-                <h3 className="font-semibold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
+          {categories.map((category, index) => (
+            <Link
+              key={category.id}
+              to={`/menu?category=${category.slug}`}
+              className="group relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden category-card animate-fade-in hover-zoom"
+              style={{ animationDelay: `${index * 0.2}s` }}
+            >
+              {/* Image */}
+              <img
+                src={category.image}
+                alt={category.name}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+              
+              {/* Content */}
+              <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-10">
+                <h3 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-2 group-hover:text-secondary transition-colors duration-300">
                   {category.name}
                 </h3>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                  Ko'rish
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <p className="text-foreground/70 mb-4">
+                  {category.description}
+                </p>
+                <div className="flex items-center gap-2 text-secondary font-medium">
+                  <span>Ko'rish</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-              </Link>
-            ))}
-          </div>
-        )}
+              </div>
+
+              {/* Decorative corner */}
+              <div className="absolute top-6 right-6 w-16 h-16 border border-secondary/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <ArrowRight className="w-6 h-6 text-secondary -rotate-45" />
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

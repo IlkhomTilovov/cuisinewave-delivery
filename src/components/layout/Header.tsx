@@ -1,37 +1,36 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, Phone } from 'lucide-react';
+import { Menu, X, ShoppingCart, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/cart';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { href: '/', label: 'Bosh sahifa' },
   { href: '/menu', label: 'Menyu' },
-  { href: '/delivery', label: 'Yetkazib berish' },
   { href: '/about', label: 'Biz haqimizda' },
   { href: '/contact', label: 'Aloqa' },
 ];
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [lang, setLang] = useState<'uz' | 'ru'>('uz');
   const location = useLocation();
   const totalItems = useCartStore((state) => state.getTotalItems());
 
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-dark">
       <div className="container">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow">
-              <span className="text-primary-foreground font-display font-bold text-xl">M</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
+              <span className="text-primary-foreground font-display font-bold text-2xl">B</span>
             </div>
-            <div className="hidden sm:block">
-              <h1 className="font-display font-bold text-lg text-foreground leading-tight">
-                Milliy Taomlar
+            <div>
+              <h1 className="font-display font-bold text-xl text-foreground leading-tight tracking-wide">
+                Bella Vista
               </h1>
-              <p className="text-xs text-muted-foreground -mt-0.5">& Fast Food</p>
+              <p className="text-xs text-secondary">Restaurant</p>
             </div>
           </Link>
 
@@ -42,10 +41,10 @@ export function Header() {
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300",
                   location.pathname === link.href
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "text-secondary"
+                    : "text-foreground/70 hover:text-foreground hover:bg-white/5"
                 )}
               >
                 {link.label}
@@ -54,26 +53,38 @@ export function Header() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
-            <a href="tel:+998901234567" className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              <Phone className="w-4 h-4" />
-              +998 90 123 45 67
-            </a>
-            
+          <div className="flex items-center gap-3">
+            {/* Language Switcher */}
+            <button
+              onClick={() => setLang(lang === 'uz' ? 'ru' : 'uz')}
+              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+            >
+              <Globe className="w-4 h-4" />
+              {lang.toUpperCase()}
+            </button>
+
+            {/* Cart */}
             <Link to="/cart" className="relative">
-              <Button variant="cart" size="icon">
+              <Button variant="glass" size="icon">
                 <ShoppingCart className="w-5 h-5" />
               </Button>
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-secondary-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
                   {totalItems}
                 </span>
               )}
             </Link>
 
+            {/* CTA Button */}
+            <Link to="/reservation" className="hidden md:block">
+              <Button variant="hero" size="default">
+                Stol band qilish
+              </Button>
+            </Link>
+
             {/* Mobile Menu Toggle */}
             <Button
-              variant="ghost"
+              variant="glass"
               size="icon"
               className="lg:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -85,30 +96,30 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="lg:hidden py-4 border-t border-border animate-fade-in">
-            <div className="flex flex-col gap-1">
+          <nav className="lg:hidden py-6 border-t border-white/10 animate-fade-in">
+            <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
                   onClick={() => setIsMenuOpen(false)}
                   className={cn(
-                    "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                    "px-4 py-3 rounded-xl text-base font-medium transition-colors",
                     location.pathname === link.href
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-primary/20 text-secondary"
+                      : "text-foreground/70 hover:text-foreground hover:bg-white/5"
                   )}
                 >
                   {link.label}
                 </Link>
               ))}
-              <a 
-                href="tel:+998901234567" 
-                className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-primary"
-              >
-                <Phone className="w-4 h-4" />
-                +998 90 123 45 67
-              </a>
+              <div className="pt-4 mt-2 border-t border-white/10">
+                <Link to="/reservation" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="hero" size="lg" className="w-full">
+                    Stol band qilish
+                  </Button>
+                </Link>
+              </div>
             </div>
           </nav>
         )}

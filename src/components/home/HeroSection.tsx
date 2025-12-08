@@ -1,79 +1,83 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Clock, Truck } from 'lucide-react';
+import { MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-hero min-h-[600px] lg:min-h-[700px] flex items-center">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-secondary rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary-glow rounded-full blur-3xl" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary-dark/95 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
       </div>
-      
-      <div className="container relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div className="text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background/10 backdrop-blur-sm text-primary-foreground/90 text-sm mb-6 animate-fade-in">
-              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-              Tez yetkazib berish xizmati
-            </div>
-            
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-foreground leading-tight mb-6 animate-slide-up">
-              Mazali Taomlar
-              <span className="block text-secondary">Bir Klik Bilan</span>
-            </h1>
-            
-            <p className="text-lg lg:text-xl text-primary-foreground/80 mb-8 max-w-lg mx-auto lg:mx-0 animate-fade-in stagger-2">
-              Milliy taomlar va fast food – eng yaxshi mazalar, tez yetkazib berish xizmati bilan uyingizga yetkaziladi.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start animate-fade-in stagger-3">
-              <Link to="/menu">
-                <Button variant="gold" size="xl" className="group">
-                  Menyuni ko'rish
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link to="/delivery">
-                <Button variant="outline" size="xl" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-                  Yetkazib berish
-                </Button>
-              </Link>
-            </div>
-            
-            {/* Features */}
-            <div className="flex flex-wrap items-center gap-6 mt-10 justify-center lg:justify-start animate-fade-in stagger-4">
-              <div className="flex items-center gap-2 text-primary-foreground/80">
-                <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <span className="text-sm">30 daqiqada yetkazamiz</span>
+
+      {/* Decorative Elements */}
+      <div className="absolute top-1/4 left-10 w-64 h-64 bg-secondary/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-primary-glow/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+
+      {/* Content */}
+      <div className="container relative z-10 pt-20">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Premium Badge */}
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass mb-8 animate-fade-in">
+            <Star className="w-4 h-4 text-secondary fill-secondary" />
+            <span className="text-sm font-medium text-secondary">Premium Dining Experience</span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground leading-tight mb-6 animate-slide-up tracking-wide">
+            Bella Vista
+            <span className="block text-secondary mt-2">Restaurant</span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-lg lg:text-xl text-foreground/70 mb-10 max-w-2xl mx-auto animate-fade-in stagger-2 leading-relaxed">
+            Eng yaxshi taomlar va mukammal xizmat ko'rsatish bilan sizni kutamiz. 
+            Unutilmas lazzat va atmosfera.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3">
+            <Link to="/reservation">
+              <Button variant="hero" size="xl" className="min-w-[200px]">
+                Stol band qilish
+              </Button>
+            </Link>
+            <Link to="/menu">
+              <Button variant="outline" size="xl" className="min-w-[200px]">
+                Menyuni ko'rish
+              </Button>
+            </Link>
+          </div>
+
+          {/* Location & Rating */}
+          <div className="flex flex-wrap items-center justify-center gap-8 mt-16 animate-fade-in stagger-4">
+            <div className="flex items-center gap-2 text-foreground/60">
+              <div className="w-10 h-10 rounded-xl glass flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-secondary" />
               </div>
-              <div className="flex items-center gap-2 text-primary-foreground/80">
-                <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center">
-                  <Truck className="w-5 h-5" />
-                </div>
-                <span className="text-sm">Bepul yetkazish</span>
+              <span className="text-sm font-medium">Toshkent shahri</span>
+            </div>
+            <div className="flex items-center gap-2 text-foreground/60">
+              <div className="w-10 h-10 rounded-xl glass flex items-center justify-center">
+                <Star className="w-5 h-5 text-secondary fill-secondary" />
               </div>
+              <span className="text-sm font-medium">4.9 (200+ baho)</span>
             </div>
           </div>
-          
-          {/* Hero Image Placeholder */}
-          <div className="hidden lg:block relative animate-float">
-            <div className="relative w-full max-w-md mx-auto aspect-square">
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 to-primary-glow/30 rounded-full blur-2xl" />
-              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-secondary/20 to-transparent backdrop-blur-sm flex items-center justify-center border border-background/10">
-                <div className="text-center text-primary-foreground/60">
-                  <div className="w-32 h-32 mx-auto mb-4 rounded-2xl bg-background/10 flex items-center justify-center">
-                    <span className="font-display text-5xl">🍽️</span>
-                  </div>
-                  <p className="text-sm">Premium taomlar</p>
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="w-6 h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center p-2">
+          <div className="w-1.5 h-3 bg-secondary rounded-full animate-pulse" />
         </div>
       </div>
     </section>
