@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      awards: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          organization: string | null
+          sort_order: number | null
+          title: string
+          year: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          organization?: string | null
+          sort_order?: number | null
+          title: string
+          year?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          organization?: string | null
+          sort_order?: number | null
+          title?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           created_at: string
@@ -114,6 +144,33 @@ export type Database = {
           name?: string
           name_uz?: string | null
           slug?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      faq_items: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          question: string
+          sort_order: number | null
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          question: string
+          sort_order?: number | null
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          question?: string
           sort_order?: number | null
         }
         Relationships: []
@@ -498,6 +555,39 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string | null
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          created_at: string
+          experience: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          position: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string
+          experience?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          position: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string
+          experience?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          position?: string
+          sort_order?: number | null
         }
         Relationships: []
       }
