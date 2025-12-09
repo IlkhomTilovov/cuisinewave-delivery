@@ -282,6 +282,7 @@ export type Database = {
       }
       products: {
         Row: {
+          calories: number | null
           category_id: string | null
           created_at: string
           description: string | null
@@ -296,10 +297,14 @@ export type Database = {
           meta_title: string | null
           name: string
           name_uz: string | null
+          prep_time: string | null
           price: number
           sort_order: number | null
+          spice_level: number | null
+          weight: string | null
         }
         Insert: {
+          calories?: number | null
           category_id?: string | null
           created_at?: string
           description?: string | null
@@ -314,10 +319,14 @@ export type Database = {
           meta_title?: string | null
           name: string
           name_uz?: string | null
+          prep_time?: string | null
           price: number
           sort_order?: number | null
+          spice_level?: number | null
+          weight?: string | null
         }
         Update: {
+          calories?: number | null
           category_id?: string | null
           created_at?: string
           description?: string | null
@@ -332,8 +341,11 @@ export type Database = {
           meta_title?: string | null
           name?: string
           name_uz?: string | null
+          prep_time?: string | null
           price?: number
           sort_order?: number | null
+          spice_level?: number | null
+          weight?: string | null
         }
         Relationships: [
           {
