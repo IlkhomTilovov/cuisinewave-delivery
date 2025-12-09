@@ -112,27 +112,31 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
 
           {/* Navigation - scrollable */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                    isActive 
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-glow" 
-                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                  )}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span className="font-medium">{item.label}</span>
-                  {isActive && <ChevronRight className="h-4 w-4 ml-auto" />}
-                </Link>
-              );
-            })}
+          <nav className="flex-1 px-3 py-4 overflow-y-auto">
+            <div className="space-y-0.5">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
+                      isActive 
+                        ? "bg-primary/10 text-primary border-l-2 border-primary" 
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-l-2 border-transparent"
+                    )}
+                  >
+                    <item.icon className={cn(
+                      "h-5 w-5 flex-shrink-0",
+                      isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                    )} />
+                    <span className="font-medium text-sm">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </nav>
 
           {/* User info & logout - fixed at bottom */}
