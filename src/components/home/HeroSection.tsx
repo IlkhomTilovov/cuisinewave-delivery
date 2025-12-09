@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="dark relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(350,30%,4%)]">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <div 
@@ -13,8 +13,8 @@ export function HeroSection() {
             backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary-dark/95 to-background" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(340,100%,27%,0.9)] via-[hsl(340,100%,20%,0.95)] to-[hsl(350,30%,4%)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(350,30%,4%)] via-transparent to-transparent" />
       </div>
 
       {/* Decorative Elements */}
@@ -25,19 +25,19 @@ export function HeroSection() {
       <div className="container relative z-10 pt-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Premium Badge */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass mb-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 mb-8 animate-fade-in">
             <Star className="w-4 h-4 text-secondary fill-secondary" />
             <span className="text-sm font-medium text-secondary">Premium Dining Experience</span>
           </div>
 
           {/* Main Title */}
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-foreground leading-tight mb-6 animate-slide-up tracking-wide">
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight mb-6 animate-slide-up tracking-wide">
             Bella Vista
             <span className="block text-secondary mt-2">Restaurant</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg lg:text-xl text-foreground/70 mb-10 max-w-2xl mx-auto animate-fade-in stagger-2 leading-relaxed">
+          <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-fade-in stagger-2 leading-relaxed">
             Eng yaxshi taomlar va mukammal xizmat ko'rsatish bilan sizni kutamiz. 
             Unutilmas lazzat va atmosfera.
           </p>
@@ -50,7 +50,7 @@ export function HeroSection() {
               </Button>
             </Link>
             <Link to="/menu">
-              <Button variant="outline" size="xl" className="min-w-[200px]">
+              <Button variant="outline" size="xl" className="min-w-[200px] border-secondary/50 text-secondary hover:bg-secondary/10">
                 Menyuni ko'rish
               </Button>
             </Link>
@@ -58,14 +58,14 @@ export function HeroSection() {
 
           {/* Location & Rating */}
           <div className="flex flex-wrap items-center justify-center gap-8 mt-16 animate-fade-in stagger-4">
-            <div className="flex items-center gap-2 text-foreground/60">
-              <div className="w-10 h-10 rounded-xl glass flex items-center justify-center">
+            <div className="flex items-center gap-2 text-white/60">
+              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center">
                 <MapPin className="w-5 h-5 text-secondary" />
               </div>
               <span className="text-sm font-medium">Toshkent shahri</span>
             </div>
-            <div className="flex items-center gap-2 text-foreground/60">
-              <div className="w-10 h-10 rounded-xl glass flex items-center justify-center">
+            <div className="flex items-center gap-2 text-white/60">
+              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center">
                 <Star className="w-5 h-5 text-secondary fill-secondary" />
               </div>
               <span className="text-sm font-medium">4.9 (200+ baho)</span>
@@ -76,7 +76,7 @@ export function HeroSection() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center p-2">
+        <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
           <div className="w-1.5 h-3 bg-secondary rounded-full animate-pulse" />
         </div>
       </div>
