@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Phone, Calendar } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function ReservationBanner() {
+  const { getSetting } = useSiteSettings();
+  const bannerImage = getSetting('reservation_banner_image');
+
   return (
     <section className="py-24 lg:py-32 relative overflow-hidden">
       {/* Background */}
@@ -10,7 +14,7 @@ export function ReservationBanner() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop')`,
+            backgroundImage: `url('${bannerImage}')`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/80" />

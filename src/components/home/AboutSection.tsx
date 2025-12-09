@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Award, Users, Clock } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const stats = [
   { icon: Award, value: '15+', label: 'Yillik tajriba' },
@@ -9,6 +10,8 @@ const stats = [
 ];
 
 export function AboutSection() {
+  const { getSetting } = useSiteSettings();
+  const aboutImage = getSetting('about_section_image');
   return (
     <section className="py-24 lg:py-32 relative overflow-hidden">
       <div className="container">
@@ -58,7 +61,7 @@ export function AboutSection() {
           <div className="relative animate-fade-in stagger-2">
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop"
+                src={aboutImage}
                 alt="Restaurant interior"
                 className="w-full h-full object-cover"
               />
