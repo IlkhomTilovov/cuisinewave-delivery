@@ -5,8 +5,77 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
 
 @layer base {
+  /* Light Theme (Default) */
   :root {
-    /* Premium Burgundy Theme */
+    --background: 0 0% 100%;
+    --foreground: 350 30% 10%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 350 30% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 350 30% 10%;
+
+    /* Burgundy Primary */
+    --primary: 340 100% 27%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 340 100% 35%;
+    --primary-dark: 340 100% 20%;
+
+    /* Gold Accent */
+    --secondary: 43 89% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Fast Food Red Accent */
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 350 10% 94%;
+    --muted-foreground: 350 10% 40%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 350 10% 88%;
+    --input: 350 10% 88%;
+    --ring: 340 100% 27%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --gold: 43 89% 50%;
+    --gold-light: 43 89% 65%;
+    --gold-dark: 43 89% 40%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --cream: 40 30% 96%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(340, 100%, 27%) 0%, hsl(340, 100%, 20%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43, 89%, 55%) 0%, hsl(33, 89%, 45%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(340, 100%, 27%, 0.95) 0%, hsl(340, 100%, 15%, 0.98) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(350, 10%, 96%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(0, 0%, 100%, 0.9) 0%, hsl(0, 0%, 100%, 0.7) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px -2px hsl(350 30% 20% / 0.1);
+    --shadow-md: 0 8px 24px -8px hsl(350 30% 20% / 0.15);
+    --shadow-lg: 0 16px 48px -16px hsl(350 30% 20% / 0.2);
+    --shadow-glow: 0 0 40px hsl(340 100% 27% / 0.2);
+    --shadow-gold: 0 8px 24px -8px hsl(43 89% 50% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 350 30% 10%;
+    --sidebar-primary: 340 100% 27%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 350 10% 94%;
+    --sidebar-accent-foreground: 350 30% 10%;
+    --sidebar-border: 350 10% 88%;
+    --sidebar-ring: 340 100% 27%;
+  }
+
+  /* Dark Theme */
+  .dark {
     --background: 350 30% 4%;
     --foreground: 0 0% 95%;
 
@@ -39,8 +108,6 @@
     --border: 350 20% 18%;
     --input: 350 20% 18%;
     --ring: 340 100% 27%;
-
-    --radius: 0.75rem;
 
     /* Custom tokens */
     --gold: 43 89% 70%;
@@ -130,13 +197,11 @@
 
   /* Glassmorphism */
   .glass {
-    @apply backdrop-blur-xl border border-white/10;
-    background: linear-gradient(135deg, hsl(0 0% 100% / 0.1) 0%, hsl(0 0% 100% / 0.05) 100%);
+    @apply backdrop-blur-xl border border-border/20 bg-card/80;
   }
 
   .glass-dark {
-    @apply backdrop-blur-xl border border-white/5;
-    background: linear-gradient(135deg, hsl(350 30% 8% / 0.8) 0%, hsl(350 30% 4% / 0.9) 100%);
+    @apply backdrop-blur-xl border border-border/30 bg-card/90;
   }
 
   .card-hover {
@@ -174,8 +239,7 @@
   }
 
   .food-card {
-    @apply rounded-3xl overflow-hidden card-hover border border-white/10;
-    background: linear-gradient(180deg, hsl(350 30% 10% / 0.9) 0%, hsl(350 30% 6% / 0.95) 100%);
+    @apply rounded-3xl overflow-hidden card-hover border border-border bg-card;
   }
 
   /* Premium hover zoom effect */
