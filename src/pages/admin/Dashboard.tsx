@@ -1,17 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, FolderTree, ShoppingCart, Image, TrendingUp, Clock } from 'lucide-react';
+import { Package, FolderTree, ShoppingCart, Image, TrendingUp, Clock, Users } from 'lucide-react';
+import { StatsChart } from '@/components/admin/StatsChart';
+import { subDays } from 'date-fns';
 
 const Dashboard = () => {
   const { data: stats } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const [products, categories, orders, banners] = await Promise.all([
+      const [products, categories, orders, banners, userRoles] = await Promise.all([
         supabase.from('products').select('id', { count: 'exact', head: true }),
         supabase.from('categories').select('id', { count: 'exact', head: true }),
         supabase.from('orders').select('id, status, total_price'),
         supabase.from('banners').select('id', { count: 'exact', head: true }),
+        supabase.from('user_roles').select('id', { count: 'exact', head: true }),
       ]);
 
       const newOrders = orders.data?.filter(o => o.status === 'new').length || 0;
@@ -22,9 +25,24 @@ const Dashboard = () => {
         categoriesCount: categories.count || 0,
         ordersCount: orders.data?.length || 0,
         bannersCount: banners.count || 0,
+        usersCount: userRoles.count || 0,
         newOrders,
         totalRevenue,
       };
+    },
+  });
+
+  // Fetch orders for the last 7 days for charts
+  const { data: recentOrdersForChart } = useQuery({
+    queryKey: ['orders-for-chart'],
+    queryFn: async () => {
+      const sevenDaysAgo = subDays(new Date(), 7).toISOString();
+      const { data } = await supabase
+        .from('orders')
+        .select('id, created_at, total_price, status')
+        .gte('created_at', sevenDaysAgo)
+        .order('created_at', { ascending: false });
+      return data || [];
     },
   });
 
@@ -43,8 +61,9 @@ const Dashboard = () => {
   const statCards = [
     { title: 'Mahsulotlar', value: stats?.productsCount || 0, icon: Package, color: 'text-primary' },
     { title: 'Kategoriyalar', value: stats?.categoriesCount || 0, icon: FolderTree, color: 'text-secondary' },
-    { title: 'Buyurtmalar', value: stats?.ordersCount || 0, icon: ShoppingCart, color: 'text-success' },
-    { title: 'Bannerlar', value: stats?.bannersCount || 0, icon: Image, color: 'text-accent' },
+    { title: 'Buyurtmalar', value: stats?.ordersCount || 0, icon: ShoppingCart, color: 'text-green-400' },
+    { title: 'Bannerlar', value: stats?.bannersCount || 0, icon: Image, color: 'text-blue-400' },
+    { title: 'Foydalanuvchilar', value: stats?.usersCount || 0, icon: Users, color: 'text-purple-400' },
   ];
 
   const formatPrice = (price: number) => {
@@ -76,17 +95,17 @@ const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {statCards.map((stat, index) => (
           <Card key={stat.title} className="glass border-border/50 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-            <CardContent className="p-6">
+            <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-3xl font-display mt-1">{stat.value}</p>
+                  <p className="text-xs lg:text-sm text-muted-foreground">{stat.title}</p>
+                  <p className="text-2xl lg:text-3xl font-display mt-1">{stat.value}</p>
                 </div>
-                <div className={`p-3 rounded-xl bg-muted ${stat.color}`}>
-                  <stat.icon className="h-6 w-6" />
+                <div className={`p-2 lg:p-3 rounded-xl bg-muted ${stat.color}`}>
+                  <stat.icon className="h-5 w-5 lg:h-6 lg:w-6" />
                 </div>
               </div>
             </CardContent>
@@ -96,7 +115,7 @@ const Dashboard = () => {
 
       {/* Revenue & New Orders */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="p-4 rounded-2xl bg-gradient-primary">
@@ -110,7 +129,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+        <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="p-4 rounded-2xl bg-blue-500/20">
@@ -125,8 +144,18 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="animate-fade-in" style={{ animationDelay: '0.7s' }}>
+          <StatsChart orders={recentOrdersForChart || []} type="revenue" />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
+          <StatsChart orders={recentOrdersForChart || []} type="orders" />
+        </div>
+      </div>
+
       {/* Recent Orders */}
-      <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+      <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.9s' }}>
         <CardHeader>
           <CardTitle className="font-display text-xl">So'nggi buyurtmalar</CardTitle>
         </CardHeader>

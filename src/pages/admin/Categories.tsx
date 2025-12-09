@@ -6,10 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Search, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 type Category = Tables<'categories'>;
 
@@ -17,6 +20,8 @@ const Categories = () => {
   const [search, setSearch] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
+  const [imageUrl, setImageUrl] = useState('');
   const queryClient = useQueryClient();
 
   const { data: categories, isLoading } = useQuery({
@@ -51,6 +56,7 @@ const Categories = () => {
       toast.success(editingCategory ? 'Kategoriya yangilandi' : "Kategoriya qo'shildi");
       setIsDialogOpen(false);
       setEditingCategory(null);
+      setImageUrl('');
     },
     onError: (error) => {
       toast.error("Xatolik yuz berdi: " + error.message);
@@ -79,7 +85,7 @@ const Categories = () => {
       name: formData.get('name') as string,
       name_uz: formData.get('name_uz') as string,
       slug: formData.get('slug') as string,
-      image_url: formData.get('image_url') as string || null,
+      image_url: imageUrl || (formData.get('image_url') as string) || null,
       is_active: formData.get('is_active') === 'on',
       sort_order: Number(formData.get('sort_order')) || 0,
       meta_title: formData.get('meta_title') as string || null,
@@ -91,6 +97,7 @@ const Categories = () => {
 
   const openEditDialog = (category: Category) => {
     setEditingCategory(category);
+    setImageUrl(category.image_url || '');
     setIsDialogOpen(true);
   };
 
@@ -121,92 +128,208 @@ const Categories = () => {
             className="pl-10 bg-muted/50"
           />
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          setIsDialogOpen(open);
-          if (!open) setEditingCategory(null);
-        }}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-primary">
-              <Plus className="h-4 w-4 mr-2" />
-              Yangi kategoriya
+        <div className="flex gap-2">
+          <div className="flex border border-border rounded-lg p-1">
+            <Button
+              variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+            >
+              <LayoutList className="h-4 w-4" />
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg glass">
-            <DialogHeader>
-              <DialogTitle className="font-display text-xl">
-                {editingCategory ? "Kategoriyani tahrirlash" : "Yangi kategoriya qo'shish"}
-              </DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nomi (RU)</Label>
-                  <Input 
-                    id="name" 
-                    name="name" 
-                    defaultValue={editingCategory?.name} 
-                    required 
-                    className="bg-muted/50"
-                    onChange={(e) => {
-                      if (!editingCategory) {
-                        const slugInput = document.getElementById('slug') as HTMLInputElement;
-                        if (slugInput) slugInput.value = generateSlug(e.target.value);
-                      }
-                    }}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                  <Input id="name_uz" name="name_uz" defaultValue={editingCategory?.name_uz || ''} className="bg-muted/50" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="slug">Slug</Label>
-                  <Input id="slug" name="slug" defaultValue={editingCategory?.slug} required className="bg-muted/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sort_order">Tartib</Label>
-                  <Input id="sort_order" name="sort_order" type="number" defaultValue={editingCategory?.sort_order || 0} className="bg-muted/50" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="image_url">Rasm URL</Label>
-                <Input id="image_url" name="image_url" defaultValue={editingCategory?.image_url || ''} className="bg-muted/50" />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="meta_title">Meta sarlavha</Label>
-                  <Input id="meta_title" name="meta_title" defaultValue={editingCategory?.meta_title || ''} className="bg-muted/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="meta_description">Meta tavsif</Label>
-                  <Input id="meta_description" name="meta_description" defaultValue={editingCategory?.meta_description || ''} className="bg-muted/50" />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Switch id="is_active" name="is_active" defaultChecked={editingCategory?.is_active ?? true} />
-                <Label htmlFor="is_active">Faol</Label>
-              </div>
-
-              <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
-                {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                Saqlash
+            <Button
+              variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+          </div>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) {
+              setEditingCategory(null);
+              setImageUrl('');
+            }
+          }}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-primary">
+                <Plus className="h-4 w-4 mr-2" />
+                Yangi kategoriya
               </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto glass">
+              <DialogHeader>
+                <DialogTitle className="font-display text-xl">
+                  {editingCategory ? "Kategoriyani tahrirlash" : "Yangi kategoriya qo'shish"}
+                </DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nomi (RU)</Label>
+                    <Input 
+                      id="name" 
+                      name="name" 
+                      defaultValue={editingCategory?.name} 
+                      required 
+                      className="bg-muted/50"
+                      onChange={(e) => {
+                        if (!editingCategory) {
+                          const slugInput = document.getElementById('slug') as HTMLInputElement;
+                          if (slugInput) slugInput.value = generateSlug(e.target.value);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="name_uz">Nomi (UZ)</Label>
+                    <Input id="name_uz" name="name_uz" defaultValue={editingCategory?.name_uz || ''} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="slug">Slug</Label>
+                    <Input id="slug" name="slug" defaultValue={editingCategory?.slug} required className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sort_order">Tartib</Label>
+                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingCategory?.sort_order || 0} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Rasm</Label>
+                  <Tabs defaultValue="upload" className="w-full">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="upload" className="flex-1">Yuklash</TabsTrigger>
+                      <TabsTrigger value="url" className="flex-1">URL</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="upload" className="mt-2">
+                      <ImageUpload
+                        value={imageUrl}
+                        onChange={setImageUrl}
+                        folder="categories"
+                      />
+                    </TabsContent>
+                    <TabsContent value="url" className="mt-2">
+                      <Input
+                        name="image_url"
+                        placeholder="https://..."
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        className="bg-muted/50"
+                      />
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="meta_title">Meta sarlavha</Label>
+                    <Input id="meta_title" name="meta_title" defaultValue={editingCategory?.meta_title || ''} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="meta_description">Meta tavsif</Label>
+                    <Input id="meta_description" name="meta_description" defaultValue={editingCategory?.meta_description || ''} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Switch id="is_active" name="is_active" defaultChecked={editingCategory?.is_active ?? true} />
+                  <Label htmlFor="is_active">Faol</Label>
+                </div>
+
+                <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
+                  {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  Saqlash
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      {/* Categories Grid */}
+      {/* Content */}
       {isLoading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
+      ) : viewMode === 'table' ? (
+        <Card className="glass border-border/50 overflow-hidden">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-16">Rasm</TableHead>
+                    <TableHead>Nomi</TableHead>
+                    <TableHead>Slug</TableHead>
+                    <TableHead>Tartib</TableHead>
+                    <TableHead>Holati</TableHead>
+                    <TableHead className="text-right">Amallar</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredCategories?.map((category) => (
+                    <TableRow key={category.id}>
+                      <TableCell>
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
+                          {category.image_url ? (
+                            <img src={category.image_url} alt={category.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-xl">📁</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{category.name}</p>
+                          {category.name_uz && (
+                            <p className="text-xs text-muted-foreground">{category.name_uz}</p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground font-mono text-sm">
+                        /{category.slug}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {category.sort_order}
+                      </TableCell>
+                      <TableCell>
+                        {category.is_active ? (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Faol</span>
+                        ) : (
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">Nofaol</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => openEditDialog(category)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:bg-destructive/10"
+                            onClick={() => {
+                              if (confirm("Haqiqatan ham o'chirmoqchimisiz?")) {
+                                deleteMutation.mutate(category.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCategories?.map((category) => (
