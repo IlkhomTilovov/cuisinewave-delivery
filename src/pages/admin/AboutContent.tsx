@@ -143,15 +143,60 @@ export default function AboutContent() {
 function AboutSettingsSection() {
   const queryClient = useQueryClient();
 
-  const aboutSettingsKeys = [
-    { key: 'about_title', label: 'Biz haqimizda sarlavha', type: 'input' },
-    { key: 'about_text_1', label: 'Biz haqimizda matn 1', type: 'textarea' },
-    { key: 'about_text_2', label: 'Biz haqimizda matn 2', type: 'textarea' },
-    { key: 'about_page_title', label: 'Sahifa sarlavhasi', type: 'input' },
-    { key: 'about_page_description', label: 'Sahifa tavsifi', type: 'textarea' },
-    { key: 'contact_title', label: "Aloqa bo'limi sarlavhasi", type: 'input' },
-    { key: 'contact_description', label: "Aloqa bo'limi tavsifi", type: 'textarea' },
+  const settingsGroups = [
+    {
+      title: "Asosiy ma'lumotlar",
+      settings: [
+        { key: 'about_title', label: 'Biz haqimizda sarlavha', type: 'input' },
+        { key: 'about_text_1', label: 'Biz haqimizda matn 1', type: 'textarea' },
+        { key: 'about_text_2', label: 'Biz haqimizda matn 2', type: 'textarea' },
+        { key: 'about_page_title', label: 'Sahifa sarlavhasi', type: 'input' },
+        { key: 'about_page_description', label: 'Sahifa tavsifi', type: 'textarea' },
+      ]
+    },
+    {
+      title: "Statistika",
+      settings: [
+        { key: 'stat_years_value', label: 'Yillar - qiymat', type: 'input' },
+        { key: 'stat_years_label', label: 'Yillar - matn', type: 'input' },
+        { key: 'stat_clients_value', label: 'Mijozlar - qiymat', type: 'input' },
+        { key: 'stat_clients_label', label: 'Mijozlar - matn', type: 'input' },
+        { key: 'stat_dishes_value', label: 'Taomlar - qiymat', type: 'input' },
+        { key: 'stat_dishes_label', label: 'Taomlar - matn', type: 'input' },
+        { key: 'stat_awards_value', label: 'Mukofotlar - qiymat', type: 'input' },
+        { key: 'stat_awards_label', label: 'Mukofotlar - matn', type: 'input' },
+      ]
+    },
+    {
+      title: "Bo'lim sarlavhalari",
+      settings: [
+        { key: 'team_section_title', label: "Jamoa bo'limi sarlavhasi", type: 'input' },
+        { key: 'team_section_description', label: "Jamoa bo'limi tavsifi", type: 'input' },
+        { key: 'history_section_title', label: "Tarix bo'limi sarlavhasi", type: 'input' },
+        { key: 'history_section_description', label: "Tarix bo'limi tavsifi", type: 'input' },
+        { key: 'awards_section_title', label: "Mukofotlar bo'limi sarlavhasi", type: 'input' },
+        { key: 'awards_section_description', label: "Mukofotlar bo'limi tavsifi", type: 'input' },
+        { key: 'video_section_title', label: "Video bo'limi sarlavhasi", type: 'input' },
+        { key: 'video_section_description', label: "Video bo'limi tavsifi", type: 'input' },
+        { key: 'testimonials_section_title', label: "Fikrlar bo'limi sarlavhasi", type: 'input' },
+        { key: 'testimonials_section_description', label: "Fikrlar bo'limi tavsifi", type: 'input' },
+        { key: 'gallery_section_title', label: "Galereya bo'limi sarlavhasi", type: 'input' },
+        { key: 'gallery_section_description', label: "Galereya bo'limi tavsifi", type: 'input' },
+        { key: 'faq_section_title', label: "FAQ bo'limi sarlavhasi", type: 'input' },
+        { key: 'faq_section_description', label: "FAQ bo'limi tavsifi", type: 'input' },
+        { key: 'map_section_title', label: "Xarita bo'limi sarlavhasi", type: 'input' },
+      ]
+    },
+    {
+      title: "Aloqa",
+      settings: [
+        { key: 'contact_title', label: "Aloqa bo'limi sarlavhasi", type: 'input' },
+        { key: 'contact_description', label: "Aloqa bo'limi tavsifi", type: 'textarea' },
+      ]
+    }
   ];
+
+  const allSettingsKeys = settingsGroups.flatMap(g => g.settings);
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['about-settings'],
@@ -159,24 +204,13 @@ function AboutSettingsSection() {
       const { data, error } = await supabase
         .from('site_settings')
         .select('*')
-        .in('key', aboutSettingsKeys.map(s => s.key));
+        .in('key', allSettingsKeys.map(s => s.key));
       if (error) throw error;
       return data;
     },
   });
 
   const [form, setForm] = useState<Record<string, string>>({});
-
-  // Initialize form when settings load
-  useState(() => {
-    if (settings) {
-      const initial: Record<string, string> = {};
-      settings.forEach(s => {
-        initial[s.key] = s.value || '';
-      });
-      setForm(initial);
-    }
-  });
 
   // Update form when settings change
   const currentSettings = settings || [];
@@ -192,7 +226,7 @@ function AboutSettingsSection() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      for (const setting of aboutSettingsKeys) {
+      for (const setting of allSettingsKeys) {
         const value = form[setting.key] || '';
         const existing = settings?.find(s => s.key === setting.key);
         
@@ -221,40 +255,44 @@ function AboutSettingsSection() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Biz haqimizda bo'limi</CardTitle>
-        <p className="text-muted-foreground text-sm">Restoran haqida ma'lumot</p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {aboutSettingsKeys.map((setting) => (
-          <div key={setting.key}>
-            <Label className="mb-2 block">{setting.label}</Label>
-            {setting.type === 'textarea' ? (
-              <Textarea
-                value={form[setting.key] || ''}
-                onChange={(e) => setForm({ ...form, [setting.key]: e.target.value })}
-                rows={3}
-              />
-            ) : (
-              <Input
-                value={form[setting.key] || ''}
-                onChange={(e) => setForm({ ...form, [setting.key]: e.target.value })}
-              />
-            )}
-          </div>
-        ))}
+    <div className="space-y-6">
+      {settingsGroups.map((group) => (
+        <Card key={group.title}>
+          <CardHeader>
+            <CardTitle className="text-lg">{group.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {group.settings.map((setting) => (
+              <div key={setting.key}>
+                <Label className="mb-2 block">{setting.label}</Label>
+                {setting.type === 'textarea' ? (
+                  <Textarea
+                    value={form[setting.key] || ''}
+                    onChange={(e) => setForm({ ...form, [setting.key]: e.target.value })}
+                    rows={3}
+                  />
+                ) : (
+                  <Input
+                    value={form[setting.key] || ''}
+                    onChange={(e) => setForm({ ...form, [setting.key]: e.target.value })}
+                  />
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ))}
 
-        <Button 
-          onClick={() => saveMutation.mutate()} 
-          disabled={saveMutation.isPending}
-          className="w-full"
-        >
-          {saveMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-          Saqlash
-        </Button>
-      </CardContent>
-    </Card>
+      <Button 
+        onClick={() => saveMutation.mutate()} 
+        disabled={saveMutation.isPending}
+        className="w-full"
+        size="lg"
+      >
+        {saveMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+        Barchasini saqlash
+      </Button>
+    </div>
   );
 }
 
