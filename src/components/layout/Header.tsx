@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, Globe } from 'lucide-react';
+import { Menu, X, ShoppingCart, Globe, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/cart';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -16,6 +17,7 @@ export function Header() {
   const [lang, setLang] = useState<'uz' | 'ru'>('uz');
   const location = useLocation();
   const totalItems = useCartStore((state) => state.getTotalItems());
+  const { isAdmin } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-dark">
@@ -74,6 +76,15 @@ export function Header() {
                 </span>
               )}
             </Link>
+
+            {/* Admin Link */}
+            {isAdmin && (
+              <Link to="/admin" className="hidden md:block">
+                <Button variant="outline" size="icon" className="border-secondary/50 text-secondary hover:bg-secondary/10">
+                  <Shield className="w-4 h-4" />
+                </Button>
+              </Link>
+            )}
 
             {/* CTA Button */}
             <Link to="/reservation" className="hidden md:block">
