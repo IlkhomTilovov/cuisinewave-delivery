@@ -10,7 +10,10 @@ import {
   LogOut, 
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Warehouse,
+  ArrowRightLeft,
+  Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -24,6 +27,9 @@ const navItems = [
   { href: '/admin/categories', label: 'Kategoriyalar', icon: FolderTree },
   { href: '/admin/orders', label: 'Buyurtmalar', icon: ShoppingCart },
   { href: '/admin/banners', label: 'Bannerlar', icon: Image },
+  { href: '/admin/inventory', label: 'Ombor', icon: Warehouse },
+  { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
+  { href: '/admin/suppliers', label: 'Yetkazuvchilar', icon: Truck },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
 ];
 
