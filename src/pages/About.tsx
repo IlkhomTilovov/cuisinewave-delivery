@@ -9,21 +9,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
 
-// Statistics data (static)
-const statistics = [
-  { icon: Clock, value: '15+', label: 'Yillik tajriba' },
-  { icon: Users, value: '50,000+', label: 'Mamnun mijozlar' },
-  { icon: Utensils, value: '120+', label: 'Taomlar' },
-  { icon: Award, value: '25+', label: 'Mukofotlar' },
-];
-
-// Timeline data (static)
-const timelineEvents = [
-  { year: '2008', title: 'Asos solingan', description: "Bella Vista restoran Toshkent shahrida o'z eshiklarini ochdi" },
-  { year: '2012', title: "Birinchi mukofot", description: "O'zbekistonning eng yaxshi restoranlari tanlovi g'olibi" },
-  { year: '2015', title: 'Kengayish', description: "Yangi filial ochildi va menyu kengaytirildi" },
-  { year: '2018', title: "Xalqaro tan olinish", description: "Markaziy Osiyo restoranlar reytingiga kiritildi" },
-  { year: '2023', title: '15 yillik yubiley', description: "50,000 dan ortiq mamnun mijozlarga xizmat ko'rsatdik" },
+// Gallery images (static)
+const galleryImages = [
+  { url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop', alt: "Restoran ichki ko'rinishi" },
+  { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop', alt: 'Taomlar' },
+  { url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop', alt: 'Maxsus xona' },
+  { url: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&h=400&fit=crop', alt: 'Oshxona' },
+  { url: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&h=400&fit=crop', alt: 'Tashqi maydon' },
+  { url: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&h=400&fit=crop', alt: 'VIP xona' },
 ];
 
 // Testimonials data (static)
@@ -48,19 +41,26 @@ const testimonials = [
   },
 ];
 
-// Gallery images (static)
-const galleryImages = [
-  { url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop', alt: "Restoran ichki ko'rinishi" },
-  { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop', alt: 'Taomlar' },
-  { url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop', alt: 'Maxsus xona' },
-  { url: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&h=400&fit=crop', alt: 'Oshxona' },
-  { url: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&h=400&fit=crop', alt: 'Tashqi maydon' },
-  { url: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&h=400&fit=crop', alt: 'VIP xona' },
+// Timeline data (static)
+const timelineEvents = [
+  { year: '2008', title: 'Asos solingan', description: "Bella Vista restoran Toshkent shahrida o'z eshiklarini ochdi" },
+  { year: '2012', title: "Birinchi mukofot", description: "O'zbekistonning eng yaxshi restoranlari tanlovi g'olibi" },
+  { year: '2015', title: 'Kengayish', description: "Yangi filial ochildi va menyu kengaytirildi" },
+  { year: '2018', title: "Xalqaro tan olinish", description: "Markaziy Osiyo restoranlar reytingiga kiritildi" },
+  { year: '2023', title: '15 yillik yubiley', description: "50,000 dan ortiq mamnun mijozlarga xizmat ko'rsatdik" },
 ];
 
 const About = () => {
   const { getSetting } = useSiteSettings();
   const [activeImage, setActiveImage] = useState<string | null>(null);
+
+  // Dynamic statistics from settings
+  const statistics = [
+    { icon: Clock, value: getSetting('stat_years_value'), label: getSetting('stat_years_label') },
+    { icon: Users, value: getSetting('stat_clients_value'), label: getSetting('stat_clients_label') },
+    { icon: Utensils, value: getSetting('stat_dishes_value'), label: getSetting('stat_dishes_label') },
+    { icon: Award, value: getSetting('stat_awards_value'), label: getSetting('stat_awards_label') },
+  ];
 
   // Fetch team members from database
   const { data: teamMembers, isLoading: teamLoading } = useQuery({
@@ -186,10 +186,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Bizning jamoa
+              {getSetting('team_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Professional va tajribali jamoamiz sizga eng yaxshi xizmatni taqdim etadi
+              {getSetting('team_section_description')}
             </p>
           </div>
 
@@ -240,10 +240,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Bizning tarix
+              {getSetting('history_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              2008-yildan buyon sizga xizmat qilmoqdamiz
+              {getSetting('history_section_description')}
             </p>
           </div>
 
@@ -284,10 +284,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Mukofotlar va yutuqlar
+              {getSetting('awards_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Bizning mehnatimiz tan olingan
+              {getSetting('awards_section_description')}
             </p>
           </div>
 
@@ -332,10 +332,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Video tanishuv
+              {getSetting('video_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Restoramiz bilan yaqindan tanishing
+              {getSetting('video_section_description')}
             </p>
           </div>
 
@@ -361,10 +361,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Mijozlarimiz fikrlari
+              {getSetting('testimonials_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Bizning xizmatimiz haqida nima deyishadi
+              {getSetting('testimonials_section_description')}
             </p>
           </div>
 
@@ -405,10 +405,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Galereya
+              {getSetting('gallery_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Restoramiz va taomlarimizdan lavhalar
+              {getSetting('gallery_section_description')}
             </p>
           </div>
 
@@ -451,10 +451,10 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Ko'p beriladigan savollar
+              {getSetting('faq_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Savollaringizga javoblar
+              {getSetting('faq_section_description')}
             </p>
           </div>
 
@@ -490,7 +490,7 @@ const About = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Bizning manzil
+              {getSetting('map_section_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {getSetting('restaurant_address')}

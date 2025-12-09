@@ -38,6 +38,31 @@ const defaultSettings: Record<string, string> = {
   instagram_url: 'https://instagram.com/bellavista',
   telegram_url: 'https://t.me/bellavista',
   facebook_url: 'https://facebook.com/bellavista',
+  // Statistics
+  stat_years_value: '15+',
+  stat_years_label: 'Yillik tajriba',
+  stat_clients_value: '50,000+',
+  stat_clients_label: 'Mamnun mijozlar',
+  stat_dishes_value: '120+',
+  stat_dishes_label: 'Taomlar',
+  stat_awards_value: '25+',
+  stat_awards_label: 'Mukofotlar',
+  // About page sections
+  team_section_title: 'Bizning jamoa',
+  team_section_description: 'Professional va tajribali jamoamiz sizga eng yaxshi xizmatni taqdim etadi',
+  history_section_title: 'Bizning tarix',
+  history_section_description: '2008-yildan buyon sizga xizmat qilmoqdamiz',
+  awards_section_title: 'Mukofotlar va yutuqlar',
+  awards_section_description: 'Bizning mehnatimiz tan olingan',
+  video_section_title: 'Video tanishuv',
+  video_section_description: 'Restoramiz bilan yaqindan tanishing',
+  testimonials_section_title: 'Mijozlarimiz fikrlari',
+  testimonials_section_description: 'Bizning xizmatimiz haqida nima deyishadi',
+  gallery_section_title: 'Galereya',
+  gallery_section_description: 'Restoramiz va taomlarimizdan lavhalar',
+  faq_section_title: "Ko'p beriladigan savollar",
+  faq_section_description: 'Savollaringizga javoblar',
+  map_section_title: 'Bizning manzil',
 };
 
 export function useSiteSettings() {
