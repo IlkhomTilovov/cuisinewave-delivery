@@ -7,9 +7,27 @@ interface SiteSetting {
 }
 
 const defaultSettings: Record<string, string> = {
+  // Images
   hero_background_image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop',
   about_section_image: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop',
   reservation_banner_image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop',
+  // Contact
+  restaurant_phone: '+998 90 123 45 67',
+  restaurant_address: 'Toshkent sh., Chilanzar tumani',
+  working_hours: '10:00 - 23:00',
+  restaurant_email: 'info@bellavista.uz',
+  // Hero text
+  hero_title: 'Bella Vista',
+  hero_subtitle: 'Restaurant',
+  hero_description: "Eng yaxshi taomlar va mukammal xizmat ko'rsatish bilan sizni kutamiz. Unutilmas lazzat va atmosfera.",
+  // About text
+  about_title: 'Biz haqimizda',
+  about_text_1: "Bella Vista – bu nafaqat restoran, balki mazali taomlar va iliq muhit uyg'unligi. Biz 15 yildan ortiq vaqt davomida mijozlarimizga eng yaxshi xizmat ko'rsatib kelmoqdamiz.",
+  about_text_2: 'Bizning oshxonamizda faqat yangi va sifatli mahsulotlar ishlatiladi. Har bir taom sevgi va professional mahorat bilan tayyorlanadi.',
+  // Social
+  instagram_url: 'https://instagram.com/bellavista',
+  telegram_url: 'https://t.me/bellavista',
+  facebook_url: 'https://facebook.com/bellavista',
 };
 
 export function useSiteSettings() {
@@ -23,7 +41,7 @@ export function useSiteSettings() {
       if (error) throw error;
       return data as SiteSetting[];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
   const getSetting = (key: string): string => {
