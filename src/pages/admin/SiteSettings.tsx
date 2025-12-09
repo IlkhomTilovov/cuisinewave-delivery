@@ -32,13 +32,30 @@ const contactSettings = [
   { key: 'restaurant_email', title: 'Email', icon: Mail, type: 'input' },
 ];
 
-const textSettings = [
+const heroSettings = [
   { key: 'hero_title', title: 'Hero sarlavha', type: 'input' },
   { key: 'hero_subtitle', title: 'Hero ikkinchi sarlavha', type: 'input' },
   { key: 'hero_description', title: 'Hero tavsif matni', type: 'textarea' },
+];
+
+const aboutSettings = [
   { key: 'about_title', title: 'Biz haqimizda sarlavha', type: 'input' },
   { key: 'about_text_1', title: 'Biz haqimizda matn 1', type: 'textarea' },
   { key: 'about_text_2', title: 'Biz haqimizda matn 2', type: 'textarea' },
+  { key: 'about_page_title', title: 'Sahifa sarlavhasi', type: 'input' },
+  { key: 'about_page_description', title: 'Sahifa tavsifi', type: 'textarea' },
+  { key: 'contact_title', title: "Aloqa bo'limi sarlavhasi", type: 'input' },
+  { key: 'contact_description', title: "Aloqa bo'limi tavsifi", type: 'textarea' },
+];
+
+const menuSettings = [
+  { key: 'menu_title', title: 'Menyu sahifasi sarlavhasi', type: 'input' },
+  { key: 'menu_description', title: 'Menyu sahifasi tavsifi', type: 'textarea' },
+];
+
+const reservationSettings = [
+  { key: 'reservation_title', title: 'Reservation sarlavhasi', type: 'input' },
+  { key: 'reservation_description', title: 'Reservation tavsifi', type: 'textarea' },
 ];
 
 const socialSettings = [
@@ -149,22 +166,30 @@ export default function SiteSettings() {
         </div>
 
         <Tabs defaultValue="images" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="images" className="flex items-center gap-2">
               <Image className="w-4 h-4" />
               Rasmlar
+            </TabsTrigger>
+            <TabsTrigger value="hero" className="flex items-center gap-2">
+              <Type className="w-4 h-4" />
+              Hero
+            </TabsTrigger>
+            <TabsTrigger value="menu" className="flex items-center gap-2">
+              <Type className="w-4 h-4" />
+              Menyu
+            </TabsTrigger>
+            <TabsTrigger value="about" className="flex items-center gap-2">
+              <Type className="w-4 h-4" />
+              Biz haqimizda
             </TabsTrigger>
             <TabsTrigger value="contact" className="flex items-center gap-2">
               <Phone className="w-4 h-4" />
               Kontakt
             </TabsTrigger>
-            <TabsTrigger value="text" className="flex items-center gap-2">
-              <Type className="w-4 h-4" />
-              Matnlar
-            </TabsTrigger>
             <TabsTrigger value="social" className="flex items-center gap-2">
               <Share2 className="w-4 h-4" />
-              Ijtimoiy tarmoqlar
+              Ijtimoiy
             </TabsTrigger>
           </TabsList>
 
@@ -188,6 +213,127 @@ export default function SiteSettings() {
             ))}
           </TabsContent>
 
+          {/* Hero Tab */}
+          <TabsContent value="hero" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Hero bo'limi</CardTitle>
+                <CardDescription>Bosh sahifaning yuqori qismi matni</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {heroSettings.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <Label>{config.title}</Label>
+                    {config.type === 'textarea' ? (
+                      <Textarea
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                        rows={3}
+                      />
+                    ) : (
+                      <Input
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                      />
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Reservation bo'limi</CardTitle>
+                <CardDescription>Stol band qilish bo'limi matni</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {reservationSettings.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <Label>{config.title}</Label>
+                    {config.type === 'textarea' ? (
+                      <Textarea
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                        rows={3}
+                      />
+                    ) : (
+                      <Input
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                      />
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Menu Tab */}
+          <TabsContent value="menu" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Menyu sahifasi</CardTitle>
+                <CardDescription>Menyu sahifasidagi matnlar</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {menuSettings.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <Label>{config.title}</Label>
+                    {config.type === 'textarea' ? (
+                      <Textarea
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                        rows={3}
+                      />
+                    ) : (
+                      <Input
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                      />
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* About Tab */}
+          <TabsContent value="about" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Biz haqimizda bo'limi</CardTitle>
+                <CardDescription>Restoran haqida ma'lumot</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {aboutSettings.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <Label>{config.title}</Label>
+                    {config.type === 'textarea' ? (
+                      <Textarea
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                        rows={3}
+                      />
+                    ) : (
+                      <Input
+                        value={getValue(config.key)}
+                        onChange={(e) => handleChange(config.key, e.target.value)}
+                        placeholder={config.title}
+                      />
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Contact Tab */}
           <TabsContent value="contact" className="space-y-6">
             <Card>
@@ -207,65 +353,6 @@ export default function SiteSettings() {
                       onChange={(e) => handleChange(config.key, e.target.value)}
                       placeholder={config.title}
                     />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Text Tab */}
-          <TabsContent value="text" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Hero bo'limi</CardTitle>
-                <CardDescription>Bosh sahifaning yuqori qismi matni</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {textSettings.filter(s => s.key.startsWith('hero')).map((config) => (
-                  <div key={config.key} className="space-y-2">
-                    <Label>{config.title}</Label>
-                    {config.type === 'textarea' ? (
-                      <Textarea
-                        value={getValue(config.key)}
-                        onChange={(e) => handleChange(config.key, e.target.value)}
-                        placeholder={config.title}
-                        rows={3}
-                      />
-                    ) : (
-                      <Input
-                        value={getValue(config.key)}
-                        onChange={(e) => handleChange(config.key, e.target.value)}
-                        placeholder={config.title}
-                      />
-                    )}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Biz haqimizda bo'limi</CardTitle>
-                <CardDescription>Restoran haqida ma'lumot</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {textSettings.filter(s => s.key.startsWith('about')).map((config) => (
-                  <div key={config.key} className="space-y-2">
-                    <Label>{config.title}</Label>
-                    {config.type === 'textarea' ? (
-                      <Textarea
-                        value={getValue(config.key)}
-                        onChange={(e) => handleChange(config.key, e.target.value)}
-                        placeholder={config.title}
-                        rows={3}
-                      />
-                    ) : (
-                      <Input
-                        value={getValue(config.key)}
-                        onChange={(e) => handleChange(config.key, e.target.value)}
-                        placeholder={config.title}
-                      />
-                    )}
                   </div>
                 ))}
               </CardContent>

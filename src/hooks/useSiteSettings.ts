@@ -24,6 +24,16 @@ const defaultSettings: Record<string, string> = {
   about_title: 'Biz haqimizda',
   about_text_1: "Bella Vista – bu nafaqat restoran, balki mazali taomlar va iliq muhit uyg'unligi. Biz 15 yildan ortiq vaqt davomida mijozlarimizga eng yaxshi xizmat ko'rsatib kelmoqdamiz.",
   about_text_2: 'Bizning oshxonamizda faqat yangi va sifatli mahsulotlar ishlatiladi. Har bir taom sevgi va professional mahorat bilan tayyorlanadi.',
+  about_page_title: 'Biz haqimizda',
+  about_page_description: 'Bella Vista restoran tarixi va qadriyatlari',
+  contact_title: "Biz bilan bog'laning",
+  contact_description: "Savollaringiz bormi? Biz bilan bog'laning",
+  // Menu
+  menu_title: 'Bizning Menyu',
+  menu_description: "Eng mazali taomlar to'plami",
+  // Reservation
+  reservation_title: 'Stol band qilish',
+  reservation_description: "Oldindan joy band qiling va maxsus xizmatdan bahramand bo'ling",
   // Social
   instagram_url: 'https://instagram.com/bellavista',
   telegram_url: 'https://t.me/bellavista',
