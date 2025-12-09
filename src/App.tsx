@@ -8,6 +8,9 @@ import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import About from "./pages/About";
+import Promotions from "./pages/Promotions";
+import Delivery from "./pages/Delivery";
+import Contact from "./pages/Contact";
 import CategoryDetail from "./pages/CategoryDetail";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
@@ -40,6 +43,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/menu" element={<Menu />} />
             <Route path="/about" element={<About />} />
+            <Route path="/promotions" element={<Promotions />} />
+            <Route path="/delivery" element={<Delivery />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/menu/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryDetail />} />
             <Route path="/cart" element={<Cart />} />

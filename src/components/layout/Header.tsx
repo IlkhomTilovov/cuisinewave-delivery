@@ -9,7 +9,10 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navLinks = [
   { href: '/menu', label: 'Menyu' },
+  { href: '/promotions', label: 'Aktsiyalar' },
+  { href: '/delivery', label: 'Yetkazib berish' },
   { href: '/about', label: 'Biz haqimizda' },
+  { href: '/contact', label: 'Aloqa' },
 ];
 
 export function Header() {
