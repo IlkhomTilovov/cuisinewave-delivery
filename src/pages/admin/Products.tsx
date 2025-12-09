@@ -8,10 +8,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Search, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 type Product = Tables<'products'>;
 type Category = Tables<'categories'>;
@@ -20,6 +23,8 @@ const Products = () => {
   const [search, setSearch] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
+  const [imageUrl, setImageUrl] = useState('');
   const queryClient = useQueryClient();
 
   const { data: products, isLoading } = useQuery({
@@ -67,6 +72,7 @@ const Products = () => {
       toast.success(editingProduct ? 'Mahsulot yangilandi' : "Mahsulot qo'shildi");
       setIsDialogOpen(false);
       setEditingProduct(null);
+      setImageUrl('');
     },
     onError: (error) => {
       toast.error("Xatolik yuz berdi: " + error.message);
@@ -98,7 +104,7 @@ const Products = () => {
       description_uz: formData.get('description_uz') as string,
       price: Number(formData.get('price')),
       discount_price: formData.get('discount_price') ? Number(formData.get('discount_price')) : null,
-      image_url: formData.get('image_url') as string,
+      image_url: imageUrl || (formData.get('image_url') as string),
       category_id: formData.get('category_id') as string || null,
       ingredients: formData.get('ingredients') as string,
       is_active: formData.get('is_active') === 'on',
@@ -111,6 +117,7 @@ const Products = () => {
 
   const openEditDialog = (product: Product) => {
     setEditingProduct(product);
+    setImageUrl(product.image_url || '');
     setIsDialogOpen(true);
   };
 
@@ -136,109 +143,237 @@ const Products = () => {
             className="pl-10 bg-muted/50"
           />
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          setIsDialogOpen(open);
-          if (!open) setEditingProduct(null);
-        }}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-primary">
-              <Plus className="h-4 w-4 mr-2" />
-              Yangi mahsulot
+        <div className="flex gap-2">
+          <div className="flex border border-border rounded-lg p-1">
+            <Button
+              variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+            >
+              <LayoutList className="h-4 w-4" />
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass">
-            <DialogHeader>
-              <DialogTitle className="font-display text-xl">
-                {editingProduct ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}
-              </DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nomi (RU)</Label>
-                  <Input id="name" name="name" defaultValue={editingProduct?.name} required className="bg-muted/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                  <Input id="name_uz" name="name_uz" defaultValue={editingProduct?.name_uz || ''} className="bg-muted/50" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="description">Tavsif (RU)</Label>
-                  <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-muted/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description_uz">Tavsif (UZ)</Label>
-                  <Textarea id="description_uz" name="description_uz" defaultValue={editingProduct?.description_uz || ''} className="bg-muted/50" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Narxi</Label>
-                  <Input id="price" name="price" type="number" defaultValue={editingProduct?.price} required className="bg-muted/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="discount_price">Chegirma narxi</Label>
-                  <Input id="discount_price" name="discount_price" type="number" defaultValue={editingProduct?.discount_price || ''} className="bg-muted/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sort_order">Tartib</Label>
-                  <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-muted/50" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category_id">Kategoriya</Label>
-                <Select name="category_id" defaultValue={editingProduct?.category_id || ''}>
-                  <SelectTrigger className="bg-muted/50">
-                    <SelectValue placeholder="Kategoriyani tanlang" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="image_url">Rasm URL</Label>
-                <Input id="image_url" name="image_url" defaultValue={editingProduct?.image_url || ''} className="bg-muted/50" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="ingredients">Tarkibi</Label>
-                <Textarea id="ingredients" name="ingredients" defaultValue={editingProduct?.ingredients || ''} className="bg-muted/50" />
-              </div>
-
-              <div className="flex gap-6">
-                <div className="flex items-center gap-2">
-                  <Switch id="is_active" name="is_active" defaultChecked={editingProduct?.is_active ?? true} />
-                  <Label htmlFor="is_active">Faol</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="is_popular" name="is_popular" defaultChecked={editingProduct?.is_popular ?? false} />
-                  <Label htmlFor="is_popular">Mashhur</Label>
-                </div>
-              </div>
-
-              <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
-                {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                Saqlash
+            <Button
+              variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+          </div>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) {
+              setEditingProduct(null);
+              setImageUrl('');
+            }
+          }}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-primary">
+                <Plus className="h-4 w-4 mr-2" />
+                Yangi mahsulot
               </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass">
+              <DialogHeader>
+                <DialogTitle className="font-display text-xl">
+                  {editingProduct ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}
+                </DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nomi (RU)</Label>
+                    <Input id="name" name="name" defaultValue={editingProduct?.name} required className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="name_uz">Nomi (UZ)</Label>
+                    <Input id="name_uz" name="name_uz" defaultValue={editingProduct?.name_uz || ''} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Tavsif (RU)</Label>
+                    <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description_uz">Tavsif (UZ)</Label>
+                    <Textarea id="description_uz" name="description_uz" defaultValue={editingProduct?.description_uz || ''} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Narxi</Label>
+                    <Input id="price" name="price" type="number" defaultValue={editingProduct?.price} required className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="discount_price">Chegirma narxi</Label>
+                    <Input id="discount_price" name="discount_price" type="number" defaultValue={editingProduct?.discount_price || ''} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sort_order">Tartib</Label>
+                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="category_id">Kategoriya</Label>
+                  <Select name="category_id" defaultValue={editingProduct?.category_id || ''}>
+                    <SelectTrigger className="bg-muted/50">
+                      <SelectValue placeholder="Kategoriyani tanlang" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Rasm</Label>
+                  <Tabs defaultValue="upload" className="w-full">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="upload" className="flex-1">Yuklash</TabsTrigger>
+                      <TabsTrigger value="url" className="flex-1">URL</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="upload" className="mt-2">
+                      <ImageUpload
+                        value={imageUrl}
+                        onChange={setImageUrl}
+                        folder="products"
+                      />
+                    </TabsContent>
+                    <TabsContent value="url" className="mt-2">
+                      <Input
+                        name="image_url"
+                        placeholder="https://..."
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        className="bg-muted/50"
+                      />
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ingredients">Tarkibi</Label>
+                  <Textarea id="ingredients" name="ingredients" defaultValue={editingProduct?.ingredients || ''} className="bg-muted/50" />
+                </div>
+
+                <div className="flex gap-6">
+                  <div className="flex items-center gap-2">
+                    <Switch id="is_active" name="is_active" defaultChecked={editingProduct?.is_active ?? true} />
+                    <Label htmlFor="is_active">Faol</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch id="is_popular" name="is_popular" defaultChecked={editingProduct?.is_popular ?? false} />
+                    <Label htmlFor="is_popular">Mashhur</Label>
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
+                  {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  Saqlash
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      {/* Products Grid */}
+      {/* Content */}
       {isLoading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
+      ) : viewMode === 'table' ? (
+        <Card className="glass border-border/50 overflow-hidden">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-16">Rasm</TableHead>
+                    <TableHead>Nomi</TableHead>
+                    <TableHead>Kategoriya</TableHead>
+                    <TableHead>Narxi</TableHead>
+                    <TableHead>Holati</TableHead>
+                    <TableHead className="text-right">Amallar</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProducts?.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
+                          {product.image_url ? (
+                            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-xl">🍽️</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{product.name}</p>
+                          {product.name_uz && (
+                            <p className="text-xs text-muted-foreground">{product.name_uz}</p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {(product as any).categories?.name || '-'}
+                      </TableCell>
+                      <TableCell>
+                        {product.discount_price ? (
+                          <div>
+                            <span className="text-secondary font-medium">{formatPrice(product.discount_price)}</span>
+                            <span className="text-xs text-muted-foreground line-through ml-2">{formatPrice(product.price)}</span>
+                          </div>
+                        ) : (
+                          <span className="font-medium">{formatPrice(product.price)}</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {product.is_active ? (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Faol</span>
+                          ) : (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">Nofaol</span>
+                          )}
+                          {product.is_popular && (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-secondary/20 text-secondary">Mashhur</span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => openEditDialog(product)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:bg-destructive/10"
+                            onClick={() => {
+                              if (confirm("Haqiqatan ham o'chirmoqchimisiz?")) {
+                                deleteMutation.mutate(product.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts?.map((product) => (

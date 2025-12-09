@@ -16,12 +16,15 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
+import { Users } from 'lucide-react';
+
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Mahsulotlar', icon: Package },
   { href: '/admin/categories', label: 'Kategoriyalar', icon: FolderTree },
   { href: '/admin/orders', label: 'Buyurtmalar', icon: ShoppingCart },
   { href: '/admin/banners', label: 'Bannerlar', icon: Image },
+  { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
 ];
 
 interface AdminLayoutProps {
