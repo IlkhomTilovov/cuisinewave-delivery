@@ -97,19 +97,23 @@ const Products = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
-    const product: Partial<Product> = {
+    const product: any = {
       name: formData.get('name') as string,
       name_uz: formData.get('name_uz') as string,
       description: formData.get('description') as string,
-      description_uz: formData.get('description_uz') as string,
       price: Number(formData.get('price')),
       discount_price: formData.get('discount_price') ? Number(formData.get('discount_price')) : null,
       image_url: imageUrl || (formData.get('image_url') as string),
       category_id: formData.get('category_id') as string || null,
-      ingredients: formData.get('ingredients') as string,
       is_active: formData.get('is_active') === 'on',
       is_popular: formData.get('is_popular') === 'on',
       sort_order: Number(formData.get('sort_order')) || 0,
+      weight: formData.get('weight') as string || null,
+      prep_time: formData.get('prep_time') as string || null,
+      spice_level: Number(formData.get('spice_level')) || 0,
+      calories: formData.get('calories') ? Number(formData.get('calories')) : null,
+      meta_title: formData.get('meta_title') as string || null,
+      meta_description: formData.get('meta_description') as string || null,
     };
 
     saveMutation.mutate(product);
@@ -191,15 +195,9 @@ const Products = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Tavsif (RU)</Label>
-                    <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-muted/50" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description_uz">Tavsif (UZ)</Label>
-                    <Textarea id="description_uz" name="description_uz" defaultValue={editingProduct?.description_uz || ''} className="bg-muted/50" />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Tavsif</Label>
+                  <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-muted/50" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -214,6 +212,25 @@ const Products = () => {
                   <div className="space-y-2">
                     <Label htmlFor="sort_order">Tartib</Label>
                     <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-muted/50" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="weight">Og'irlik/Hajm</Label>
+                    <Input id="weight" name="weight" placeholder="300g, 500ml" defaultValue={(editingProduct as any)?.weight || ''} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="prep_time">Tayyorlash vaqti</Label>
+                    <Input id="prep_time" name="prep_time" placeholder="15-20 daq" defaultValue={(editingProduct as any)?.prep_time || ''} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="spice_level">Achchiqlik (0-3)</Label>
+                    <Input id="spice_level" name="spice_level" type="number" min="0" max="3" defaultValue={(editingProduct as any)?.spice_level || 0} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="calories">Kaloriya (kCal)</Label>
+                    <Input id="calories" name="calories" type="number" defaultValue={(editingProduct as any)?.calories || ''} className="bg-muted/50" />
                   </div>
                 </div>
 
@@ -257,9 +274,15 @@ const Products = () => {
                   </Tabs>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="ingredients">Tarkibi</Label>
-                  <Textarea id="ingredients" name="ingredients" defaultValue={editingProduct?.ingredients || ''} className="bg-muted/50" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="meta_title">Meta Title (SEO)</Label>
+                    <Input id="meta_title" name="meta_title" defaultValue={editingProduct?.meta_title || ''} className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="meta_description">Meta Description (SEO)</Label>
+                    <Input id="meta_description" name="meta_description" defaultValue={editingProduct?.meta_description || ''} className="bg-muted/50" />
+                  </div>
                 </div>
 
                 <div className="flex gap-6">
