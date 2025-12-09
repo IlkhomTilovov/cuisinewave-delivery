@@ -33,7 +33,7 @@ const navItems = [
   { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
   { href: '/admin/suppliers', label: 'Yetkazuvchilar', icon: Truck },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
-  { href: '/admin/settings', label: 'Sozlamalar', icon: Settings },
+  { href: '/admin/site-settings', label: 'Sozlamalar', icon: Settings },
 ];
 
 interface AdminLayoutProps {
