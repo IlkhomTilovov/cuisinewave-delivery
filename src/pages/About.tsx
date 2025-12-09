@@ -1,40 +1,23 @@
 import { Layout } from '@/components/layout/Layout';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
-import { Phone, Mail, MapPin, Clock, Instagram, Send, Facebook, Award, Users, Utensils, Star, ChefHat, Quote, Play, ChevronDown } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Phone, Mail, MapPin, Clock, Instagram, Send, Facebook, Award, Users, Utensils, Star, ChefHat, Quote, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useState } from 'react';
 
-// Team data
-const teamMembers = [
-  {
-    name: 'Akbar Karimov',
-    position: 'Bosh oshpaz',
-    image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=400&fit=crop',
-    experience: '15 yil tajriba',
-  },
-  {
-    name: 'Dilnoza Rahimova',
-    position: 'Sous-chef',
-    image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=400&h=400&fit=crop',
-    experience: '10 yil tajriba',
-  },
-  {
-    name: 'Jasur Toshmatov',
-    position: 'Konditer ustasi',
-    image: 'https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=400&h=400&fit=crop',
-    experience: '8 yil tajriba',
-  },
-  {
-    name: 'Malika Saidova',
-    position: 'Restoran menejeri',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop',
-    experience: '12 yil tajriba',
-  },
+// Statistics data (static)
+const statistics = [
+  { icon: Clock, value: '15+', label: 'Yillik tajriba' },
+  { icon: Users, value: '50,000+', label: 'Mamnun mijozlar' },
+  { icon: Utensils, value: '120+', label: 'Taomlar' },
+  { icon: Award, value: '25+', label: 'Mukofotlar' },
 ];
 
-// Timeline data
+// Timeline data (static)
 const timelineEvents = [
   { year: '2008', title: 'Asos solingan', description: "Bella Vista restoran Toshkent shahrida o'z eshiklarini ochdi" },
   { year: '2012', title: "Birinchi mukofot", description: "O'zbekistonning eng yaxshi restoranlari tanlovi g'olibi" },
@@ -43,23 +26,7 @@ const timelineEvents = [
   { year: '2023', title: '15 yillik yubiley', description: "50,000 dan ortiq mamnun mijozlarga xizmat ko'rsatdik" },
 ];
 
-// Statistics data
-const statistics = [
-  { icon: Clock, value: '15+', label: 'Yillik tajriba' },
-  { icon: Users, value: '50,000+', label: 'Mamnun mijozlar' },
-  { icon: Utensils, value: '120+', label: 'Taomlar' },
-  { icon: Award, value: '25+', label: 'Mukofotlar' },
-];
-
-// Awards data
-const awards = [
-  { year: '2023', title: "Yilning eng yaxshi restorani", organization: "O'zbekiston Restoratorlar Assotsiatsiyasi" },
-  { year: '2022', title: "Eng yaxshi xizmat ko'rsatish", organization: "Hospitality Awards" },
-  { year: '2021', title: "Milliy taomlar ustasi", organization: "Gastronomiya festivali" },
-  { year: '2020', title: "Mijozlar tanlovi", organization: "TripAdvisor" },
-];
-
-// Testimonials data
+// Testimonials data (static)
 const testimonials = [
   {
     name: 'Sardor Alimov',
@@ -81,9 +48,9 @@ const testimonials = [
   },
 ];
 
-// Gallery images
+// Gallery images (static)
 const galleryImages = [
-  { url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop', alt: 'Restoran ichki ko\'rinishi' },
+  { url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop', alt: "Restoran ichki ko'rinishi" },
   { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop', alt: 'Taomlar' },
   { url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop', alt: 'Maxsus xona' },
   { url: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&h=400&fit=crop', alt: 'Oshxona' },
@@ -91,18 +58,51 @@ const galleryImages = [
   { url: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?w=600&h=400&fit=crop', alt: 'VIP xona' },
 ];
 
-// FAQ data
-const faqItems = [
-  { question: 'Ish vaqtingiz qanday?', answer: "Biz har kuni soat 10:00 dan 23:00 gacha ishlaymiz. Dam olish kunlari ham ochiqmiz." },
-  { question: "Stol band qilish kerakmi?", answer: "Ha, ayniqsa hafta oxiri va bayram kunlarida oldindan stol band qilishni tavsiya etamiz. Telefon yoki saytimiz orqali band qilishingiz mumkin." },
-  { question: "Yetkazib berish xizmati bormi?", answer: "Ha, shahar bo'ylab yetkazib berish xizmatimiz mavjud. Minimal buyurtma summasi 50,000 so'm." },
-  { question: "Vegetarian taomlar bormi?", answer: "Ha, menyumizda vegetarianlar uchun maxsus taomlar bo'limi mavjud." },
-  { question: "To'lov usullari qanday?", answer: "Naqd pul, bank kartalari (Uzcard, Humo, Visa, Mastercard) va Click, Payme orqali to'lash mumkin." },
-];
-
 const About = () => {
   const { getSetting } = useSiteSettings();
   const [activeImage, setActiveImage] = useState<string | null>(null);
+
+  // Fetch team members from database
+  const { data: teamMembers, isLoading: teamLoading } = useQuery({
+    queryKey: ['team-members-public'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch FAQ items from database
+  const { data: faqItems, isLoading: faqLoading } = useQuery({
+    queryKey: ['faq-items-public'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('faq_items')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch awards from database
+  const { data: awards, isLoading: awardsLoading } = useQuery({
+    queryKey: ['awards-public'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('awards')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const contactItems = [
     { icon: Phone, label: 'Telefon', value: getSetting('restaurant_phone'), href: `tel:${getSetting('restaurant_phone').replace(/\s/g, '')}` },
@@ -194,29 +194,43 @@ const About = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <Card 
-                key={index} 
-                className="overflow-hidden group animate-fade-in hover-scale"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="aspect-square overflow-hidden">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto -mt-12 mb-4 relative z-10 border-4 border-background">
-                    <ChefHat className="w-6 h-6 text-primary" />
+            {teamLoading ? (
+              [...Array(4)].map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <Skeleton className="aspect-square" />
+                  <CardContent className="p-6">
+                    <Skeleton className="h-6 w-3/4 mx-auto mb-2" />
+                    <Skeleton className="h-4 w-1/2 mx-auto" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : teamMembers && teamMembers.length > 0 ? (
+              teamMembers.map((member, index) => (
+                <Card 
+                  key={member.id} 
+                  className="overflow-hidden group animate-fade-in hover-scale"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <img
+                      src={member.image_url || 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&h=400&fit=crop'}
+                      alt={member.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
                   </div>
-                  <h3 className="font-display text-xl font-bold text-foreground mb-1">{member.name}</h3>
-                  <p className="text-primary font-medium mb-2">{member.position}</p>
-                  <p className="text-sm text-muted-foreground">{member.experience}</p>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6 text-center">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto -mt-12 mb-4 relative z-10 border-4 border-background">
+                      <ChefHat className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="font-display text-xl font-bold text-foreground mb-1">{member.name}</h3>
+                    <p className="text-primary font-medium mb-2">{member.position}</p>
+                    <p className="text-sm text-muted-foreground">{member.experience}</p>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p className="col-span-full text-center text-muted-foreground">Jamoa a'zolari topilmadi</p>
+            )}
           </div>
         </div>
       </section>
@@ -235,7 +249,6 @@ const About = () => {
 
           <div className="max-w-4xl mx-auto">
             <div className="relative">
-              {/* Timeline line */}
               <div className="absolute left-8 lg:left-1/2 top-0 bottom-0 w-0.5 bg-primary/30 transform lg:-translate-x-1/2" />
               
               {timelineEvents.map((event, index) => (
@@ -246,10 +259,8 @@ const About = () => {
                   }`}
                   style={{ animationDelay: `${index * 150}ms` }}
                 >
-                  {/* Timeline dot */}
                   <div className="absolute left-8 lg:left-1/2 w-4 h-4 rounded-full bg-primary transform -translate-x-1/2 z-10" />
                   
-                  {/* Content */}
                   <div className={`ml-16 lg:ml-0 lg:w-1/2 ${index % 2 === 0 ? 'lg:pr-12 lg:text-right' : 'lg:pl-12'}`}>
                     <Card className="inline-block">
                       <CardContent className="p-6">
@@ -281,22 +292,37 @@ const About = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {awards.map((award, index) => (
-              <Card 
-                key={index} 
-                className="text-center animate-fade-in hover-scale"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CardContent className="p-6">
-                  <div className="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center mx-auto mb-4">
-                    <Award className="w-8 h-8 text-secondary" />
-                  </div>
-                  <span className="text-sm text-primary font-bold">{award.year}</span>
-                  <h3 className="font-display text-lg font-bold text-foreground mt-2 mb-2">{award.title}</h3>
-                  <p className="text-sm text-muted-foreground">{award.organization}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {awardsLoading ? (
+              [...Array(4)].map((_, i) => (
+                <Card key={i} className="text-center">
+                  <CardContent className="p-6">
+                    <Skeleton className="w-16 h-16 rounded-full mx-auto mb-4" />
+                    <Skeleton className="h-4 w-1/4 mx-auto mb-2" />
+                    <Skeleton className="h-6 w-3/4 mx-auto mb-2" />
+                    <Skeleton className="h-4 w-1/2 mx-auto" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : awards && awards.length > 0 ? (
+              awards.map((award, index) => (
+                <Card 
+                  key={award.id} 
+                  className="text-center animate-fade-in hover-scale"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center mx-auto mb-4">
+                      <Award className="w-8 h-8 text-secondary" />
+                    </div>
+                    <span className="text-sm text-primary font-bold">{award.year}</span>
+                    <h3 className="font-display text-lg font-bold text-foreground mt-2 mb-2">{award.title}</h3>
+                    <p className="text-sm text-muted-foreground">{award.organization}</p>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p className="col-span-full text-center text-muted-foreground">Mukofotlar topilmadi</p>
+            )}
           </div>
         </div>
       </section>
@@ -433,18 +459,28 @@ const About = () => {
           </div>
 
           <div className="max-w-3xl mx-auto animate-fade-in stagger-1">
-            <Accordion type="single" collapsible className="space-y-4">
-              {faqItems.map((item, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="border rounded-xl px-6">
-                  <AccordionTrigger className="text-left font-semibold hover:no-underline">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {faqLoading ? (
+              <div className="space-y-4">
+                {[...Array(4)].map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full rounded-xl" />
+                ))}
+              </div>
+            ) : faqItems && faqItems.length > 0 ? (
+              <Accordion type="single" collapsible className="space-y-4">
+                {faqItems.map((item, index) => (
+                  <AccordionItem key={item.id} value={`item-${index}`} className="border rounded-xl px-6">
+                    <AccordionTrigger className="text-left font-semibold hover:no-underline">
+                      {item.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground">
+                      {item.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : (
+              <p className="text-center text-muted-foreground">FAQ topilmadi</p>
+            )}
           </div>
         </div>
       </section>

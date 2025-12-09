@@ -23,6 +23,8 @@ import { Users } from 'lucide-react';
 
 import { Settings } from 'lucide-react';
 
+import { FileText } from 'lucide-react';
+
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Mahsulotlar', icon: Package },
@@ -33,6 +35,7 @@ const navItems = [
   { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
   { href: '/admin/suppliers', label: 'Yetkazuvchilar', icon: Truck },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
+  { href: '/admin/about-content', label: 'Biz haqimizda', icon: FileText },
   { href: '/admin/site-settings', label: 'Sozlamalar', icon: Settings },
 ];
 
