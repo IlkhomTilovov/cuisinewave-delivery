@@ -118,6 +118,51 @@ export type Database = {
         }
         Relationships: []
       }
+      ingredients: {
+        Row: {
+          category: string | null
+          cost_per_unit: number
+          created_at: string
+          current_stock: number
+          expiry_alert_days: number | null
+          id: string
+          is_active: boolean | null
+          min_stock: number
+          name: string
+          name_uz: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          cost_per_unit?: number
+          created_at?: string
+          current_stock?: number
+          expiry_alert_days?: number | null
+          id?: string
+          is_active?: boolean | null
+          min_stock?: number
+          name: string
+          name_uz?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          cost_per_unit?: number
+          created_at?: string
+          current_stock?: number
+          expiry_alert_days?: number | null
+          id?: string
+          is_active?: boolean | null
+          min_stock?: number
+          name?: string
+          name_uz?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           id: string
@@ -198,6 +243,42 @@ export type Database = {
           user_fullname?: string
         }
         Relationships: []
+      }
+      product_ingredients: {
+        Row: {
+          id: string
+          ingredient_id: string
+          product_id: string
+          quantity_needed: number
+        }
+        Insert: {
+          id?: string
+          ingredient_id: string
+          product_id: string
+          quantity_needed?: number
+        }
+        Update: {
+          id?: string
+          ingredient_id?: string
+          product_id?: string
+          quantity_needed?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_ingredients_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_ingredients_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -288,6 +369,99 @@ export type Database = {
         }
         Relationships: []
       }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expiry_date: string | null
+          id: string
+          ingredient_id: string
+          movement_type: string
+          notes: string | null
+          quantity: number
+          supplier_id: string | null
+          total_cost: number | null
+          unit_cost: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expiry_date?: string | null
+          id?: string
+          ingredient_id: string
+          movement_type: string
+          notes?: string | null
+          quantity: number
+          supplier_id?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expiry_date?: string | null
+          id?: string
+          ingredient_id?: string
+          movement_type?: string
+          notes?: string | null
+          quantity?: number
+          supplier_id?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          notes: string | null
+          phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -314,6 +488,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      deduct_ingredients_for_order: {
+        Args: { p_order_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

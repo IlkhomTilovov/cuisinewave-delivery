@@ -17,6 +17,9 @@ import Categories from "./pages/admin/Categories";
 import Orders from "./pages/admin/Orders";
 import Banners from "./pages/admin/Banners";
 import Users from "./pages/admin/Users";
+import Inventory from "./pages/admin/Inventory";
+import StockMovements from "./pages/admin/StockMovements";
+import Suppliers from "./pages/admin/Suppliers";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,9 @@ const App = () => (
             <Route path="/admin/categories" element={<AdminLayout><Categories /></AdminLayout>} />
             <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
             <Route path="/admin/banners" element={<AdminLayout><Banners /></AdminLayout>} />
+            <Route path="/admin/inventory" element={<AdminLayout><Inventory /></AdminLayout>} />
+            <Route path="/admin/stock-movements" element={<AdminLayout><StockMovements /></AdminLayout>} />
+            <Route path="/admin/suppliers" element={<AdminLayout><Suppliers /></AdminLayout>} />
             <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
             
             <Route path="*" element={<NotFound />} />
