@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/cart';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navLinks = [
   { href: '/menu', label: 'Menyu' },
@@ -56,10 +57,13 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Language Switcher */}
             <button
               onClick={() => setLang(lang === 'uz' ? 'ru' : 'uz')}
-              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-muted/50 transition-colors"
             >
               <Globe className="w-4 h-4" />
               {lang.toUpperCase()}

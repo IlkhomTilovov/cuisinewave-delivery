@@ -17,7 +17,7 @@ const buttonVariants = cva(
         hero: "bg-gradient-to-br from-primary to-primary-dark text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-glow",
         gold: "bg-gradient-to-r from-gold to-gold-dark text-background font-bold hover:opacity-90 shadow-gold",
         cart: "bg-muted text-foreground hover:bg-muted/80 border border-border",
-        glass: "backdrop-blur-xl border border-white/10 bg-white/10 text-foreground hover:bg-white/20",
+        glass: "backdrop-blur-xl border border-border/30 bg-card/50 text-foreground hover:bg-card/70",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90 shadow-md",
       },
       size: {
