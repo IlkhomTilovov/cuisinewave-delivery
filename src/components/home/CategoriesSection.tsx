@@ -68,7 +68,7 @@ export function CategoriesSection() {
             {displayCategories.map((category: any, index: number) => (
               <Link
                 key={category.id}
-                to={`/menu?category=${category.slug}`}
+                to={`/category/${category.slug}`}
                 className="group relative h-[400px] lg:h-[500px] rounded-3xl overflow-hidden category-card animate-fade-in hover-zoom"
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
