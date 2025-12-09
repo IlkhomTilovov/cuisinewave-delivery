@@ -9,11 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const Menu = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const selectedCategory = searchParams.get('category');
+  const { getSetting } = useSiteSettings();
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
@@ -58,8 +60,10 @@ const Menu = () => {
     <Layout>
       <section className="py-8 lg:py-12 bg-muted/30">
         <div className="container">
-          <h1 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-2">Menyu</h1>
-          <p className="text-muted-foreground">Eng mazali taomlarni tanlang</p>
+          <h1 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-2">
+            {getSetting('menu_title')}
+          </h1>
+          <p className="text-muted-foreground">{getSetting('menu_description')}</p>
         </div>
       </section>
 

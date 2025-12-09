@@ -7,6 +7,8 @@ export function ReservationBanner() {
   const { getSetting } = useSiteSettings();
   const bannerImage = getSetting('reservation_banner_image');
   const phone = getSetting('restaurant_phone');
+  const reservationTitle = getSetting('reservation_title');
+  const reservationDescription = getSetting('reservation_description');
 
   return (
     <section className="py-24 lg:py-32 relative overflow-hidden">
@@ -25,13 +27,12 @@ export function ReservationBanner() {
       <div className="container relative z-10">
         <div className="max-w-2xl">
           <h2 className="font-display text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-6 leading-tight animate-fade-in">
-            Bugun mazali taomlarimizni{' '}
+            {reservationTitle || 'Bugun mazali taomlarimizni'}{' '}
             <span className="text-secondary">tatib ko'ring!</span>
           </h2>
           
           <p className="text-lg text-foreground/70 mb-10 animate-fade-in stagger-1">
-            Oilaviy yig'inlar, do'stlar bilan uchrashuvlar yoki ish uchrashuvlari uchun 
-            ideal joy. Stolni hoziroq band qiling!
+            {reservationDescription || "Oilaviy yig'inlar, do'stlar bilan uchrashuvlar yoki ish uchrashuvlari uchun ideal joy. Stolni hoziroq band qiling!"}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-in stagger-2">
