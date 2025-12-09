@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
+import About from "./pages/About";
 import CategoryDetail from "./pages/CategoryDetail";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
@@ -37,10 +38,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/menu" element={<Menu />} />
+            <Route path="/about" element={<About />} />
             <Route path="/menu/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryDetail />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/auth" element={<Auth />} />
             <Route path="/auth" element={<Auth />} />
             
             {/* Admin Routes */}
