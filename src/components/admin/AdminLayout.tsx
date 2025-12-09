@@ -136,16 +136,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </nav>
 
           {/* User info & logout */}
-          <div className="p-4 border-t border-sidebar-border">
-            <div className="px-4 py-2 mb-2">
-              <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-              <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-secondary/20 text-secondary capitalize">
+          <div className="p-4 border-t border-sidebar-border mt-auto">
+            <div className="px-3 py-2 mb-2 rounded-lg bg-sidebar-accent/50">
+              <p className="text-sm text-sidebar-foreground font-medium truncate">{user.email}</p>
+              <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-primary/20 text-primary capitalize">
                 {userRole}
               </span>
             </div>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 py-3"
               onClick={handleSignOut}
             >
               <LogOut className="h-4 w-4 mr-3" />
