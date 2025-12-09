@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Loader2, Plus, Pencil, Trash2, Users, HelpCircle, Award } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, Users, HelpCircle, Award, FileText } from 'lucide-react';
 
 interface TeamMember {
   id: string;
@@ -94,8 +94,12 @@ export default function AboutContent() {
           </p>
         </div>
 
-        <Tabs defaultValue="team" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="settings" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Sayt ma'lumotlari
+            </TabsTrigger>
             <TabsTrigger value="team" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Jamoa
@@ -109,6 +113,11 @@ export default function AboutContent() {
               Mukofotlar
             </TabsTrigger>
           </TabsList>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings">
+            <AboutSettingsSection />
+          </TabsContent>
 
           {/* Team Tab */}
           <TabsContent value="team">
@@ -127,6 +136,125 @@ export default function AboutContent() {
         </Tabs>
       </div>
     </AdminLayout>
+  );
+}
+
+// About Settings Section Component
+function AboutSettingsSection() {
+  const queryClient = useQueryClient();
+
+  const aboutSettingsKeys = [
+    { key: 'about_title', label: 'Biz haqimizda sarlavha', type: 'input' },
+    { key: 'about_text_1', label: 'Biz haqimizda matn 1', type: 'textarea' },
+    { key: 'about_text_2', label: 'Biz haqimizda matn 2', type: 'textarea' },
+    { key: 'about_page_title', label: 'Sahifa sarlavhasi', type: 'input' },
+    { key: 'about_page_description', label: 'Sahifa tavsifi', type: 'textarea' },
+    { key: 'contact_title', label: "Aloqa bo'limi sarlavhasi", type: 'input' },
+    { key: 'contact_description', label: "Aloqa bo'limi tavsifi", type: 'textarea' },
+  ];
+
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ['about-settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*')
+        .in('key', aboutSettingsKeys.map(s => s.key));
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [form, setForm] = useState<Record<string, string>>({});
+
+  // Initialize form when settings load
+  useState(() => {
+    if (settings) {
+      const initial: Record<string, string> = {};
+      settings.forEach(s => {
+        initial[s.key] = s.value || '';
+      });
+      setForm(initial);
+    }
+  });
+
+  // Update form when settings change
+  const currentSettings = settings || [];
+  if (currentSettings.length > 0 && Object.keys(form).length === 0) {
+    const initial: Record<string, string> = {};
+    currentSettings.forEach(s => {
+      initial[s.key] = s.value || '';
+    });
+    if (Object.keys(initial).length > 0) {
+      setForm(initial);
+    }
+  }
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      for (const setting of aboutSettingsKeys) {
+        const value = form[setting.key] || '';
+        const existing = settings?.find(s => s.key === setting.key);
+        
+        if (existing) {
+          await supabase
+            .from('site_settings')
+            .update({ value, updated_at: new Date().toISOString() })
+            .eq('key', setting.key);
+        } else {
+          await supabase
+            .from('site_settings')
+            .insert({ key: setting.key, value });
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['about-settings'] });
+      queryClient.invalidateQueries({ queryKey: ['site-settings-public'] });
+      toast.success('Saqlandi');
+    },
+    onError: () => toast.error('Xatolik yuz berdi'),
+  });
+
+  if (isLoading) {
+    return <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin" /></div>;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Biz haqimizda bo'limi</CardTitle>
+        <p className="text-muted-foreground text-sm">Restoran haqida ma'lumot</p>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {aboutSettingsKeys.map((setting) => (
+          <div key={setting.key}>
+            <Label className="mb-2 block">{setting.label}</Label>
+            {setting.type === 'textarea' ? (
+              <Textarea
+                value={form[setting.key] || ''}
+                onChange={(e) => setForm({ ...form, [setting.key]: e.target.value })}
+                rows={3}
+              />
+            ) : (
+              <Input
+                value={form[setting.key] || ''}
+                onChange={(e) => setForm({ ...form, [setting.key]: e.target.value })}
+              />
+            )}
+          </div>
+        ))}
+
+        <Button 
+          onClick={() => saveMutation.mutate()} 
+          disabled={saveMutation.isPending}
+          className="w-full"
+        >
+          {saveMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+          Saqlash
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 
