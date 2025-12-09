@@ -6,6 +6,7 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 export function ReservationBanner() {
   const { getSetting } = useSiteSettings();
   const bannerImage = getSetting('reservation_banner_image');
+  const phone = getSetting('restaurant_phone');
 
   return (
     <section className="py-24 lg:py-32 relative overflow-hidden">
@@ -40,10 +41,10 @@ export function ReservationBanner() {
                 Stol band qilish
               </Button>
             </Link>
-            <a href="tel:+998901234567">
+            <a href={`tel:${phone.replace(/\s/g, '')}`}>
               <Button variant="outline" size="xl" className="w-full sm:w-auto group">
                 <Phone className="w-5 h-5" />
-                +998 90 123 45 67
+                {phone}
               </Button>
             </a>
           </div>

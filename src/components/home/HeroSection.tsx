@@ -6,6 +6,10 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 export function HeroSection() {
   const { getSetting } = useSiteSettings();
   const heroImage = getSetting('hero_background_image');
+  const heroTitle = getSetting('hero_title');
+  const heroSubtitle = getSetting('hero_subtitle');
+  const heroDescription = getSetting('hero_description');
+  const address = getSetting('restaurant_address');
 
   return (
     <section className="dark relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(350,30%,4%)]">
@@ -36,14 +40,13 @@ export function HeroSection() {
 
           {/* Main Title */}
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight mb-6 animate-slide-up tracking-wide">
-            Bella Vista
-            <span className="block text-secondary mt-2">Restaurant</span>
+            {heroTitle}
+            <span className="block text-secondary mt-2">{heroSubtitle}</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-fade-in stagger-2 leading-relaxed">
-            Eng yaxshi taomlar va mukammal xizmat ko'rsatish bilan sizni kutamiz. 
-            Unutilmas lazzat va atmosfera.
+            {heroDescription}
           </p>
 
           {/* CTA Buttons */}
@@ -66,7 +69,7 @@ export function HeroSection() {
               <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center">
                 <MapPin className="w-5 h-5 text-secondary" />
               </div>
-              <span className="text-sm font-medium">Toshkent shahri</span>
+              <span className="text-sm font-medium">{address.split(',')[0]}</span>
             </div>
             <div className="flex items-center gap-2 text-white/60">
               <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center">

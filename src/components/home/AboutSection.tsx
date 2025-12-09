@@ -6,12 +6,16 @@ import { useSiteSettings } from '@/hooks/useSiteSettings';
 const stats = [
   { icon: Award, value: '15+', label: 'Yillik tajriba' },
   { icon: Users, value: '50k+', label: 'Xursand mijozlar' },
-  { icon: Clock, value: '24/7', label: 'Xizmat ko\'rsatish' },
+  { icon: Clock, value: '24/7', label: "Xizmat ko'rsatish" },
 ];
 
 export function AboutSection() {
   const { getSetting } = useSiteSettings();
   const aboutImage = getSetting('about_section_image');
+  const aboutTitle = getSetting('about_title');
+  const aboutText1 = getSetting('about_text_1');
+  const aboutText2 = getSetting('about_text_2');
+
   return (
     <section className="py-24 lg:py-32 relative overflow-hidden">
       <div className="container">
@@ -19,18 +23,16 @@ export function AboutSection() {
           {/* Content */}
           <div className="animate-fade-in">
             <h2 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-6 title-underline">
-              Biz haqimizda
+              {aboutTitle}
             </h2>
             
             <div className="space-y-6 mt-8">
               <p className="text-foreground/70 leading-relaxed text-lg">
-                Bella Vista – bu nafaqat restoran, balki mazali taomlar va iliq muhit uyg'unligi. 
-                Biz 15 yildan ortiq vaqt davomida mijozlarimizga eng yaxshi xizmat ko'rsatib kelmoqdamiz.
+                {aboutText1}
               </p>
               
               <p className="text-foreground/70 leading-relaxed">
-                Bizning oshxonamizda faqat yangi va sifatli mahsulotlar ishlatiladi. 
-                Har bir taom sevgi va professional mahorat bilan tayyorlanadi.
+                {aboutText2}
               </p>
             </div>
 

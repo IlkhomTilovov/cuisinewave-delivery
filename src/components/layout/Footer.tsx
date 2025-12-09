@@ -1,7 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, Instagram, Send, Facebook } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function Footer() {
+  const { getSetting } = useSiteSettings();
+  const phone = getSetting('restaurant_phone');
+  const email = getSetting('restaurant_email');
+  const address = getSetting('restaurant_address');
+  const hours = getSetting('working_hours');
+  const instagram = getSetting('instagram_url');
+  const telegram = getSetting('telegram_url');
+  const facebook = getSetting('facebook_url');
+
   return (
     <footer className="bg-card border-t border-border">
       <div className="container py-16 lg:py-20">
@@ -53,25 +63,25 @@ export function Footer() {
                 <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
                   <Phone className="w-4 h-4 text-secondary" />
                 </div>
-                +998 90 123 45 67
+                {phone}
               </li>
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
                   <Mail className="w-4 h-4 text-secondary" />
                 </div>
-                info@bellavista.uz
+                {email}
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
                 <div className="w-9 h-9 rounded-xl glass flex items-center justify-center shrink-0">
                   <MapPin className="w-4 h-4 text-secondary" />
                 </div>
-                Toshkent sh., Chilonzor tumani
+                {address}
               </li>
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
                   <Clock className="w-4 h-4 text-secondary" />
                 </div>
-                10:00 – 23:00
+                {hours}
               </li>
             </ul>
           </div>
@@ -81,9 +91,9 @@ export function Footer() {
             <h4 className="font-display font-semibold text-lg text-foreground mb-6">Ijtimoiy tarmoqlar</h4>
             <div className="flex gap-3">
               {[
-                { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-                { icon: Send, href: 'https://t.me', label: 'Telegram' },
-                { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
+                { icon: Instagram, href: instagram, label: 'Instagram' },
+                { icon: Send, href: telegram, label: 'Telegram' },
+                { icon: Facebook, href: facebook, label: 'Facebook' },
               ].map((social) => (
                 <a 
                   key={social.label}
