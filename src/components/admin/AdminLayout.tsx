@@ -29,10 +29,12 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { user, loading, signOut, isAdmin, userRole } = useAuth();
+  const { user, loading, roleLoading, signOut, isAdmin, userRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isAuthLoading = loading || roleLoading;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -41,12 +43,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    if (!loading && user && !isAdmin) {
+    if (!loading && !roleLoading && user && !isAdmin) {
       navigate('/');
     }
-  }, [user, loading, isAdmin, navigate]);
+  }, [user, loading, roleLoading, isAdmin, navigate]);
 
-  if (loading) {
+  if (isAuthLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>

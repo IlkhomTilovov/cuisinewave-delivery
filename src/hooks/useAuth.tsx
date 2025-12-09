@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -19,9 +20,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const fetchUserRole = async (userId: string) => {
+    setRoleLoading(true);
     const { data } = await supabase
       .from('user_roles')
       .select('role')
@@ -29,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .maybeSingle();
     
     setUserRole(data?.role || null);
+    setRoleLoading(false);
   };
 
   useEffect(() => {
@@ -46,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }, 0);
         } else {
           setUserRole(null);
+          setRoleLoading(false);
         }
       }
     );
@@ -58,6 +63,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (session?.user) {
         fetchUserRole(session.user.id);
+      } else {
+        setRoleLoading(false);
       }
     });
 
@@ -87,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isAdmin = userRole === 'superadmin' || userRole === 'manager' || userRole === 'operator';
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, isAdmin, userRole }}>
+    <AuthContext.Provider value={{ user, session, loading, roleLoading, signIn, signUp, signOut, isAdmin, userRole }}>
       {children}
     </AuthContext.Provider>
   );
