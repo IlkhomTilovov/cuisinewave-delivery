@@ -10,7 +10,6 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 const navLinks = [
   { href: '/menu', label: 'Menyu' },
   { href: '/about', label: 'Biz haqimizda' },
-  { href: '/contact', label: 'Aloqa' },
 ];
 
 export function Header() {
