@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export function HeroSection() {
+  const { getSetting } = useSiteSettings();
+  const heroImage = getSetting('hero_background_image');
+
   return (
     <section className="dark relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(350,30%,4%)]">
       {/* Background Image with Overlay */}
@@ -10,7 +14,7 @@ export function HeroSection() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop')`,
+            backgroundImage: `url('${heroImage}')`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(340,100%,27%,0.9)] via-[hsl(340,100%,20%,0.95)] to-[hsl(350,30%,4%)]" />
