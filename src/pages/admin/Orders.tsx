@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { 
   Search, Loader2, Eye, MapPin, Phone, User, Clock, CreditCard, 
   CalendarIcon, Download, Printer, ShoppingBag, TrendingUp, 
-  Package, Trash2, Volume2, VolumeX, History, CheckCircle2
+  Package, Trash2, Volume2, VolumeX, History, CheckCircle2, Bike
 } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { format, startOfDay, endOfDay, subDays, isWithinInterval } from 'date-fns';
@@ -26,6 +26,7 @@ import { useOrderNotification } from '@/hooks/useOrderNotification';
 
 type Order = Tables<'orders'>;
 type OrderItem = Tables<'order_items'>;
+type Courier = Tables<'couriers'>;
 
 interface OrderStatusHistory {
   id: string;
@@ -118,6 +119,20 @@ const Orders = () => {
     enabled: !!selectedOrder,
   });
 
+  // Fetch available couriers
+  const { data: couriers } = useQuery({
+    queryKey: ['couriers-available'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('couriers')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+      if (error) throw error;
+      return data as Courier[];
+    },
+  });
+
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
@@ -138,6 +153,23 @@ const Orders = () => {
     },
     onError: (error) => {
       toast.error("Xatolik yuz berdi: " + error.message);
+    },
+  });
+
+  const assignCourierMutation = useMutation({
+    mutationFn: async ({ orderId, courierId }: { orderId: string; courierId: string | null }) => {
+      const { error } = await supabase
+        .from('orders')
+        .update({ courier_id: courierId })
+        .eq('id', orderId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      invalidateGroup('orders');
+      toast.success('Kuryer tayinlandi');
+    },
+    onError: (error) => {
+      toast.error("Xatolik: " + error.message);
     },
   });
 
@@ -173,6 +205,11 @@ const Orders = () => {
 
   const getStatusInfo = (status: string) => {
     return statusOptions.find(s => s.value === status) || statusOptions[0];
+  };
+
+  const getCourierInfo = (courierId: string | null) => {
+    if (!courierId || !couriers) return null;
+    return couriers.find(c => c.id === courierId);
   };
 
   // Date filtering logic
@@ -473,6 +510,7 @@ const Orders = () => {
         <div className="space-y-4">
           {filteredOrders.map((order) => {
             const statusInfo = getStatusInfo(order.status || 'new');
+            const courierInfo = getCourierInfo(order.courier_id);
             return (
               <Card key={order.id} className="glass border-border/50">
                 <CardContent className="p-4">
@@ -481,6 +519,12 @@ const Orders = () => {
                       <div className="flex items-center gap-3">
                         <h3 className="font-display text-lg">{order.user_fullname}</h3>
                         <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
+                        {courierInfo && (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Bike className="h-3 w-3" />
+                            {courierInfo.name}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
@@ -494,8 +538,8 @@ const Orders = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="text-right mr-2">
                         <p className="text-xl font-display text-secondary">{formatPrice(Number(order.total_price))}</p>
                         <p className="text-xs text-muted-foreground capitalize">{order.payment_type}</p>
                       </div>
@@ -503,12 +547,32 @@ const Orders = () => {
                         value={order.status || 'new'} 
                         onValueChange={(status) => updateStatusMutation.mutate({ id: order.id, status })}
                       >
-                        <SelectTrigger className="w-40 bg-muted/50">
+                        <SelectTrigger className="w-36 bg-muted/50">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           {statusOptions.map((status) => (
                             <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select 
+                        value={order.courier_id || 'none'} 
+                        onValueChange={(courierId) => assignCourierMutation.mutate({ 
+                          orderId: order.id, 
+                          courierId: courierId === 'none' ? null : courierId 
+                        })}
+                      >
+                        <SelectTrigger className="w-36 bg-muted/50">
+                          <Bike className="h-4 w-4 mr-2" />
+                          <SelectValue placeholder="Kuryer" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Tayinlanmagan</SelectItem>
+                          {couriers?.filter(c => c.is_available || c.id === order.courier_id).map((courier) => (
+                            <SelectItem key={courier.id} value={courier.id}>
+                              {courier.name} ({courier.current_orders_count}/{courier.max_orders})
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -590,6 +654,50 @@ const Orders = () => {
                     <Clock className="h-4 w-4" /> Vaqt
                   </p>
                   <p className="font-medium">{format(new Date(selectedOrder.created_at), 'dd.MM.yyyy HH:mm')}</p>
+                </div>
+              </div>
+
+              {/* Courier Assignment Section */}
+              <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Bike className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Kuryer</p>
+                      <p className="font-medium">
+                        {getCourierInfo(selectedOrder.courier_id)?.name || 'Tayinlanmagan'}
+                      </p>
+                    </div>
+                  </div>
+                  <Select 
+                    value={selectedOrder.courier_id || 'none'} 
+                    onValueChange={(courierId) => {
+                      assignCourierMutation.mutate({ 
+                        orderId: selectedOrder.id, 
+                        courierId: courierId === 'none' ? null : courierId 
+                      });
+                      setSelectedOrder({...selectedOrder, courier_id: courierId === 'none' ? null : courierId});
+                    }}
+                  >
+                    <SelectTrigger className="w-48 bg-background">
+                      <SelectValue placeholder="Kuryer tanlang" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Tayinlanmagan</SelectItem>
+                      {couriers?.filter(c => c.is_available || c.id === selectedOrder.courier_id).map((courier) => (
+                        <SelectItem key={courier.id} value={courier.id}>
+                          <div className="flex items-center gap-2">
+                            <span>{courier.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              ({courier.current_orders_count}/{courier.max_orders})
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
