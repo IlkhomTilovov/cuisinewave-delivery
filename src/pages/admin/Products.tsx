@@ -348,7 +348,7 @@ const Products = () => {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-medium">{product.name}</p>
+                          <p className="font-medium text-slate-900">{product.name}</p>
                           {product.name_uz && (
                             <p className="text-xs text-slate-500">{product.name_uz}</p>
                           )}
@@ -364,7 +364,7 @@ const Products = () => {
                             <span className="text-xs text-slate-400 line-through ml-2">{formatPrice(product.price)}</span>
                           </div>
                         ) : (
-                          <span className="font-medium">{formatPrice(product.price)}</span>
+                          <span className="font-medium text-slate-900">{formatPrice(product.price)}</span>
                         )}
                       </TableCell>
                       <TableCell>
