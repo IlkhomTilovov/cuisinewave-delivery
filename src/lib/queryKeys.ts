@@ -20,6 +20,15 @@ export const queryKeys = {
   // Stock movements
   stockMovements: ['stock-movements'] as const,
   
+  // Inventory counts
+  inventoryCounts: ['inventory-counts'] as const,
+  
+  // Reports
+  usageReport: (period: string) => ['usage-report', period] as const,
+  wasteReport: (period: string) => ['waste-report', period] as const,
+  costReport: ['cost-report'] as const,
+  priceHistory: (period: string) => ['price-history', period] as const,
+  
   // Suppliers
   suppliers: ['suppliers'] as const,
   
@@ -54,7 +63,7 @@ export const invalidationGroups = {
   orders: [queryKeys.orders, queryKeys.adminOrders(), queryKeys.adminIngredients, queryKeys.stockMovements, queryKeys.dashboardStats],
   
   // When stock movements change
-  stockMovements: [queryKeys.stockMovements, queryKeys.adminIngredients, queryKeys.dashboardStats],
+  stockMovements: [queryKeys.stockMovements, queryKeys.adminIngredients, queryKeys.dashboardStats, queryKeys.inventoryCounts],
   
   // When suppliers change
   suppliers: [queryKeys.suppliers],
