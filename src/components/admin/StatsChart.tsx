@@ -56,31 +56,31 @@ export function StatsChart({ orders, type = 'revenue' }: StatsChartProps) {
 
   if (type === 'orders') {
     return (
-      <Card className="glass border-border/50">
+      <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="pb-2">
-          <CardTitle className="font-display text-lg">Buyurtmalar (7 kun)</CardTitle>
+          <CardTitle className="font-display text-lg text-slate-900">Buyurtmalar (7 kun)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                  axisLine={{ stroke: 'hsl(var(--border))' }}
+                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  axisLine={{ stroke: '#e2e8f0' }}
                 />
                 <YAxis
-                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                  axisLine={{ stroke: 'hsl(var(--border))' }}
+                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  axisLine={{ stroke: '#e2e8f0' }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
                     borderRadius: '8px',
                   }}
-                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                  labelStyle={{ color: '#1e293b' }}
                   formatter={(value: number) => [value + ' ta', 'Buyurtmalar']}
                 />
                 <Bar
@@ -97,47 +97,47 @@ export function StatsChart({ orders, type = 'revenue' }: StatsChartProps) {
   }
 
   return (
-    <Card className="glass border-border/50">
+    <Card className="bg-white border-slate-200 shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="font-display text-lg">Daromad (7 kun)</CardTitle>
+        <CardTitle className="font-display text-lg text-slate-900">Daromad (7 kun)</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--secondary))" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(var(--secondary))" stopOpacity={0} />
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
                 dataKey="date"
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 axisLine={{ stroke: 'hsl(var(--border))' }}
               />
               <YAxis
-                tickFormatter={formatPrice}
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                axisLine={{ stroke: 'hsl(var(--border))' }}
+                  tickFormatter={formatPrice}
+                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  axisLine={{ stroke: '#e2e8f0' }}
               />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-                labelStyle={{ color: 'hsl(var(--foreground))' }}
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                  }}
+                  labelStyle={{ color: '#1e293b' }}
                 formatter={(value: number) => [
                   new Intl.NumberFormat('uz-UZ').format(value) + " so'm",
                   'Daromad',
                 ]}
               />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="hsl(var(--secondary))"
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#10b981"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorRevenue)"
