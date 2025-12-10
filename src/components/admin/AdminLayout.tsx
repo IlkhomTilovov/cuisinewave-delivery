@@ -11,7 +11,6 @@ import {
   X,
   Warehouse,
   ArrowRightLeft,
-  Truck,
   Users,
   Settings,
   FileText,
@@ -33,7 +32,6 @@ const navItems = [
   { href: '/admin/orders', label: 'Buyurtmalar', icon: ShoppingCart },
   { href: '/admin/inventory', label: 'Ombor', icon: Warehouse },
   { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
-  { href: '/admin/suppliers', label: 'Yetkazuvchilar', icon: Truck },
   { href: '/admin/couriers', label: 'Kuryerlar', icon: Bike },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
 ];
