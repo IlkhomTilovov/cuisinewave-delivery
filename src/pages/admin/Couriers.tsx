@@ -47,11 +47,11 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  new: 'bg-blue-500/20 text-blue-400',
-  cooking: 'bg-orange-500/20 text-orange-400',
-  on_the_way: 'bg-purple-500/20 text-purple-400',
-  delivered: 'bg-green-500/20 text-green-400',
-  cancelled: 'bg-red-500/20 text-red-400',
+  new: 'bg-blue-100 text-blue-600',
+  cooking: 'bg-orange-100 text-orange-600',
+  on_the_way: 'bg-purple-100 text-purple-600',
+  delivered: 'bg-emerald-100 text-emerald-600',
+  cancelled: 'bg-red-100 text-red-600',
 };
 
 const Couriers = () => {
@@ -216,12 +216,12 @@ const Couriers = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Kuryer qidirish..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-muted/50"
+            className="pl-10 bg-slate-50 border-slate-200"
           />
         </div>
         
@@ -232,7 +232,7 @@ const Couriers = () => {
               Kuryer qo'shish
             </Button>
           </DialogTrigger>
-          <DialogContent className="glass">
+          <DialogContent className="bg-white border-slate-200">
             <DialogHeader>
               <DialogTitle className="font-display">
                 {editingCourier ? "Kuryerni tahrirlash" : "Yangi kuryer"}
@@ -325,32 +325,32 @@ const Couriers = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Jami kuryerlar</p>
-            <p className="text-2xl font-display font-bold">{couriers?.length || 0}</p>
+            <p className="text-sm text-slate-500">Jami kuryerlar</p>
+            <p className="text-2xl font-display font-bold text-slate-900">{couriers?.length || 0}</p>
           </CardContent>
         </Card>
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Faol</p>
-            <p className="text-2xl font-display font-bold text-green-400">
+            <p className="text-sm text-slate-500">Faol</p>
+            <p className="text-2xl font-display font-bold text-emerald-600">
               {couriers?.filter(c => c.is_active && c.is_available).length || 0}
             </p>
           </CardContent>
         </Card>
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Band</p>
-            <p className="text-2xl font-display font-bold text-orange-400">
+            <p className="text-sm text-slate-500">Band</p>
+            <p className="text-2xl font-display font-bold text-orange-600">
               {couriers?.filter(c => c.is_active && !c.is_available).length || 0}
             </p>
           </CardContent>
         </Card>
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Faol buyurtmalar</p>
-            <p className="text-2xl font-display font-bold text-secondary">
+            <p className="text-sm text-slate-500">Faol buyurtmalar</p>
+            <p className="text-2xl font-display font-bold text-blue-600">
               {courierOrders?.length || 0}
             </p>
           </CardContent>
@@ -372,16 +372,16 @@ const Couriers = () => {
             const isExpanded = expandedCourier === courier.id;
             
             return (
-              <Card key={courier.id} className={`glass border-border/50 ${!courier.is_active ? 'opacity-50' : ''}`}>
+              <Card key={courier.id} className={`bg-white border-slate-200 ${!courier.is_active ? 'opacity-50' : ''}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-primary/20">
-                        <VehicleIcon className="h-5 w-5 text-primary" />
+                      <div className="p-2 rounded-xl bg-blue-100">
+                        <VehicleIcon className="h-5 w-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-display font-semibold">{courier.name}</h3>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <h3 className="font-display font-semibold text-slate-900">{courier.name}</h3>
+                        <p className="text-sm text-slate-500 flex items-center gap-1">
                           <Phone className="h-3 w-3" /> {courier.phone}
                         </p>
                       </div>
@@ -402,10 +402,10 @@ const Couriers = () => {
                   </div>
                   
                   <div className="flex items-center gap-2 mb-3">
-                    <Badge className={courier.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}>
+                    <Badge className={courier.is_active ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}>
                       {courier.is_active ? 'Faol' : 'Nofaol'}
                     </Badge>
-                    <Badge className={courier.is_available ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400'}>
+                    <Badge className={courier.is_available ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}>
                       {courier.is_available ? 'Bo\'sh' : 'Band'}
                     </Badge>
                     <Badge variant="outline" className="ml-auto">
@@ -416,14 +416,14 @@ const Couriers = () => {
                   
                   <div className="flex items-center justify-between text-sm mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Faol:</span>
+                      <span className="text-slate-500">Faol:</span>
                       <Switch 
                         checked={courier.is_active} 
                         onCheckedChange={() => toggleActive(courier)}
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Bo'sh:</span>
+                      <span className="text-slate-500">Bo'sh:</span>
                       <Switch 
                         checked={courier.is_available} 
                         onCheckedChange={() => toggleAvailable(courier)}
@@ -451,7 +451,7 @@ const Couriers = () => {
                         {courierOrdersList.map((order) => (
                           <div 
                             key={order.id} 
-                            className="p-3 rounded-lg bg-muted/50 space-y-2"
+                            className="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-2"
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-medium text-sm">{order.user_fullname}</span>
@@ -459,16 +459,16 @@ const Couriers = () => {
                                 {statusLabels[order.status || 'new']}
                               </Badge>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-2 text-xs text-slate-500">
                               <MapPin className="h-3 w-3" />
                               <span className="truncate">{order.address}</span>
                             </div>
                             <div className="flex items-center justify-between text-xs">
-                              <span className="flex items-center gap-1 text-muted-foreground">
+                              <span className="flex items-center gap-1 text-slate-500">
                                 <Clock className="h-3 w-3" />
                                 {format(new Date(order.created_at), 'HH:mm')}
                               </span>
-                              <span className="font-semibold text-secondary">
+                              <span className="font-semibold text-emerald-600">
                                 {formatPrice(Number(order.total_price))}
                               </span>
                             </div>
@@ -479,7 +479,7 @@ const Couriers = () => {
                   )}
 
                   {!hasOrders && (
-                    <div className="text-center py-2 text-xs text-muted-foreground">
+                    <div className="text-center py-2 text-xs text-slate-500">
                       Faol buyurtmalar yo'q
                     </div>
                   )}
@@ -491,7 +491,7 @@ const Couriers = () => {
       )}
 
       {filteredCouriers?.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-slate-500">
           Kuryerlar topilmadi
         </div>
       )}

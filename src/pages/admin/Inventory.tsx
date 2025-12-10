@@ -156,36 +156,36 @@ const Inventory = () => {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-primary/20 text-primary">
+            <div className="p-3 rounded-xl bg-blue-100 text-blue-600">
               <Package className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Jami mahsulotlar</p>
-              <p className="text-2xl font-display">{totalItems}</p>
+              <p className="text-sm text-slate-500">Jami mahsulotlar</p>
+              <p className="text-2xl font-display text-slate-900">{totalItems}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-red-500/20 text-red-400">
+            <div className="p-3 rounded-xl bg-red-100 text-red-600">
               <AlertTriangle className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Kam qolgan</p>
-              <p className="text-2xl font-display">{lowStockItems}</p>
+              <p className="text-sm text-slate-500">Kam qolgan</p>
+              <p className="text-2xl font-display text-slate-900">{lowStockItems}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-secondary/20 text-secondary">
+            <div className="p-3 rounded-xl bg-emerald-100 text-emerald-600">
               <TrendingDown className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Jami qiymat</p>
-              <p className="text-2xl font-display">{formatPrice(totalValue)}</p>
+              <p className="text-sm text-slate-500">Jami qiymat</p>
+              <p className="text-2xl font-display text-slate-900">{formatPrice(totalValue)}</p>
             </div>
           </CardContent>
         </Card>
@@ -195,18 +195,18 @@ const Inventory = () => {
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div className="flex gap-4 flex-1">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Qidirish..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-muted/50"
+              className="pl-10 bg-slate-50 border-slate-200"
             />
           </div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
             <TabsList>
               <TabsTrigger value="all">Hammasi</TabsTrigger>
-              <TabsTrigger value="low" className="text-red-400">
+              <TabsTrigger value="low" className="text-red-600">
                 Kam qolgan ({lowStockItems})
               </TabsTrigger>
             </TabsList>
@@ -222,7 +222,7 @@ const Inventory = () => {
               Yangi mahsulot
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg glass">
+          <DialogContent className="max-w-lg bg-white border-slate-200">
             <DialogHeader>
               <DialogTitle className="font-display text-xl">
                 {editingIngredient ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}
@@ -232,11 +232,11 @@ const Inventory = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nomi (RU)</Label>
-                  <Input id="name" name="name" defaultValue={editingIngredient?.name} required className="bg-muted/50" />
+                  <Input id="name" name="name" defaultValue={editingIngredient?.name} required className="bg-slate-50 border-slate-200" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                  <Input id="name_uz" name="name_uz" defaultValue={editingIngredient?.name_uz || ''} className="bg-muted/50" />
+                  <Input id="name_uz" name="name_uz" defaultValue={editingIngredient?.name_uz || ''} className="bg-slate-50 border-slate-200" />
                 </div>
               </div>
 
@@ -244,7 +244,7 @@ const Inventory = () => {
                 <div className="space-y-2">
                   <Label htmlFor="unit">O'lchov birligi</Label>
                   <Select name="unit" defaultValue={editingIngredient?.unit || 'kg'}>
-                    <SelectTrigger className="bg-muted/50">
+                    <SelectTrigger className="bg-slate-50 border-slate-200">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -257,7 +257,7 @@ const Inventory = () => {
                 <div className="space-y-2">
                   <Label htmlFor="category">Kategoriya</Label>
                   <Select name="category" defaultValue={editingIngredient?.category || ''}>
-                    <SelectTrigger className="bg-muted/50">
+                    <SelectTrigger className="bg-slate-50 border-slate-200">
                       <SelectValue placeholder="Tanlang" />
                     </SelectTrigger>
                     <SelectContent>
@@ -272,11 +272,11 @@ const Inventory = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="min_stock">Minimal zaxira</Label>
-                  <Input id="min_stock" name="min_stock" type="number" step="0.01" defaultValue={editingIngredient?.min_stock || 0} className="bg-muted/50" />
+                  <Input id="min_stock" name="min_stock" type="number" step="0.01" defaultValue={editingIngredient?.min_stock || 0} className="bg-slate-50 border-slate-200" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="cost_per_unit">Narxi (birlik uchun)</Label>
-                  <Input id="cost_per_unit" name="cost_per_unit" type="number" defaultValue={editingIngredient?.cost_per_unit || 0} className="bg-muted/50" />
+                  <Input id="cost_per_unit" name="cost_per_unit" type="number" defaultValue={editingIngredient?.cost_per_unit || 0} className="bg-slate-50 border-slate-200" />
                 </div>
               </div>
 
@@ -300,7 +300,7 @@ const Inventory = () => {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <Card className="glass border-border/50 overflow-hidden">
+        <Card className="bg-white border-slate-200 overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -322,31 +322,31 @@ const Inventory = () => {
                     const category = categoryOptions.find(c => c.value === ing.category);
                     
                     return (
-                      <TableRow key={ing.id} className={isLow ? 'bg-red-500/5' : ''}>
+                      <TableRow key={ing.id} className={isLow ? 'bg-red-50' : ''}>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            {isLow && <AlertTriangle className="h-4 w-4 text-red-400" />}
+                            {isLow && <AlertTriangle className="h-4 w-4 text-red-600" />}
                             <div>
                               <p className="font-medium">{ing.name}</p>
-                              {ing.name_uz && <p className="text-xs text-muted-foreground">{ing.name_uz}</p>}
+                              {ing.name_uz && <p className="text-xs text-slate-500">{ing.name_uz}</p>}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
+                        <TableCell className="text-slate-500">
                           {category?.label || '-'}
                         </TableCell>
                         <TableCell>
-                          <span className={isLow ? 'text-red-400 font-medium' : ''}>
+                          <span className={isLow ? 'text-red-600 font-medium' : ''}>
                             {ing.current_stock} {ing.unit}
                           </span>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
+                        <TableCell className="text-slate-500">
                           {ing.min_stock} {ing.unit}
                         </TableCell>
                         <TableCell>
                           {formatPrice(ing.cost_per_unit)}/{ing.unit}
                         </TableCell>
-                        <TableCell className="text-secondary font-medium">
+                        <TableCell className="text-emerald-600 font-medium">
                           {formatPrice(value)}
                         </TableCell>
                         <TableCell className="text-right">
@@ -379,7 +379,7 @@ const Inventory = () => {
       )}
 
       {filteredIngredients?.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-slate-500">
           Mahsulotlar topilmadi
         </div>
       )}
