@@ -426,19 +426,30 @@ const Products = () => {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-1.5">
                                 {ingredientAvailability[product.id] ? (
                                   ingredientAvailability[product.id].available ? (
                                     ingredientAvailability[product.id].partial ? (
-                                      <AlertTriangle className="h-4 w-4 text-amber-500" />
+                                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">
+                                        <AlertTriangle className="h-3 w-3" />
+                                        Kam
+                                      </span>
                                     ) : (
-                                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">
+                                        <CheckCircle2 className="h-3 w-3" />
+                                        Yetarli
+                                      </span>
                                     )
                                   ) : (
-                                    <XCircle className="h-4 w-4 text-red-500" />
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">
+                                      <XCircle className="h-3 w-3" />
+                                      Yetmaydi
+                                    </span>
                                   )
                                 ) : (
-                                  <span className="text-slate-400 text-xs">—</span>
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-slate-100 text-slate-500">
+                                    Bog'lanmagan
+                                  </span>
                                 )}
                               </div>
                             </TooltipTrigger>
@@ -461,7 +472,7 @@ const Products = () => {
                                   </div>
                                 )
                               ) : (
-                                <span>Ingredientlar bog'lanmagan</span>
+                                <span>Ingredientlar bog'lanmagan - "Ingredientlar" tugmasini bosing</span>
                               )}
                             </TooltipContent>
                           </Tooltip>
@@ -482,20 +493,26 @@ const Products = () => {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           <Button 
-                            variant="ghost" 
+                            variant="outline" 
                             size="sm" 
                             title="Ingredientlar"
+                            className="border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                             onClick={() => setIngredientsProductId(product.id)}
                           >
                             <Package className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => openEditDialog(product)}>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                            onClick={() => openEditDialog(product)}
+                          >
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
-                            className="text-destructive hover:bg-destructive/10"
+                            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                             onClick={() => {
                               if (confirm("Haqiqatan ham o'chirmoqchimisiz?")) {
                                 deleteMutation.mutate(product.id);
