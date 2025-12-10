@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -11,8 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList, Package } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList, Package, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import { queryKeys } from '@/lib/queryKeys';
@@ -22,6 +23,13 @@ import { ProductIngredients } from '@/components/admin/ProductIngredients';
 
 type Product = Tables<'products'>;
 type Category = Tables<'categories'>;
+
+interface ProductIngredient {
+  product_id: string;
+  ingredient_id: string;
+  quantity_needed: number;
+  ingredients: { name: string; current_stock: number; unit: string };
+}
 
 const Products = () => {
   const [search, setSearch] = useState('');
@@ -33,7 +41,7 @@ const Products = () => {
   const { invalidateGroup } = useQueryInvalidation();
   
   // Real-time subscription for products and categories
-  useRealtimeSubscription(['products', 'categories']);
+  useRealtimeSubscription(['products', 'categories', 'ingredients']);
 
   const { data: products, isLoading } = useQuery({
     queryKey: queryKeys.adminProducts,
@@ -60,6 +68,52 @@ const Products = () => {
     },
   });
 
+  // Fetch product ingredients with stock info
+  const { data: productIngredients } = useQuery({
+    queryKey: ['product-ingredients-with-stock'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('product_ingredients')
+        .select('product_id, ingredient_id, quantity_needed, ingredients(name, current_stock, unit)');
+      if (error) throw error;
+      return data as ProductIngredient[];
+    },
+  });
+
+  // Calculate ingredient availability for each product
+  const ingredientAvailability = useMemo(() => {
+    if (!productIngredients) return {};
+    
+    const availability: Record<string, { available: boolean; partial: boolean; missing: string[] }> = {};
+    
+    // Group by product_id
+    const byProduct = productIngredients.reduce((acc, pi) => {
+      if (!acc[pi.product_id]) acc[pi.product_id] = [];
+      acc[pi.product_id].push(pi);
+      return acc;
+    }, {} as Record<string, ProductIngredient[]>);
+    
+    Object.entries(byProduct).forEach(([productId, ingredients]) => {
+      const missing: string[] = [];
+      let hasPartial = false;
+      
+      ingredients.forEach(ing => {
+        if (ing.ingredients.current_stock < ing.quantity_needed) {
+          missing.push(ing.ingredients.name);
+        } else if (ing.ingredients.current_stock < ing.quantity_needed * 3) {
+          hasPartial = true;
+        }
+      });
+      
+      availability[productId] = {
+        available: missing.length === 0,
+        partial: hasPartial && missing.length === 0,
+        missing,
+      };
+    });
+    
+    return availability;
+  }, [productIngredients]);
   const saveMutation = useMutation({
     mutationFn: async (product: Partial<Product>) => {
       if (editingProduct) {
@@ -330,6 +384,7 @@ const Products = () => {
                     <TableHead>Nomi</TableHead>
                     <TableHead>Kategoriya</TableHead>
                     <TableHead>Narxi</TableHead>
+                    <TableHead>Ingredientlar</TableHead>
                     <TableHead>Holati</TableHead>
                     <TableHead className="text-right">Amallar</TableHead>
                   </TableRow>
@@ -366,6 +421,51 @@ const Products = () => {
                         ) : (
                           <span className="font-medium text-slate-900">{formatPrice(product.price)}</span>
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center gap-1">
+                                {ingredientAvailability[product.id] ? (
+                                  ingredientAvailability[product.id].available ? (
+                                    ingredientAvailability[product.id].partial ? (
+                                      <AlertTriangle className="h-4 w-4 text-amber-500" />
+                                    ) : (
+                                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                    )
+                                  ) : (
+                                    <XCircle className="h-4 w-4 text-red-500" />
+                                  )
+                                ) : (
+                                  <span className="text-slate-400 text-xs">—</span>
+                                )}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-white border-slate-200 text-slate-900">
+                              {ingredientAvailability[product.id] ? (
+                                ingredientAvailability[product.id].available ? (
+                                  ingredientAvailability[product.id].partial ? (
+                                    <span>Kam qolgan ingredientlar bor</span>
+                                  ) : (
+                                    <span className="text-emerald-600">Barcha ingredientlar yetarli</span>
+                                  )
+                                ) : (
+                                  <div>
+                                    <span className="text-red-600 font-medium">Yetishmayapti:</span>
+                                    <ul className="text-xs mt-1">
+                                      {ingredientAvailability[product.id].missing.map(name => (
+                                        <li key={name}>• {name}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )
+                              ) : (
+                                <span>Ingredientlar bog'lanmagan</span>
+                              )}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -437,15 +537,58 @@ const Products = () => {
               <CardContent className="p-4">
                 <h3 className="font-display text-lg truncate">{product.name}</h3>
                 <p className="text-sm text-slate-500 truncate">{(product as any).categories?.name}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  {product.discount_price ? (
-                    <>
-                      <span className="text-emerald-600 font-medium">{formatPrice(product.discount_price)}</span>
-                      <span className="text-sm text-slate-400 line-through">{formatPrice(product.price)}</span>
-                    </>
-                  ) : (
-                    <span className="text-emerald-600 font-medium">{formatPrice(product.price)}</span>
-                  )}
+                <div className="flex items-center justify-between mt-2">
+                  <div className="flex items-center gap-2">
+                    {product.discount_price ? (
+                      <>
+                        <span className="text-emerald-600 font-medium">{formatPrice(product.discount_price)}</span>
+                        <span className="text-sm text-slate-400 line-through">{formatPrice(product.price)}</span>
+                      </>
+                    ) : (
+                      <span className="text-emerald-600 font-medium">{formatPrice(product.price)}</span>
+                    )}
+                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1">
+                          {ingredientAvailability[product.id] ? (
+                            ingredientAvailability[product.id].available ? (
+                              ingredientAvailability[product.id].partial ? (
+                                <AlertTriangle className="h-4 w-4 text-amber-500" />
+                              ) : (
+                                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                              )
+                            ) : (
+                              <XCircle className="h-4 w-4 text-red-500" />
+                            )
+                          ) : null}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white border-slate-200 text-slate-900">
+                        {ingredientAvailability[product.id] ? (
+                          ingredientAvailability[product.id].available ? (
+                            ingredientAvailability[product.id].partial ? (
+                              <span>Kam qolgan ingredientlar bor</span>
+                            ) : (
+                              <span className="text-emerald-600">Barcha ingredientlar yetarli</span>
+                            )
+                          ) : (
+                            <div>
+                              <span className="text-red-600 font-medium">Yetishmayapti:</span>
+                              <ul className="text-xs mt-1">
+                                {ingredientAvailability[product.id].missing.map(name => (
+                                  <li key={name}>• {name}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )
+                        ) : (
+                          <span>Ingredientlar bog'lanmagan</span>
+                        )}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <Button 
