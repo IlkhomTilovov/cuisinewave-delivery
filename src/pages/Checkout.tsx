@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -248,33 +248,6 @@ const Checkout = () => {
               </div>
             </div>
 
-            {/* Payment */}
-            <div className="p-6 bg-card rounded-2xl border border-border/50 space-y-4">
-              <h2 className="font-semibold text-lg">To'lov usuli</h2>
-              
-              <RadioGroup
-                value={form.payment_type}
-                onValueChange={(value) => handleChange('payment_type', value)}
-                className="grid grid-cols-2 gap-4"
-              >
-                <div className="flex items-center space-x-2 p-4 border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="cash" id="cash" />
-                  <Label htmlFor="cash" className="cursor-pointer">Naqd pul</Label>
-                </div>
-                <div className="flex items-center space-x-2 p-4 border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="cursor-pointer">Karta</Label>
-                </div>
-                <div className="flex items-center space-x-2 p-4 border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="payme" id="payme" />
-                  <Label htmlFor="payme" className="cursor-pointer">Payme</Label>
-                </div>
-                <div className="flex items-center space-x-2 p-4 border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
-                  <RadioGroupItem value="click" id="click" />
-                  <Label htmlFor="click" className="cursor-pointer">Click</Label>
-                </div>
-              </RadioGroup>
-            </div>
 
             {/* Notes */}
             <div className="p-6 bg-card rounded-2xl border border-border/50 space-y-4">
