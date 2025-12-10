@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { queryKeys } from '@/lib/queryKeys';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
+import { useOrderNotification } from '@/hooks/useOrderNotification';
 
 type Order = Tables<'orders'>;
 type OrderItem = Tables<'order_items'>;
@@ -55,6 +56,9 @@ const Orders = () => {
 
   // Real-time subscription for orders
   useRealtimeSubscription(['orders']);
+  
+  // Order notification sound
+  useOrderNotification(soundEnabled);
 
   const { data: orders, isLoading } = useQuery({
     queryKey: queryKeys.adminOrders(statusFilter),
