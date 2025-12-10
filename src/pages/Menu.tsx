@@ -58,7 +58,7 @@ const Menu = () => {
 
   return (
     <Layout>
-      <section className="pt-16 pb-8 lg:pt-20 lg:pb-12 bg-primary/10">
+      <section className="pt-16 pb-8 lg:pt-20 lg:pb-12">
         <div className="container">
           <h1 className="font-display text-3xl lg:text-4xl font-bold text-primary mb-2">
             {getSetting('menu_title') || 'Bizning Menyu'}
