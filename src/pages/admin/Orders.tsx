@@ -557,23 +557,46 @@ const Orders = () => {
                         </SelectContent>
                       </Select>
                       <Select 
-                        value={order.courier_id || 'none'} 
+                        value={order.courier_id || 'unassigned'} 
                         onValueChange={(courierId) => assignCourierMutation.mutate({ 
                           orderId: order.id, 
-                          courierId: courierId === 'none' ? null : courierId 
+                          courierId: courierId === 'unassigned' ? null : courierId 
                         })}
                       >
-                        <SelectTrigger className="w-36 bg-muted/50">
+                        <SelectTrigger className="w-44 bg-muted/50">
                           <Bike className="h-4 w-4 mr-2" />
-                          <SelectValue placeholder="Kuryer" />
+                          <SelectValue>
+                            {order.courier_id 
+                              ? couriers?.find(c => c.id === order.courier_id)?.name || 'Yuklanmoqda...'
+                              : 'Tayinlanmagan'
+                            }
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">Tayinlanmagan</SelectItem>
-                          {couriers?.filter(c => c.is_available || c.id === order.courier_id).map((courier) => (
-                            <SelectItem key={courier.id} value={courier.id}>
-                              {courier.name} ({courier.current_orders_count}/{courier.max_orders})
+                          <SelectItem value="unassigned">Tayinlanmagan</SelectItem>
+                          {couriers && couriers.length > 0 ? (
+                            couriers.map((courier) => (
+                              <SelectItem 
+                                key={courier.id} 
+                                value={courier.id}
+                                disabled={!courier.is_available && courier.id !== order.courier_id}
+                              >
+                                <span className="flex items-center gap-2">
+                                  {courier.name}
+                                  <span className="text-muted-foreground text-xs">
+                                    ({courier.current_orders_count || 0}/{courier.max_orders || 5})
+                                  </span>
+                                  {!courier.is_available && (
+                                    <span className="text-orange-400 text-xs">Band</span>
+                                  )}
+                                </span>
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="no-couriers" disabled>
+                              Kuryerlar yo'q
                             </SelectItem>
-                          ))}
+                          )}
                         </SelectContent>
                       </Select>
                       <Button 
