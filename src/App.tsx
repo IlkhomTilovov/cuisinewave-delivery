@@ -21,7 +21,6 @@ import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Categories from "./pages/admin/Categories";
 import Orders from "./pages/admin/Orders";
-import Banners from "./pages/admin/Banners";
 import Users from "./pages/admin/Users";
 import Inventory from "./pages/admin/Inventory";
 import StockMovements from "./pages/admin/StockMovements";
@@ -56,7 +55,6 @@ const App = () => (
             <Route path="/admin/products" element={<AdminLayout><Products /></AdminLayout>} />
             <Route path="/admin/categories" element={<AdminLayout><Categories /></AdminLayout>} />
             <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
-            <Route path="/admin/banners" element={<AdminLayout><Banners /></AdminLayout>} />
             <Route path="/admin/inventory" element={<AdminLayout><Inventory /></AdminLayout>} />
             <Route path="/admin/stock-movements" element={<AdminLayout><StockMovements /></AdminLayout>} />
             <Route path="/admin/suppliers" element={<AdminLayout><Suppliers /></AdminLayout>} />
