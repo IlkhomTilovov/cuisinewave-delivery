@@ -158,17 +158,17 @@ const Dashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {statCards.map((stat, index) => (
-          <Card key={stat.title} className="glass border-border/50 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+          <Card key={stat.title} className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
             <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs lg:text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-2xl lg:text-3xl font-display mt-1">{stat.value}</p>
+                  <p className="text-xs lg:text-sm text-slate-500">{stat.title}</p>
+                  <p className="text-2xl lg:text-3xl font-display mt-1 text-slate-900">{stat.value}</p>
                   {(stat as any).subtext && (
                     <p className="text-xs text-orange-400 mt-1">{(stat as any).subtext}</p>
                   )}
                 </div>
-                <div className={`p-2 lg:p-3 rounded-xl bg-muted ${stat.color}`}>
+                <div className={`p-2 lg:p-3 rounded-xl bg-slate-100 ${stat.color}`}>
                   <stat.icon className="h-5 w-5 lg:h-6 lg:w-6" />
                 </div>
               </div>
@@ -179,29 +179,29 @@ const Dashboard = () => {
 
       {/* Revenue & New Orders */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+        <Card className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="p-4 rounded-2xl bg-gradient-primary">
                 <TrendingUp className="h-8 w-8 text-primary-foreground" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Jami daromad</p>
-                <p className="text-2xl font-display text-secondary">{formatPrice(stats?.totalRevenue || 0)}</p>
+                <p className="text-sm text-slate-500">Jami daromad</p>
+                <p className="text-2xl font-display text-emerald-600">{formatPrice(stats?.totalRevenue || 0)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+        <Card className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="p-4 rounded-2xl bg-blue-500/20">
                 <Clock className="h-8 w-8 text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Yangi buyurtmalar</p>
-                <p className="text-2xl font-display">{stats?.newOrders || 0}</p>
+                <p className="text-sm text-slate-500">Yangi buyurtmalar</p>
+                <p className="text-2xl font-display text-slate-900">{stats?.newOrders || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -209,9 +209,9 @@ const Dashboard = () => {
       </div>
 
       {/* Courier Statistics Section */}
-      <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.65s' }}>
+      <Card className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: '0.65s' }}>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="font-display text-xl flex items-center gap-2">
+          <CardTitle className="font-display text-xl flex items-center gap-2 text-slate-900">
             <Bike className="h-5 w-5 text-primary" />
             Kuryerlar holati
           </CardTitle>
@@ -222,27 +222,27 @@ const Dashboard = () => {
         <CardContent>
           {/* Courier Stats Summary */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="p-4 rounded-xl bg-muted/50 text-center">
-              <p className="text-3xl font-display font-bold">{courierStats.total}</p>
-              <p className="text-sm text-muted-foreground">Jami kuryerlar</p>
+            <div className="p-4 rounded-xl bg-slate-100 text-center">
+              <p className="text-3xl font-display font-bold text-slate-900">{courierStats.total}</p>
+              <p className="text-sm text-slate-500">Jami kuryerlar</p>
             </div>
             <div className="p-4 rounded-xl bg-green-500/10 text-center">
-              <p className="text-3xl font-display font-bold text-green-400">{courierStats.available}</p>
-              <p className="text-sm text-muted-foreground">Bo'sh</p>
+              <p className="text-3xl font-display font-bold text-emerald-600">{courierStats.available}</p>
+              <p className="text-sm text-slate-500">Bo'sh</p>
             </div>
             <div className="p-4 rounded-xl bg-orange-500/10 text-center">
-              <p className="text-3xl font-display font-bold text-orange-400">{courierStats.busy}</p>
-              <p className="text-sm text-muted-foreground">Band</p>
+              <p className="text-3xl font-display font-bold text-orange-600">{courierStats.busy}</p>
+              <p className="text-sm text-slate-500">Band</p>
             </div>
             <div className="p-4 rounded-xl bg-purple-500/10 text-center">
-              <p className="text-3xl font-display font-bold text-purple-400">{courierStats.activeOrders}</p>
-              <p className="text-sm text-muted-foreground">Faol buyurtmalar</p>
+              <p className="text-3xl font-display font-bold text-purple-600">{courierStats.activeOrders}</p>
+              <p className="text-sm text-slate-500">Faol buyurtmalar</p>
             </div>
           </div>
 
           {/* Active Couriers with Orders */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground mb-3">Faol kuryerlar</h4>
+            <h4 className="text-sm font-medium text-slate-500 mb-3">Faol kuryerlar</h4>
             {couriers && couriers.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {couriers.map((courier) => {
@@ -251,37 +251,37 @@ const Dashboard = () => {
                   const isBusy = (courier.current_orders_count || 0) >= (courier.max_orders || 5);
                   
                   return (
-                    <div 
-                      key={courier.id} 
-                      className={`p-4 rounded-xl border transition-all ${
-                        hasOrders 
-                          ? 'bg-primary/5 border-primary/30' 
-                          : 'bg-muted/30 border-border/50'
-                      }`}
+                      <div 
+                        key={courier.id} 
+                        className={`p-4 rounded-xl border transition-all ${
+                          hasOrders 
+                            ? 'bg-blue-50 border-blue-200' 
+                            : 'bg-slate-50 border-slate-200'
+                        }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${
-                            courier.is_available && !isBusy ? 'bg-green-400' : 'bg-orange-400'
-                          }`} />
-                          <span className="font-medium">{courier.name}</span>
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${
+                              courier.is_available && !isBusy ? 'bg-emerald-500' : 'bg-orange-500'
+                            }`} />
+                            <span className="font-medium text-slate-900">{courier.name}</span>
                         </div>
                         <Badge variant="outline" className="text-xs">
                           {courierOrdersList.length}/{courier.max_orders || 5}
                         </Badge>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                        <Phone className="h-3 w-3" />
-                        <span>{courier.phone}</span>
+                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                          <Phone className="h-3 w-3" />
+                          <span>{courier.phone}</span>
                       </div>
 
                       {hasOrders ? (
-                        <div className="space-y-2 mt-3 pt-3 border-t border-border/50">
-                          {courierOrdersList.slice(0, 2).map((order) => (
-                            <div key={order.id} className="flex items-center justify-between text-xs">
-                              <div className="flex items-center gap-1 text-muted-foreground truncate max-w-[60%]">
-                                <MapPin className="h-3 w-3 flex-shrink-0" />
+                          <div className="space-y-2 mt-3 pt-3 border-t border-slate-200">
+                            {courierOrdersList.slice(0, 2).map((order) => (
+                              <div key={order.id} className="flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-1 text-slate-500 truncate max-w-[60%]">
+                                  <MapPin className="h-3 w-3 flex-shrink-0" />
                                 <span className="truncate">{order.address}</span>
                               </div>
                               <Badge className={`text-[10px] ${getStatusColor(order.status || 'new')}`}>
@@ -290,21 +290,21 @@ const Dashboard = () => {
                             </div>
                           ))}
                           {courierOrdersList.length > 2 && (
-                            <p className="text-xs text-muted-foreground text-center">
+                            <p className="text-xs text-slate-500 text-center">
                               +{courierOrdersList.length - 2} buyurtma
                             </p>
                           )}
                         </div>
                       ) : (
-                        <p className="text-xs text-muted-foreground mt-2">Buyurtma yo'q</p>
+                        <p className="text-xs text-slate-500 mt-2">Buyurtma yo'q</p>
                       )}
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <Bike className="h-12 w-12 mx-auto mb-2 opacity-20" />
+              <div className="text-center py-8 text-slate-500">
+                <Bike className="h-12 w-12 mx-auto mb-2 opacity-30" />
                 <p>Faol kuryerlar yo'q</p>
                 <Link to="/admin/couriers" className="text-sm text-primary hover:underline mt-2 inline-block">
                   Kuryer qo'shish
@@ -326,20 +326,20 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Orders */}
-      <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+      <Card className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: '0.9s' }}>
         <CardHeader>
-          <CardTitle className="font-display text-xl">So'nggi buyurtmalar</CardTitle>
+          <CardTitle className="font-display text-xl text-slate-900">So'nggi buyurtmalar</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {recentOrders?.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-4 rounded-xl bg-muted/50">
+              <div key={order.id} className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
                 <div>
-                  <p className="font-medium">{order.user_fullname}</p>
-                  <p className="text-sm text-muted-foreground">{order.phone}</p>
+                  <p className="font-medium text-slate-900">{order.user_fullname}</p>
+                  <p className="text-sm text-slate-500">{order.phone}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-secondary">{formatPrice(Number(order.total_price))}</p>
+                  <p className="font-medium text-emerald-600">{formatPrice(Number(order.total_price))}</p>
                   <span className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full ${getStatusColor(order.status || 'new')}`}>
                     {getStatusLabel(order.status || 'new')}
                   </span>
@@ -347,7 +347,7 @@ const Dashboard = () => {
               </div>
             ))}
             {!recentOrders?.length && (
-              <p className="text-center text-muted-foreground py-8">Hali buyurtmalar yo'q</p>
+              <p className="text-center text-slate-500 py-8">Hali buyurtmalar yo'q</p>
             )}
           </div>
         </CardContent>
