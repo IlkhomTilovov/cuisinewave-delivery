@@ -1,15 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, FolderTree, ShoppingCart, TrendingUp, Clock, Users, Warehouse } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Package, FolderTree, ShoppingCart, TrendingUp, Clock, Users, Warehouse, Bike, MapPin, Phone } from 'lucide-react';
 import { StatsChart } from '@/components/admin/StatsChart';
-import { subDays } from 'date-fns';
+import { subDays, format } from 'date-fns';
 import { queryKeys } from '@/lib/queryKeys';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
+import { Tables } from '@/integrations/supabase/types';
+import { Link } from 'react-router-dom';
+
+type Order = Tables<'orders'>;
+type Courier = Tables<'couriers'>;
 
 const Dashboard = () => {
   // Real-time subscription for all relevant tables
-  useRealtimeSubscription(['orders', 'products', 'categories', 'ingredients']);
+  useRealtimeSubscription(['orders', 'products', 'categories', 'ingredients', 'couriers']);
 
   const { data: stats } = useQuery({
     queryKey: queryKeys.dashboardStats,
@@ -38,6 +44,54 @@ const Dashboard = () => {
       };
     },
   });
+
+  // Fetch couriers
+  const { data: couriers } = useQuery({
+    queryKey: ['dashboard-couriers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('couriers')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+      if (error) throw error;
+      return data as Courier[];
+    },
+  });
+
+  // Fetch active courier orders
+  const { data: courierOrders } = useQuery({
+    queryKey: ['dashboard-courier-orders'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .not('courier_id', 'is', null)
+        .in('status', ['new', 'cooking', 'on_the_way'])
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Order[];
+    },
+  });
+
+  // Group orders by courier
+  const ordersByCourier = courierOrders?.reduce((acc, order) => {
+    if (order.courier_id) {
+      if (!acc[order.courier_id]) {
+        acc[order.courier_id] = [];
+      }
+      acc[order.courier_id].push(order);
+    }
+    return acc;
+  }, {} as Record<string, Order[]>) || {};
+
+  // Courier statistics
+  const courierStats = {
+    total: couriers?.length || 0,
+    available: couriers?.filter(c => c.is_available).length || 0,
+    busy: couriers?.filter(c => !c.is_available || (c.current_orders_count || 0) >= (c.max_orders || 5)).length || 0,
+    activeOrders: courierOrders?.length || 0,
+  };
 
   // Fetch orders for the last 7 days for charts
   const { data: recentOrdersForChart } = useQuery({
@@ -153,6 +207,113 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Courier Statistics Section */}
+      <Card className="glass border-border/50 animate-fade-in" style={{ animationDelay: '0.65s' }}>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="font-display text-xl flex items-center gap-2">
+            <Bike className="h-5 w-5 text-primary" />
+            Kuryerlar holati
+          </CardTitle>
+          <Link to="/admin/couriers" className="text-sm text-primary hover:underline">
+            Barchasini ko'rish →
+          </Link>
+        </CardHeader>
+        <CardContent>
+          {/* Courier Stats Summary */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-muted/50 text-center">
+              <p className="text-3xl font-display font-bold">{courierStats.total}</p>
+              <p className="text-sm text-muted-foreground">Jami kuryerlar</p>
+            </div>
+            <div className="p-4 rounded-xl bg-green-500/10 text-center">
+              <p className="text-3xl font-display font-bold text-green-400">{courierStats.available}</p>
+              <p className="text-sm text-muted-foreground">Bo'sh</p>
+            </div>
+            <div className="p-4 rounded-xl bg-orange-500/10 text-center">
+              <p className="text-3xl font-display font-bold text-orange-400">{courierStats.busy}</p>
+              <p className="text-sm text-muted-foreground">Band</p>
+            </div>
+            <div className="p-4 rounded-xl bg-purple-500/10 text-center">
+              <p className="text-3xl font-display font-bold text-purple-400">{courierStats.activeOrders}</p>
+              <p className="text-sm text-muted-foreground">Faol buyurtmalar</p>
+            </div>
+          </div>
+
+          {/* Active Couriers with Orders */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-muted-foreground mb-3">Faol kuryerlar</h4>
+            {couriers && couriers.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {couriers.map((courier) => {
+                  const courierOrdersList = ordersByCourier[courier.id] || [];
+                  const hasOrders = courierOrdersList.length > 0;
+                  const isBusy = (courier.current_orders_count || 0) >= (courier.max_orders || 5);
+                  
+                  return (
+                    <div 
+                      key={courier.id} 
+                      className={`p-4 rounded-xl border transition-all ${
+                        hasOrders 
+                          ? 'bg-primary/5 border-primary/30' 
+                          : 'bg-muted/30 border-border/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            courier.is_available && !isBusy ? 'bg-green-400' : 'bg-orange-400'
+                          }`} />
+                          <span className="font-medium">{courier.name}</span>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {courierOrdersList.length}/{courier.max_orders || 5}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                        <Phone className="h-3 w-3" />
+                        <span>{courier.phone}</span>
+                      </div>
+
+                      {hasOrders ? (
+                        <div className="space-y-2 mt-3 pt-3 border-t border-border/50">
+                          {courierOrdersList.slice(0, 2).map((order) => (
+                            <div key={order.id} className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-1 text-muted-foreground truncate max-w-[60%]">
+                                <MapPin className="h-3 w-3 flex-shrink-0" />
+                                <span className="truncate">{order.address}</span>
+                              </div>
+                              <Badge className={`text-[10px] ${getStatusColor(order.status || 'new')}`}>
+                                {getStatusLabel(order.status || 'new')}
+                              </Badge>
+                            </div>
+                          ))}
+                          {courierOrdersList.length > 2 && (
+                            <p className="text-xs text-muted-foreground text-center">
+                              +{courierOrdersList.length - 2} buyurtma
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-muted-foreground mt-2">Buyurtma yo'q</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Bike className="h-12 w-12 mx-auto mb-2 opacity-20" />
+                <p>Faol kuryerlar yo'q</p>
+                <Link to="/admin/couriers" className="text-sm text-primary hover:underline mt-2 inline-block">
+                  Kuryer qo'shish
+                </Link>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
