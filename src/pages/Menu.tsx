@@ -58,12 +58,12 @@ const Menu = () => {
 
   return (
     <Layout>
-      <section className="py-8 lg:py-12 bg-muted/30">
+      <section className="py-8 lg:py-12 bg-primary/10">
         <div className="container">
-          <h1 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-2">
-            {getSetting('menu_title')}
+          <h1 className="font-display text-3xl lg:text-4xl font-bold text-primary mb-2">
+            {getSetting('menu_title') || 'Bizning Menyu'}
           </h1>
-          <p className="text-muted-foreground">{getSetting('menu_description')}</p>
+          <p className="text-foreground/70">{getSetting('menu_description') || 'Eng mazali taomlar to\'plami'}</p>
         </div>
       </section>
 
