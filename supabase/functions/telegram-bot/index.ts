@@ -68,7 +68,6 @@ serve(async (req) => {
       const chatId = body.callback_query.message.chat.id;
       const firstName = body.callback_query.from.first_name || 'Mehmon';
       
-      // Just show start for any callback
       await handleStart(chatId, firstName);
       
       return new Response(JSON.stringify({ ok: true }), {
@@ -81,7 +80,6 @@ serve(async (req) => {
       const chatId = body.message.chat.id;
       const firstName = body.message.from?.first_name || 'Mehmon';
       
-      // Always show start menu
       await handleStart(chatId, firstName);
       
       return new Response(JSON.stringify({ ok: true }), {
