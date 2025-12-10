@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Package, FolderTree, ShoppingCart, TrendingUp, Clock, Users, Warehouse, Bike, MapPin, Phone } from 'lucide-react';
+import { Package, FolderTree, ShoppingCart, TrendingUp, Clock, Users, Warehouse, Bike, MapPin, Phone, ArrowUpCircle, ArrowDownCircle, RotateCcw, Trash } from 'lucide-react';
 import { StatsChart } from '@/components/admin/StatsChart';
-import { subDays, format } from 'date-fns';
+import { subDays, format, startOfDay, endOfDay } from 'date-fns';
 import { queryKeys } from '@/lib/queryKeys';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 import { Tables } from '@/integrations/supabase/types';
@@ -15,7 +15,7 @@ type Courier = Tables<'couriers'>;
 
 const Dashboard = () => {
   // Real-time subscription for all relevant tables
-  useRealtimeSubscription(['orders', 'products', 'categories', 'ingredients', 'couriers']);
+  useRealtimeSubscription(['orders', 'products', 'categories', 'ingredients', 'couriers', 'stock_movements']);
 
   const { data: stats } = useQuery({
     queryKey: queryKeys.dashboardStats,
@@ -45,6 +45,27 @@ const Dashboard = () => {
     },
   });
 
+  // Fetch today's stock movements
+  const { data: todayMovements } = useQuery({
+    queryKey: ['dashboard-stock-movements-today'],
+    queryFn: async () => {
+      const today = new Date();
+      const { data, error } = await supabase
+        .from('stock_movements')
+        .select('movement_type, total_cost, quantity')
+        .gte('created_at', startOfDay(today).toISOString())
+        .lte('created_at', endOfDay(today).toISOString());
+      if (error) throw error;
+      
+      const totalIn = data?.filter(m => m.movement_type === 'in').reduce((sum, m) => sum + (m.total_cost || 0), 0) || 0;
+      const totalOut = data?.filter(m => m.movement_type === 'out').reduce((sum, m) => sum + (m.total_cost || 0), 0) || 0;
+      const totalReturn = data?.filter(m => m.movement_type === 'return').reduce((sum, m) => sum + (m.total_cost || 0), 0) || 0;
+      const totalWaste = data?.filter(m => m.movement_type === 'waste').reduce((sum, m) => sum + (m.total_cost || 0), 0) || 0;
+      const movementsCount = data?.length || 0;
+      
+      return { totalIn, totalOut, totalReturn, totalWaste, movementsCount };
+    },
+  });
   // Fetch couriers
   const { data: couriers } = useQuery({
     queryKey: ['dashboard-couriers'],
@@ -207,6 +228,47 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Today's Stock Movements */}
+      <Card className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: '0.55s' }}>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="font-display text-xl flex items-center gap-2 text-slate-900">
+            <Warehouse className="h-5 w-5 text-primary" />
+            Bugungi ombor harakatlari
+          </CardTitle>
+          <Link to="/admin/stock-movements" className="text-sm text-primary hover:underline">
+            Barchasini ko'rish →
+          </Link>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="p-4 rounded-xl bg-emerald-50 text-center">
+              <ArrowUpCircle className="h-6 w-6 text-emerald-600 mx-auto mb-2" />
+              <p className="text-xl font-bold text-emerald-600">{formatPrice(todayMovements?.totalIn || 0)}</p>
+              <p className="text-xs text-slate-500">Kirim</p>
+            </div>
+            <div className="p-4 rounded-xl bg-red-50 text-center">
+              <ArrowDownCircle className="h-6 w-6 text-red-600 mx-auto mb-2" />
+              <p className="text-xl font-bold text-red-600">{formatPrice(todayMovements?.totalOut || 0)}</p>
+              <p className="text-xs text-slate-500">Chiqim</p>
+            </div>
+            <div className="p-4 rounded-xl bg-purple-50 text-center">
+              <RotateCcw className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+              <p className="text-xl font-bold text-purple-600">{formatPrice(todayMovements?.totalReturn || 0)}</p>
+              <p className="text-xs text-slate-500">Qaytarish</p>
+            </div>
+            <div className="p-4 rounded-xl bg-orange-50 text-center">
+              <Trash className="h-6 w-6 text-orange-600 mx-auto mb-2" />
+              <p className="text-xl font-bold text-orange-600">{formatPrice(todayMovements?.totalWaste || 0)}</p>
+              <p className="text-xs text-slate-500">Isrof</p>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-100 text-center">
+              <p className="text-3xl font-bold text-slate-900">{todayMovements?.movementsCount || 0}</p>
+              <p className="text-xs text-slate-500 mt-1">Jami harakatlar</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Courier Statistics Section */}
       <Card className="bg-white border-slate-200 shadow-sm animate-fade-in" style={{ animationDelay: '0.65s' }}>
