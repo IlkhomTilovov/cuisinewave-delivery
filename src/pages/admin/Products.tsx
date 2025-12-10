@@ -12,12 +12,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList, Package } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import { queryKeys } from '@/lib/queryKeys';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
+import { ProductIngredients } from '@/components/admin/ProductIngredients';
 
 type Product = Tables<'products'>;
 type Category = Tables<'categories'>;
@@ -28,6 +29,7 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   const [imageUrl, setImageUrl] = useState('');
+  const [ingredientsProductId, setIngredientsProductId] = useState<string | null>(null);
   const { invalidateGroup } = useQueryInvalidation();
   
   // Real-time subscription for products and categories
@@ -378,7 +380,15 @@ const Products = () => {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            title="Ingredientlar"
+                            onClick={() => setIngredientsProductId(product.id)}
+                          >
+                            <Package className="h-4 w-4" />
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => openEditDialog(product)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -440,6 +450,14 @@ const Products = () => {
                 <div className="flex gap-2 mt-4">
                   <Button 
                     variant="outline" 
+                    size="sm"
+                    onClick={() => setIngredientsProductId(product.id)}
+                    title="Ingredientlar"
+                  >
+                    <Package className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
                     size="sm" 
                     className="flex-1"
                     onClick={() => openEditDialog(product)}
@@ -470,6 +488,18 @@ const Products = () => {
           Mahsulotlar topilmadi
         </div>
       )}
+
+      {/* Ingredients Dialog */}
+      <Dialog open={!!ingredientsProductId} onOpenChange={(open) => !open && setIngredientsProductId(null)}>
+        <DialogContent className="max-w-lg glass">
+          {ingredientsProductId && (
+            <ProductIngredients
+              productId={ingredientsProductId}
+              productName={products?.find(p => p.id === ingredientsProductId)?.name || ''}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
