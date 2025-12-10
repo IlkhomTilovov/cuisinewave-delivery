@@ -180,25 +180,55 @@ const Inventory = () => {
           <Button variant="outline" size="sm" onClick={sendNotification} disabled={isNotifying || lowStockItems === 0} className={lowStockItems > 0 ? 'text-red-600' : ''}>
             {isNotifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4 mr-1" />}Telegram
           </Button>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditingIngredient(null); }}>
             <DialogTrigger asChild><Button className="bg-gradient-primary"><Plus className="h-4 w-4 mr-2" />Yangi</Button></DialogTrigger>
-            <DialogContent className="max-w-lg bg-white">
-              <DialogHeader><DialogTitle>{editingIngredient ? "Tahrirlash" : "Qo'shish"}</DialogTitle></DialogHeader>
+            <DialogContent className="max-w-lg bg-white border-slate-200">
+              <DialogHeader><DialogTitle className="text-slate-900">{editingIngredient ? "Tahrirlash" : "Qo'shish"}</DialogTitle></DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><Label>Nomi</Label><Input name="name" defaultValue={editingIngredient?.name} required className="bg-slate-50" /></div>
-                  <div><Label>Nomi (UZ)</Label><Input name="name_uz" defaultValue={editingIngredient?.name_uz || ''} className="bg-slate-50" /></div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Nomi</Label>
+                    <Input name="name" defaultValue={editingIngredient?.name} required className="bg-slate-50 border-slate-200 text-slate-900" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Nomi (UZ)</Label>
+                    <Input name="name_uz" defaultValue={editingIngredient?.name_uz || ''} className="bg-slate-50 border-slate-200 text-slate-900" />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div><Label>Birlik</Label><Select name="unit" defaultValue={editingIngredient?.unit || 'kg'}><SelectTrigger className="bg-slate-50"><SelectValue /></SelectTrigger><SelectContent>{unitOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select></div>
-                  <div><Label>Kategoriya</Label><Select name="category" defaultValue={editingIngredient?.category || ''}><SelectTrigger className="bg-slate-50"><SelectValue placeholder="Tanlang" /></SelectTrigger><SelectContent>{categoryOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select></div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Birlik</Label>
+                    <Select name="unit" defaultValue={editingIngredient?.unit || 'kg'}>
+                      <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900"><SelectValue /></SelectTrigger>
+                      <SelectContent>{unitOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Kategoriya</Label>
+                    <Select name="category" defaultValue={editingIngredient?.category || ''}>
+                      <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900"><SelectValue placeholder="Tanlang" /></SelectTrigger>
+                      <SelectContent>{categoryOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div><Label>Min. zaxira</Label><Input name="min_stock" type="number" step="0.01" defaultValue={editingIngredient?.min_stock || 0} className="bg-slate-50" /></div>
-                  <div><Label>Narxi</Label><Input name="cost_per_unit" type="number" defaultValue={editingIngredient?.cost_per_unit || 0} className="bg-slate-50" /></div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Min. zaxira</Label>
+                    <Input name="min_stock" type="number" step="0.01" defaultValue={editingIngredient?.min_stock || 0} className="bg-slate-50 border-slate-200 text-slate-900" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-slate-700">Narxi</Label>
+                    <Input name="cost_per_unit" type="number" defaultValue={editingIngredient?.cost_per_unit || 0} className="bg-slate-50 border-slate-200 text-slate-900" />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2"><Switch name="is_active" defaultChecked={editingIngredient?.is_active ?? true} /><Label>Faol</Label></div>
-                <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>{saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}Saqlash</Button>
+                <div className="flex items-center gap-2">
+                  <Switch name="is_active" defaultChecked={editingIngredient?.is_active ?? true} />
+                  <Label className="text-slate-700">Faol</Label>
+                </div>
+                <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
+                  {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  Saqlash
+                </Button>
               </form>
             </DialogContent>
           </Dialog>
