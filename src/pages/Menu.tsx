@@ -30,8 +30,11 @@ const Menu = () => {
     },
   });
 
+  // Find selected category id from slug
+  const selectedCategoryId = categories?.find(c => c.slug === selectedCategory)?.id;
+
   const { data: products, isLoading } = useQuery({
-    queryKey: ['products', selectedCategory, searchQuery],
+    queryKey: ['products', selectedCategoryId, searchQuery],
     queryFn: async () => {
       let query = supabase
         .from('products')
@@ -39,8 +42,8 @@ const Menu = () => {
         .eq('is_active', true)
         .order('sort_order');
 
-      if (selectedCategory) {
-        query = query.eq('categories.slug', selectedCategory);
+      if (selectedCategoryId) {
+        query = query.eq('category_id', selectedCategoryId);
       }
 
       const { data, error } = await query;
@@ -54,6 +57,7 @@ const Menu = () => {
       }
       return data;
     },
+    enabled: !selectedCategory || !!selectedCategoryId,
   });
 
   return (
