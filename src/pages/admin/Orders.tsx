@@ -39,11 +39,11 @@ interface OrderStatusHistory {
 }
 
 const statusOptions = [
-  { value: 'new', label: 'Yangi', color: 'bg-blue-500/20 text-blue-400', icon: '🆕' },
-  { value: 'cooking', label: 'Tayyorlanmoqda', color: 'bg-orange-500/20 text-orange-400', icon: '👨‍🍳' },
-  { value: 'on_the_way', label: "Yo'lda", color: 'bg-purple-500/20 text-purple-400', icon: '🚗' },
-  { value: 'delivered', label: 'Yetkazildi', color: 'bg-green-500/20 text-green-400', icon: '✅' },
-  { value: 'cancelled', label: 'Bekor qilindi', color: 'bg-red-500/20 text-red-400', icon: '❌' },
+  { value: 'new', label: 'Yangi', color: 'bg-blue-100 text-blue-600', icon: '🆕' },
+  { value: 'cooking', label: 'Tayyorlanmoqda', color: 'bg-orange-100 text-orange-600', icon: '👨‍🍳' },
+  { value: 'on_the_way', label: "Yo'lda", color: 'bg-purple-100 text-purple-600', icon: '🚗' },
+  { value: 'delivered', label: 'Yetkazildi', color: 'bg-emerald-100 text-emerald-600', icon: '✅' },
+  { value: 'cancelled', label: 'Bekor qilindi', color: 'bg-red-100 text-red-600', icon: '❌' },
 ];
 
 const dateFilterOptions = [
@@ -369,50 +369,50 @@ const Orders = () => {
     <div className="space-y-6">
       {/* Statistics Panel */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-blue-500/20">
-              <ShoppingBag className="h-6 w-6 text-blue-400" />
+            <div className="p-3 rounded-xl bg-blue-100">
+              <ShoppingBag className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Bugungi buyurtmalar</p>
-              <p className="text-2xl font-display font-bold">{stats.todayCount}</p>
+              <p className="text-sm text-slate-500">Bugungi buyurtmalar</p>
+              <p className="text-2xl font-display font-bold text-slate-900">{stats.todayCount}</p>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-green-500/20">
-              <TrendingUp className="h-6 w-6 text-green-400" />
+            <div className="p-3 rounded-xl bg-emerald-100">
+              <TrendingUp className="h-6 w-6 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Bugungi daromad</p>
-              <p className="text-2xl font-display font-bold text-secondary">{formatPrice(stats.todayRevenue)}</p>
+              <p className="text-sm text-slate-500">Bugungi daromad</p>
+              <p className="text-2xl font-display font-bold text-emerald-600">{formatPrice(stats.todayRevenue)}</p>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-purple-500/20">
-              <Package className="h-6 w-6 text-purple-400" />
+            <div className="p-3 rounded-xl bg-purple-100">
+              <Package className="h-6 w-6 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">O'rtacha summa</p>
-              <p className="text-2xl font-display font-bold">{formatPrice(Math.round(stats.avgOrderValue))}</p>
+              <p className="text-sm text-slate-500">O'rtacha summa</p>
+              <p className="text-2xl font-display font-bold text-slate-900">{formatPrice(Math.round(stats.avgOrderValue))}</p>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glass border-border/50">
+        <Card className="bg-white border-slate-200">
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-orange-500/20">
-              <Clock className="h-6 w-6 text-orange-400" />
+            <div className="p-3 rounded-xl bg-orange-100">
+              <Clock className="h-6 w-6 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Yangi buyurtmalar</p>
-              <p className="text-2xl font-display font-bold text-orange-400">{stats.newOrders}</p>
+              <p className="text-sm text-slate-500">Yangi buyurtmalar</p>
+              <p className="text-2xl font-display font-bold text-orange-600">{stats.newOrders}</p>
             </div>
           </CardContent>
         </Card>
@@ -422,17 +422,17 @@ const Orders = () => {
       <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
         <div className="flex flex-col sm:flex-row gap-4 flex-1">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Qidirish..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-muted/50"
+              className="pl-10 bg-slate-50 border-slate-200"
             />
           </div>
           
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 bg-muted/50">
+            <SelectTrigger className="w-48 bg-slate-50 border-slate-200">
               <SelectValue placeholder="Holat bo'yicha" />
             </SelectTrigger>
             <SelectContent>
@@ -444,7 +444,7 @@ const Orders = () => {
           </Select>
           
           <Select value={dateFilter} onValueChange={setDateFilter}>
-            <SelectTrigger className="w-48 bg-muted/50">
+            <SelectTrigger className="w-48 bg-slate-50 border-slate-200">
               <CalendarIcon className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Sana bo'yicha" />
             </SelectTrigger>
@@ -458,7 +458,7 @@ const Orders = () => {
           {dateFilter === 'custom' && (
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-auto bg-muted/50">
+                <Button variant="outline" className="w-auto bg-slate-50 border-slate-200">
                   <CalendarIcon className="h-4 w-4 mr-2" />
                   {customDateRange.from && customDateRange.to 
                     ? `${format(customDateRange.from, 'dd.MM')} - ${format(customDateRange.to, 'dd.MM')}`
@@ -497,7 +497,7 @@ const Orders = () => {
       </div>
 
       {/* Results count */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-slate-500">
         Jami: {filteredOrders.length} ta buyurtma
       </div>
 
@@ -512,12 +512,12 @@ const Orders = () => {
             const statusInfo = getStatusInfo(order.status || 'new');
             const courierInfo = getCourierInfo(order.courier_id);
             return (
-              <Card key={order.id} className="glass border-border/50">
+              <Card key={order.id} className="bg-white border-slate-200">
                 <CardContent className="p-4">
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-display text-lg">{order.user_fullname}</h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-display text-lg text-slate-900">{order.user_fullname}</h3>
                         <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
                         {courierInfo && (
                           <Badge variant="outline" className="flex items-center gap-1">
@@ -526,7 +526,7 @@ const Orders = () => {
                           </Badge>
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      <div className="flex flex-wrap gap-4 text-sm text-slate-500">
                         <span className="flex items-center gap-1">
                           <Phone className="h-4 w-4" /> {order.phone}
                         </span>
@@ -540,14 +540,14 @@ const Orders = () => {
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <div className="text-right mr-2">
-                        <p className="text-xl font-display text-secondary">{formatPrice(Number(order.total_price))}</p>
-                        <p className="text-xs text-muted-foreground capitalize">{order.payment_type}</p>
+                        <p className="text-xl font-display text-emerald-600">{formatPrice(Number(order.total_price))}</p>
+                        <p className="text-xs text-slate-500 capitalize">{order.payment_type}</p>
                       </div>
                       <Select 
                         value={order.status || 'new'} 
                         onValueChange={(status) => updateStatusMutation.mutate({ id: order.id, status })}
                       >
-                        <SelectTrigger className="w-36 bg-muted/50">
+                        <SelectTrigger className="w-36 bg-slate-50 border-slate-200">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -563,7 +563,7 @@ const Orders = () => {
                           courierId: courierId === 'unassigned' ? null : courierId 
                         })}
                       >
-                        <SelectTrigger className="w-44 bg-muted/50">
+                        <SelectTrigger className="w-44 bg-slate-50 border-slate-200">
                           <Bike className="h-4 w-4 mr-2" />
                           <SelectValue>
                             {order.courier_id 
@@ -583,11 +583,11 @@ const Orders = () => {
                               >
                                 <span className="flex items-center gap-2">
                                   {courier.name}
-                                  <span className="text-muted-foreground text-xs">
+                                  <span className="text-slate-400 text-xs">
                                     ({courier.current_orders_count || 0}/{courier.max_orders || 5})
                                   </span>
                                   {!courier.is_available && (
-                                    <span className="text-orange-400 text-xs">Band</span>
+                                    <span className="text-orange-500 text-xs">Band</span>
                                   )}
                                 </span>
                               </SelectItem>
@@ -616,14 +616,14 @@ const Orders = () => {
       )}
 
       {filteredOrders.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-slate-500">
           Buyurtmalar topilmadi
         </div>
       )}
 
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <DialogContent className="max-w-3xl glass max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl bg-white border-slate-200 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display text-xl flex items-center justify-between">
               <span>Buyurtma #{selectedOrder?.id.slice(0, 8)}</span>
@@ -649,31 +649,31 @@ const Orders = () => {
             <div className="space-y-6" ref={printRef}>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-sm text-slate-500 flex items-center gap-1">
                     <User className="h-4 w-4" /> Mijoz
                   </p>
                   <p className="font-medium">{selectedOrder.user_fullname}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-sm text-slate-500 flex items-center gap-1">
                     <Phone className="h-4 w-4" /> Telefon
                   </p>
                   <p className="font-medium">{selectedOrder.phone}</p>
                 </div>
                 <div className="space-y-1 col-span-2">
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-sm text-slate-500 flex items-center gap-1">
                     <MapPin className="h-4 w-4" /> Manzil
                   </p>
                   <p className="font-medium">{selectedOrder.address}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-sm text-slate-500 flex items-center gap-1">
                     <CreditCard className="h-4 w-4" /> To'lov turi
                   </p>
                   <p className="font-medium capitalize">{selectedOrder.payment_type}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <p className="text-sm text-slate-500 flex items-center gap-1">
                     <Clock className="h-4 w-4" /> Vaqt
                   </p>
                   <p className="font-medium">{format(new Date(selectedOrder.created_at), 'dd.MM.yyyy HH:mm')}</p>
@@ -681,14 +681,14 @@ const Orders = () => {
               </div>
 
               {/* Courier Assignment Section */}
-              <div className="p-4 rounded-xl bg-muted/30 border border-border/50">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Bike className="h-5 w-5 text-primary" />
+                    <div className="p-2 rounded-lg bg-blue-100">
+                      <Bike className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-muted-foreground">Kuryer</p>
+                      <p className="text-sm text-slate-500">Kuryer</p>
                       <p className="font-medium">
                         {getCourierInfo(selectedOrder.courier_id)?.name || 'Tayinlanmagan'}
                       </p>
@@ -704,7 +704,7 @@ const Orders = () => {
                       setSelectedOrder({...selectedOrder, courier_id: courierId === 'none' ? null : courierId});
                     }}
                   >
-                    <SelectTrigger className="w-48 bg-background">
+                    <SelectTrigger className="w-48 bg-white border-slate-200">
                       <SelectValue placeholder="Kuryer tanlang" />
                     </SelectTrigger>
                     <SelectContent>
@@ -713,7 +713,7 @@ const Orders = () => {
                         <SelectItem key={courier.id} value={courier.id}>
                           <div className="flex items-center gap-2">
                             <span>{courier.name}</span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-xs text-slate-400">
                               ({courier.current_orders_count}/{courier.max_orders})
                             </span>
                           </div>
@@ -725,8 +725,8 @@ const Orders = () => {
               </div>
 
               {selectedOrder.notes && (
-                <div className="p-4 rounded-xl bg-muted/50">
-                  <p className="text-sm text-muted-foreground mb-1">Izoh</p>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <p className="text-sm text-slate-500 mb-1">Izoh</p>
                   <p>{selectedOrder.notes}</p>
                 </div>
               )}
@@ -735,18 +735,18 @@ const Orders = () => {
                 <h4 className="font-display text-lg mb-3">Buyurtma tarkibi</h4>
                 <div className="space-y-2">
                   {orderItems?.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-3 rounded-xl bg-muted/50">
+                    <div key={item.id} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-200">
                       <div>
                         <p className="font-medium">{item.product_name}</p>
-                        <p className="text-sm text-muted-foreground">{item.quantity} x {formatPrice(Number(item.price))}</p>
+                        <p className="text-sm text-slate-500">{item.quantity} x {formatPrice(Number(item.price))}</p>
                       </div>
-                      <p className="font-medium text-secondary">{formatPrice(item.quantity * Number(item.price))}</p>
+                      <p className="font-medium text-emerald-600">{formatPrice(item.quantity * Number(item.price))}</p>
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-between items-center mt-4 pt-4 border-t border-border">
+                <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-200">
                   <span className="font-display text-lg">Jami</span>
-                  <span className="text-2xl font-display text-secondary">{formatPrice(Number(selectedOrder.total_price))}</span>
+                  <span className="text-2xl font-display text-emerald-600">{formatPrice(Number(selectedOrder.total_price))}</span>
                 </div>
               </div>
 
@@ -758,7 +758,7 @@ const Orders = () => {
                 </h4>
                 <div className="relative">
                   {/* Timeline line */}
-                  <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
+                  <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-200" />
                   
                   <div className="space-y-4">
                     {orderHistory && orderHistory.length > 0 ? (
@@ -772,30 +772,30 @@ const Orders = () => {
                             <div className={cn(
                               "relative z-10 flex items-center justify-center w-5 h-5 rounded-full border-2 shrink-0",
                               isLast 
-                                ? "bg-primary border-primary" 
-                                : "bg-background border-border"
+                                ? "bg-blue-600 border-blue-600" 
+                                : "bg-white border-slate-200"
                             )}>
-                              {isLast && <CheckCircle2 className="h-3 w-3 text-primary-foreground" />}
+                              {isLast && <CheckCircle2 className="h-3 w-3 text-white" />}
                             </div>
                             
                             {/* Content */}
                             <div className={cn(
                               "flex-1 pb-4 min-w-0",
-                              !isLast && "border-b border-border/50"
+                              !isLast && "border-b border-slate-200"
                             )}>
                               <div className="flex items-center gap-2 flex-wrap">
                                 <Badge className={cn(statusInfo.color, "text-xs")}>
                                   {statusInfo.icon} {statusInfo.label}
                                 </Badge>
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-xs text-slate-500">
                                   {format(new Date(history.changed_at), 'dd.MM.yyyy HH:mm:ss')}
                                 </span>
                               </div>
                               {history.notes && (
-                                <p className="text-sm text-muted-foreground mt-1">{history.notes}</p>
+                                <p className="text-sm text-slate-500 mt-1">{history.notes}</p>
                               )}
                               {history.old_status && (
-                                <p className="text-xs text-muted-foreground mt-1">
+                                <p className="text-xs text-slate-400 mt-1">
                                   {getStatusInfo(history.old_status).label} → {statusInfo.label}
                                 </p>
                               )}
@@ -804,7 +804,7 @@ const Orders = () => {
                         );
                       })
                     ) : (
-                      <p className="text-sm text-muted-foreground pl-10">Tarix mavjud emas</p>
+                      <p className="text-sm text-slate-500 pl-10">Tarix mavjud emas</p>
                     )}
                   </div>
                 </div>

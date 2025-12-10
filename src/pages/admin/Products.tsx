@@ -147,16 +147,16 @@ const Products = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Qidirish..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-muted/50"
+            className="pl-10 bg-slate-50 border-slate-200"
           />
         </div>
         <div className="flex gap-2">
-          <div className="flex border border-border rounded-lg p-1">
+          <div className="flex border border-slate-200 rounded-lg p-1 bg-white">
             <Button
               variant={viewMode === 'table' ? 'secondary' : 'ghost'}
               size="sm"
@@ -185,7 +185,7 @@ const Products = () => {
                 Yangi mahsulot
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-slate-200">
               <DialogHeader>
                 <DialogTitle className="font-display text-xl">
                   {editingProduct ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}
@@ -195,57 +195,57 @@ const Products = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Nomi (RU)</Label>
-                    <Input id="name" name="name" defaultValue={editingProduct?.name} required className="bg-muted/50" />
+                    <Input id="name" name="name" defaultValue={editingProduct?.name} required className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                    <Input id="name_uz" name="name_uz" defaultValue={editingProduct?.name_uz || ''} className="bg-muted/50" />
+                    <Input id="name_uz" name="name_uz" defaultValue={editingProduct?.name_uz || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Tavsif</Label>
-                  <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-muted/50" />
+                  <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-slate-50 border-slate-200" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="price">Narxi</Label>
-                    <Input id="price" name="price" type="number" defaultValue={editingProduct?.price} required className="bg-muted/50" />
+                    <Input id="price" name="price" type="number" defaultValue={editingProduct?.price} required className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="discount_price">Chegirma narxi</Label>
-                    <Input id="discount_price" name="discount_price" type="number" defaultValue={editingProduct?.discount_price || ''} className="bg-muted/50" />
+                    <Input id="discount_price" name="discount_price" type="number" defaultValue={editingProduct?.discount_price || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="sort_order">Tartib</Label>
-                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-muted/50" />
+                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="weight">Og'irlik/Hajm</Label>
-                    <Input id="weight" name="weight" placeholder="300g, 500ml" defaultValue={(editingProduct as any)?.weight || ''} className="bg-muted/50" />
+                    <Input id="weight" name="weight" placeholder="300g, 500ml" defaultValue={(editingProduct as any)?.weight || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="prep_time">Tayyorlash vaqti</Label>
-                    <Input id="prep_time" name="prep_time" placeholder="15-20 daq" defaultValue={(editingProduct as any)?.prep_time || ''} className="bg-muted/50" />
+                    <Input id="prep_time" name="prep_time" placeholder="15-20 daq" defaultValue={(editingProduct as any)?.prep_time || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="spice_level">Achchiqlik (0-3)</Label>
-                    <Input id="spice_level" name="spice_level" type="number" min="0" max="3" defaultValue={(editingProduct as any)?.spice_level || 0} className="bg-muted/50" />
+                    <Input id="spice_level" name="spice_level" type="number" min="0" max="3" defaultValue={(editingProduct as any)?.spice_level || 0} className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="calories">Kaloriya (kCal)</Label>
-                    <Input id="calories" name="calories" type="number" defaultValue={(editingProduct as any)?.calories || ''} className="bg-muted/50" />
+                    <Input id="calories" name="calories" type="number" defaultValue={(editingProduct as any)?.calories || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="category_id">Kategoriya</Label>
                   <Select name="category_id" defaultValue={editingProduct?.category_id || ''}>
-                    <SelectTrigger className="bg-muted/50">
+                    <SelectTrigger className="bg-slate-50 border-slate-200">
                       <SelectValue placeholder="Kategoriyani tanlang" />
                     </SelectTrigger>
                     <SelectContent>
@@ -276,7 +276,7 @@ const Products = () => {
                         placeholder="https://..."
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
-                        className="bg-muted/50"
+                        className="bg-slate-50 border-slate-200"
                       />
                     </TabsContent>
                   </Tabs>
@@ -285,11 +285,11 @@ const Products = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="meta_title">Meta Title (SEO)</Label>
-                    <Input id="meta_title" name="meta_title" defaultValue={editingProduct?.meta_title || ''} className="bg-muted/50" />
+                    <Input id="meta_title" name="meta_title" defaultValue={editingProduct?.meta_title || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="meta_description">Meta Description (SEO)</Label>
-                    <Input id="meta_description" name="meta_description" defaultValue={editingProduct?.meta_description || ''} className="bg-muted/50" />
+                    <Input id="meta_description" name="meta_description" defaultValue={editingProduct?.meta_description || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
@@ -320,7 +320,7 @@ const Products = () => {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : viewMode === 'table' ? (
-        <Card className="glass border-border/50 overflow-hidden">
+        <Card className="bg-white border-slate-200 overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -338,7 +338,7 @@ const Products = () => {
                   {filteredProducts?.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell>
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100">
                           {product.image_url ? (
                             <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
@@ -350,18 +350,18 @@ const Products = () => {
                         <div>
                           <p className="font-medium">{product.name}</p>
                           {product.name_uz && (
-                            <p className="text-xs text-muted-foreground">{product.name_uz}</p>
+                            <p className="text-xs text-slate-500">{product.name_uz}</p>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-slate-500">
                         {(product as any).categories?.name || '-'}
                       </TableCell>
                       <TableCell>
                         {product.discount_price ? (
                           <div>
-                            <span className="text-secondary font-medium">{formatPrice(product.discount_price)}</span>
-                            <span className="text-xs text-muted-foreground line-through ml-2">{formatPrice(product.price)}</span>
+                            <span className="text-emerald-600 font-medium">{formatPrice(product.discount_price)}</span>
+                            <span className="text-xs text-slate-400 line-through ml-2">{formatPrice(product.price)}</span>
                           </div>
                         ) : (
                           <span className="font-medium">{formatPrice(product.price)}</span>
@@ -370,12 +370,12 @@ const Products = () => {
                       <TableCell>
                         <div className="flex gap-2">
                           {product.is_active ? (
-                            <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Faol</span>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-600">Faol</span>
                           ) : (
-                            <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">Nofaol</span>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-600">Nofaol</span>
                           )}
                           {product.is_popular && (
-                            <span className="px-2 py-0.5 text-xs rounded-full bg-secondary/20 text-secondary">Mashhur</span>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-600">Mashhur</span>
                           )}
                         </div>
                       </TableCell>
@@ -416,35 +416,35 @@ const Products = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts?.map((product) => (
-            <Card key={product.id} className="glass border-border/50 overflow-hidden">
-              <div className="aspect-video relative bg-muted">
+            <Card key={product.id} className="bg-white border-slate-200 overflow-hidden">
+              <div className="aspect-video relative bg-slate-100">
                 {product.image_url ? (
                   <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-4xl">🍽️</div>
                 )}
                 {!product.is_active && (
-                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                    <span className="text-muted-foreground">Nofaol</span>
+                  <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                    <span className="text-slate-500">Nofaol</span>
                   </div>
                 )}
                 {product.is_popular && (
-                  <span className="absolute top-2 left-2 px-2 py-1 text-xs rounded-full bg-secondary text-secondary-foreground">
+                  <span className="absolute top-2 left-2 px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-600">
                     Mashhur
                   </span>
                 )}
               </div>
               <CardContent className="p-4">
                 <h3 className="font-display text-lg truncate">{product.name}</h3>
-                <p className="text-sm text-muted-foreground truncate">{(product as any).categories?.name}</p>
+                <p className="text-sm text-slate-500 truncate">{(product as any).categories?.name}</p>
                 <div className="flex items-center gap-2 mt-2">
                   {product.discount_price ? (
                     <>
-                      <span className="text-secondary font-medium">{formatPrice(product.discount_price)}</span>
-                      <span className="text-sm text-muted-foreground line-through">{formatPrice(product.price)}</span>
+                      <span className="text-emerald-600 font-medium">{formatPrice(product.discount_price)}</span>
+                      <span className="text-sm text-slate-400 line-through">{formatPrice(product.price)}</span>
                     </>
                   ) : (
-                    <span className="text-secondary font-medium">{formatPrice(product.price)}</span>
+                    <span className="text-emerald-600 font-medium">{formatPrice(product.price)}</span>
                   )}
                 </div>
                 <div className="flex gap-2 mt-4">
@@ -484,14 +484,14 @@ const Products = () => {
       )}
 
       {filteredProducts?.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-slate-500">
           Mahsulotlar topilmadi
         </div>
       )}
 
       {/* Ingredients Dialog */}
       <Dialog open={!!ingredientsProductId} onOpenChange={(open) => !open && setIngredientsProductId(null)}>
-        <DialogContent className="max-w-lg glass">
+        <DialogContent className="max-w-lg bg-white border-slate-200">
           {ingredientsProductId && (
             <ProductIngredients
               productId={ingredientsProductId}

@@ -126,16 +126,16 @@ const Categories = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Qidirish..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-muted/50"
+            className="pl-10 bg-slate-50 border-slate-200"
           />
         </div>
         <div className="flex gap-2">
-          <div className="flex border border-border rounded-lg p-1">
+          <div className="flex border border-slate-200 rounded-lg p-1 bg-white">
             <Button
               variant={viewMode === 'table' ? 'secondary' : 'ghost'}
               size="sm"
@@ -164,7 +164,7 @@ const Categories = () => {
                 Yangi kategoriya
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto glass">
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-white border-slate-200">
               <DialogHeader>
                 <DialogTitle className="font-display text-xl">
                   {editingCategory ? "Kategoriyani tahrirlash" : "Yangi kategoriya qo'shish"}
@@ -179,7 +179,7 @@ const Categories = () => {
                       name="name" 
                       defaultValue={editingCategory?.name} 
                       required 
-                      className="bg-muted/50"
+                      className="bg-slate-50 border-slate-200"
                       onChange={(e) => {
                         if (!editingCategory) {
                           const slugInput = document.getElementById('slug') as HTMLInputElement;
@@ -190,18 +190,18 @@ const Categories = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                    <Input id="name_uz" name="name_uz" defaultValue={editingCategory?.name_uz || ''} className="bg-muted/50" />
+                    <Input id="name_uz" name="name_uz" defaultValue={editingCategory?.name_uz || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="slug">Slug</Label>
-                    <Input id="slug" name="slug" defaultValue={editingCategory?.slug} required className="bg-muted/50" />
+                    <Input id="slug" name="slug" defaultValue={editingCategory?.slug} required className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="sort_order">Tartib</Label>
-                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingCategory?.sort_order || 0} className="bg-muted/50" />
+                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingCategory?.sort_order || 0} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
@@ -225,7 +225,7 @@ const Categories = () => {
                         placeholder="https://..."
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
-                        className="bg-muted/50"
+                        className="bg-slate-50 border-slate-200"
                       />
                     </TabsContent>
                   </Tabs>
@@ -234,11 +234,11 @@ const Categories = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="meta_title">Meta sarlavha</Label>
-                    <Input id="meta_title" name="meta_title" defaultValue={editingCategory?.meta_title || ''} className="bg-muted/50" />
+                    <Input id="meta_title" name="meta_title" defaultValue={editingCategory?.meta_title || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="meta_description">Meta tavsif</Label>
-                    <Input id="meta_description" name="meta_description" defaultValue={editingCategory?.meta_description || ''} className="bg-muted/50" />
+                    <Input id="meta_description" name="meta_description" defaultValue={editingCategory?.meta_description || ''} className="bg-slate-50 border-slate-200" />
                   </div>
                 </div>
 
@@ -263,7 +263,7 @@ const Categories = () => {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : viewMode === 'table' ? (
-        <Card className="glass border-border/50 overflow-hidden">
+        <Card className="bg-white border-slate-200 overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -281,7 +281,7 @@ const Categories = () => {
                   {filteredCategories?.map((category) => (
                     <TableRow key={category.id}>
                       <TableCell>
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted">
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100">
                           {category.image_url ? (
                             <img src={category.image_url} alt={category.name} className="w-full h-full object-cover" />
                           ) : (
@@ -293,21 +293,21 @@ const Categories = () => {
                         <div>
                           <p className="font-medium">{category.name}</p>
                           {category.name_uz && (
-                            <p className="text-xs text-muted-foreground">{category.name_uz}</p>
+                            <p className="text-xs text-slate-500">{category.name_uz}</p>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-muted-foreground font-mono text-sm">
+                      <TableCell className="text-slate-500 font-mono text-sm">
                         /{category.slug}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-slate-500">
                         {category.sort_order}
                       </TableCell>
                       <TableCell>
                         {category.is_active ? (
-                          <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Faol</span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-600">Faol</span>
                         ) : (
-                          <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400">Nofaol</span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-600">Nofaol</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -339,25 +339,25 @@ const Categories = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCategories?.map((category) => (
-            <Card key={category.id} className="glass border-border/50 overflow-hidden">
-              <div className="aspect-video relative bg-muted">
+            <Card key={category.id} className="bg-white border-slate-200 overflow-hidden">
+              <div className="aspect-video relative bg-slate-100">
                 {category.image_url ? (
                   <img src={category.image_url} alt={category.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-4xl">📁</div>
                 )}
                 {!category.is_active && (
-                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                    <span className="text-muted-foreground">Nofaol</span>
+                  <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                    <span className="text-slate-500">Nofaol</span>
                   </div>
                 )}
               </div>
               <CardContent className="p-4">
                 <h3 className="font-display text-lg">{category.name}</h3>
                 {category.name_uz && (
-                  <p className="text-sm text-muted-foreground">{category.name_uz}</p>
+                  <p className="text-sm text-slate-500">{category.name_uz}</p>
                 )}
-                <p className="text-xs text-muted-foreground mt-1">/{category.slug}</p>
+                <p className="text-xs text-slate-500 mt-1">/{category.slug}</p>
                 <div className="flex gap-2 mt-4">
                   <Button 
                     variant="outline" 
@@ -387,7 +387,7 @@ const Categories = () => {
       )}
 
       {filteredCategories?.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-slate-500">
           Kategoriyalar topilmadi
         </div>
       )}
