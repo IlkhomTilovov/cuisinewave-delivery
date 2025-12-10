@@ -26,6 +26,7 @@ import Users from "./pages/admin/Users";
 import Inventory from "./pages/admin/Inventory";
 import StockMovements from "./pages/admin/StockMovements";
 import Suppliers from "./pages/admin/Suppliers";
+import Couriers from "./pages/admin/Couriers";
 import SiteSettings from "./pages/admin/SiteSettings";
 import AboutContent from "./pages/admin/AboutContent";
 
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/admin/inventory" element={<AdminLayout><Inventory /></AdminLayout>} />
             <Route path="/admin/stock-movements" element={<AdminLayout><StockMovements /></AdminLayout>} />
             <Route path="/admin/suppliers" element={<AdminLayout><Suppliers /></AdminLayout>} />
+            <Route path="/admin/couriers" element={<AdminLayout><Couriers /></AdminLayout>} />
             <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
             <Route path="/admin/about-content" element={<AboutContent />} />
             <Route path="/admin/site-settings" element={<SiteSettings />} />
