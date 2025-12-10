@@ -218,7 +218,7 @@ const InventoryCount = () => {
                               value={countItems[ing.id] ?? ''}
                               onChange={(e) => setCountItems(prev => ({
                                 ...prev,
-                                [ing.id]: e.target.value ? Number(e.target.value) : undefined
+                                [ing.id]: e.target.value !== '' ? Number(e.target.value) : undefined
                               }))}
                             />
                           </TableCell>
