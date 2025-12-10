@@ -26,6 +26,8 @@ import Orders from "./pages/admin/Orders";
 import Users from "./pages/admin/Users";
 import Inventory from "./pages/admin/Inventory";
 import StockMovements from "./pages/admin/StockMovements";
+import InventoryCount from "./pages/admin/InventoryCount";
+import InventoryReports from "./pages/admin/InventoryReports";
 import Suppliers from "./pages/admin/Suppliers";
 import Couriers from "./pages/admin/Couriers";
 import SiteSettings from "./pages/admin/SiteSettings";
@@ -62,6 +64,8 @@ const App = () => (
             <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
             <Route path="/admin/inventory" element={<AdminLayout><Inventory /></AdminLayout>} />
             <Route path="/admin/stock-movements" element={<AdminLayout><StockMovements /></AdminLayout>} />
+            <Route path="/admin/inventory-count" element={<AdminLayout><InventoryCount /></AdminLayout>} />
+            <Route path="/admin/inventory-reports" element={<AdminLayout><InventoryReports /></AdminLayout>} />
             <Route path="/admin/suppliers" element={<AdminLayout><Suppliers /></AdminLayout>} />
             <Route path="/admin/couriers" element={<AdminLayout><Couriers /></AdminLayout>} />
             <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />

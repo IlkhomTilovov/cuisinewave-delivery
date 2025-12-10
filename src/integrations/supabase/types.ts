@@ -214,6 +214,41 @@ export type Database = {
         }
         Relationships: []
       }
+      ingredient_price_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          id: string
+          ingredient_id: string
+          new_price: number
+          old_price: number
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          ingredient_id: string
+          new_price: number
+          old_price: number
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          ingredient_id?: string
+          new_price?: number
+          old_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ingredient_price_history_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ingredients: {
         Row: {
           category: string | null
@@ -258,6 +293,85 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      inventory_counts: {
+        Row: {
+          actual_quantity: number
+          counted_at: string
+          counted_by: string | null
+          difference: number | null
+          expected_quantity: number
+          id: string
+          ingredient_id: string
+          is_applied: boolean | null
+          notes: string | null
+        }
+        Insert: {
+          actual_quantity: number
+          counted_at?: string
+          counted_by?: string | null
+          difference?: number | null
+          expected_quantity: number
+          id?: string
+          ingredient_id: string
+          is_applied?: boolean | null
+          notes?: string | null
+        }
+        Update: {
+          actual_quantity?: number
+          counted_at?: string
+          counted_by?: string | null
+          difference?: number | null
+          expected_quantity?: number
+          id?: string
+          ingredient_id?: string
+          is_applied?: boolean | null
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_counts_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      low_stock_notifications: {
+        Row: {
+          current_stock: number
+          id: string
+          ingredient_id: string
+          min_stock: number
+          notification_type: string | null
+          notified_at: string
+        }
+        Insert: {
+          current_stock: number
+          id?: string
+          ingredient_id: string
+          min_stock: number
+          notification_type?: string | null
+          notified_at?: string
+        }
+        Update: {
+          current_stock?: number
+          id?: string
+          ingredient_id?: string
+          min_stock?: number
+          notification_type?: string | null
+          notified_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "low_stock_notifications_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_items: {
         Row: {

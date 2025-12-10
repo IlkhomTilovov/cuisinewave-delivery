@@ -15,7 +15,9 @@ import {
   Settings,
   FileText,
   ChevronDown,
-  Bike
+  Bike,
+  ClipboardCheck,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -32,6 +34,8 @@ const navItems = [
   { href: '/admin/orders', label: 'Buyurtmalar', icon: ShoppingCart },
   { href: '/admin/inventory', label: 'Ombor', icon: Warehouse },
   { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
+  { href: '/admin/inventory-count', label: 'Inventarizatsiya', icon: ClipboardCheck },
+  { href: '/admin/inventory-reports', label: 'Hisobotlar', icon: BarChart3 },
   { href: '/admin/couriers', label: 'Kuryerlar', icon: Bike },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
 ];
