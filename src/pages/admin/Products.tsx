@@ -239,70 +239,70 @@ const Products = () => {
                 Yangi mahsulot
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-slate-200">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto !bg-white border-slate-200 text-slate-900">
               <DialogHeader>
-                <DialogTitle className="font-display text-xl">
+                <DialogTitle className="font-display text-xl text-slate-900">
                   {editingProduct ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nomi (RU)</Label>
-                    <Input id="name" name="name" defaultValue={editingProduct?.name} required className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="name" className="text-slate-700">Nomi (RU)</Label>
+                    <Input id="name" name="name" defaultValue={editingProduct?.name} required className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                    <Input id="name_uz" name="name_uz" defaultValue={editingProduct?.name_uz || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="name_uz" className="text-slate-700">Nomi (UZ)</Label>
+                    <Input id="name_uz" name="name_uz" defaultValue={editingProduct?.name_uz || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Tavsif</Label>
-                  <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-slate-50 border-slate-200" />
+                  <Label htmlFor="description" className="text-slate-700">Tavsif</Label>
+                  <Textarea id="description" name="description" defaultValue={editingProduct?.description || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price">Narxi</Label>
-                    <Input id="price" name="price" type="number" defaultValue={editingProduct?.price} required className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="price" className="text-slate-700">Narxi</Label>
+                    <Input id="price" name="price" type="number" defaultValue={editingProduct?.price} required className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="discount_price">Chegirma narxi</Label>
-                    <Input id="discount_price" name="discount_price" type="number" defaultValue={editingProduct?.discount_price || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="discount_price" className="text-slate-700">Chegirma narxi</Label>
+                    <Input id="discount_price" name="discount_price" type="number" defaultValue={editingProduct?.discount_price || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="sort_order">Tartib</Label>
-                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="sort_order" className="text-slate-700">Tartib</Label>
+                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingProduct?.sort_order || 0} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="weight">Og'irlik/Hajm</Label>
-                    <Input id="weight" name="weight" placeholder="300g, 500ml" defaultValue={(editingProduct as any)?.weight || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="weight" className="text-slate-700">Og'irlik/Hajm</Label>
+                    <Input id="weight" name="weight" placeholder="300g, 500ml" defaultValue={(editingProduct as any)?.weight || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="prep_time">Tayyorlash vaqti</Label>
-                    <Input id="prep_time" name="prep_time" placeholder="15-20 daq" defaultValue={(editingProduct as any)?.prep_time || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="prep_time" className="text-slate-700">Tayyorlash vaqti</Label>
+                    <Input id="prep_time" name="prep_time" placeholder="15-20 daq" defaultValue={(editingProduct as any)?.prep_time || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="spice_level">Achchiqlik (0-3)</Label>
-                    <Input id="spice_level" name="spice_level" type="number" min="0" max="3" defaultValue={(editingProduct as any)?.spice_level || 0} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="spice_level" className="text-slate-700">Achchiqlik (0-3)</Label>
+                    <Input id="spice_level" name="spice_level" type="number" min="0" max="3" defaultValue={(editingProduct as any)?.spice_level || 0} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="calories">Kaloriya (kCal)</Label>
-                    <Input id="calories" name="calories" type="number" defaultValue={(editingProduct as any)?.calories || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="calories" className="text-slate-700">Kaloriya (kCal)</Label>
+                    <Input id="calories" name="calories" type="number" defaultValue={(editingProduct as any)?.calories || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="category_id">Kategoriya</Label>
+                  <Label htmlFor="category_id" className="text-slate-700">Kategoriya</Label>
                   <Select name="category_id" defaultValue={editingProduct?.category_id || ''}>
-                    <SelectTrigger className="bg-slate-50 border-slate-200">
+                    <SelectTrigger className="bg-white border-slate-300 text-slate-900">
                       <SelectValue placeholder="Kategoriyani tanlang" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-slate-200">
                       {categories?.map((cat) => (
                         <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                       ))}
@@ -311,17 +311,18 @@ const Products = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Rasm</Label>
+                  <Label className="text-slate-700">Rasm</Label>
                   <Tabs defaultValue="upload" className="w-full">
-                    <TabsList className="w-full">
-                      <TabsTrigger value="upload" className="flex-1">Yuklash</TabsTrigger>
-                      <TabsTrigger value="url" className="flex-1">URL</TabsTrigger>
+                    <TabsList className="w-full bg-slate-100">
+                      <TabsTrigger value="upload" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-slate-900">Yuklash</TabsTrigger>
+                      <TabsTrigger value="url" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-slate-900">URL</TabsTrigger>
                     </TabsList>
                     <TabsContent value="upload" className="mt-2">
                       <ImageUpload
                         value={imageUrl}
                         onChange={setImageUrl}
                         folder="products"
+                        className="admin-upload"
                       />
                     </TabsContent>
                     <TabsContent value="url" className="mt-2">
@@ -330,7 +331,7 @@ const Products = () => {
                         placeholder="https://..."
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
-                        className="bg-slate-50 border-slate-200"
+                        className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
                       />
                     </TabsContent>
                   </Tabs>
@@ -338,23 +339,23 @@ const Products = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="meta_title">Meta Title (SEO)</Label>
-                    <Input id="meta_title" name="meta_title" defaultValue={editingProduct?.meta_title || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="meta_title" className="text-slate-700">Meta Title (SEO)</Label>
+                    <Input id="meta_title" name="meta_title" defaultValue={editingProduct?.meta_title || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="meta_description">Meta Description (SEO)</Label>
-                    <Input id="meta_description" name="meta_description" defaultValue={editingProduct?.meta_description || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="meta_description" className="text-slate-700">Meta Description (SEO)</Label>
+                    <Input id="meta_description" name="meta_description" defaultValue={editingProduct?.meta_description || ''} className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400" />
                   </div>
                 </div>
 
                 <div className="flex gap-6">
                   <div className="flex items-center gap-2">
                     <Switch id="is_active" name="is_active" defaultChecked={editingProduct?.is_active ?? true} />
-                    <Label htmlFor="is_active">Faol</Label>
+                    <Label htmlFor="is_active" className="text-slate-700">Faol</Label>
                   </div>
                   <div className="flex items-center gap-2">
                     <Switch id="is_popular" name="is_popular" defaultChecked={editingProduct?.is_popular ?? false} />
-                    <Label htmlFor="is_popular">Mashhur</Label>
+                    <Label htmlFor="is_popular" className="text-slate-700">Mashhur</Label>
                   </div>
                 </div>
 

@@ -124,7 +124,12 @@ export function ImageUpload({ value, onChange, folder = 'uploads', className }: 
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
-          className="w-full h-48 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors bg-muted/30"
+          className={cn(
+            "w-full h-48 border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-2 transition-colors",
+            className?.includes('admin-upload') 
+              ? "border-slate-300 text-slate-500 hover:border-primary hover:text-primary bg-slate-50" 
+              : "border-border text-muted-foreground hover:border-primary hover:text-primary bg-muted/30"
+          )}
         >
           {isUploading ? (
             <>
