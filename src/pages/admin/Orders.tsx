@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { 
   Search, Loader2, Eye, MapPin, Phone, User, Clock, CreditCard, 
   CalendarIcon, Download, Printer, ShoppingBag, TrendingUp, 
-  Package, X, Trash2, Volume2, VolumeX
+  Package, Trash2, Volume2, VolumeX, History, CheckCircle2
 } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { format, startOfDay, endOfDay, subDays, isWithinInterval } from 'date-fns';
@@ -27,12 +27,22 @@ import { useOrderNotification } from '@/hooks/useOrderNotification';
 type Order = Tables<'orders'>;
 type OrderItem = Tables<'order_items'>;
 
+interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  old_status: string | null;
+  new_status: string;
+  changed_by: string | null;
+  changed_at: string;
+  notes: string | null;
+}
+
 const statusOptions = [
-  { value: 'new', label: 'Yangi', color: 'bg-blue-500/20 text-blue-400' },
-  { value: 'cooking', label: 'Tayyorlanmoqda', color: 'bg-orange-500/20 text-orange-400' },
-  { value: 'on_the_way', label: "Yo'lda", color: 'bg-purple-500/20 text-purple-400' },
-  { value: 'delivered', label: 'Yetkazildi', color: 'bg-green-500/20 text-green-400' },
-  { value: 'cancelled', label: 'Bekor qilindi', color: 'bg-red-500/20 text-red-400' },
+  { value: 'new', label: 'Yangi', color: 'bg-blue-500/20 text-blue-400', icon: '🆕' },
+  { value: 'cooking', label: 'Tayyorlanmoqda', color: 'bg-orange-500/20 text-orange-400', icon: '👨‍🍳' },
+  { value: 'on_the_way', label: "Yo'lda", color: 'bg-purple-500/20 text-purple-400', icon: '🚗' },
+  { value: 'delivered', label: 'Yetkazildi', color: 'bg-green-500/20 text-green-400', icon: '✅' },
+  { value: 'cancelled', label: 'Bekor qilindi', color: 'bg-red-500/20 text-red-400', icon: '❌' },
 ];
 
 const dateFilterOptions = [
@@ -92,6 +102,22 @@ const Orders = () => {
     enabled: !!selectedOrder,
   });
 
+  // Fetch order status history
+  const { data: orderHistory } = useQuery({
+    queryKey: ['order-history', selectedOrder?.id],
+    queryFn: async () => {
+      if (!selectedOrder) return [];
+      const { data, error } = await supabase
+        .from('order_status_history')
+        .select('*')
+        .eq('order_id', selectedOrder.id)
+        .order('changed_at', { ascending: true });
+      if (error) throw error;
+      return data as OrderStatusHistory[];
+    },
+    enabled: !!selectedOrder,
+  });
+
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
@@ -124,9 +150,7 @@ const Orders = () => {
         .eq('order_id', id);
       if (itemsError) throw itemsError;
       
-      // Then delete order (this won't work due to RLS, but we try)
-      // Note: Orders table doesn't have DELETE policy, so this will fail
-      // We'll just mark it as cancelled instead
+      // Mark as cancelled
       const { error } = await supabase
         .from('orders')
         .update({ status: 'cancelled' })
@@ -512,7 +536,7 @@ const Orders = () => {
 
       {/* Order Details Dialog */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <DialogContent className="max-w-2xl glass">
+        <DialogContent className="max-w-3xl glass max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display text-xl flex items-center justify-between">
               <span>Buyurtma #{selectedOrder?.id.slice(0, 8)}</span>
@@ -592,6 +616,66 @@ const Orders = () => {
                 <div className="flex justify-between items-center mt-4 pt-4 border-t border-border">
                   <span className="font-display text-lg">Jami</span>
                   <span className="text-2xl font-display text-secondary">{formatPrice(Number(selectedOrder.total_price))}</span>
+                </div>
+              </div>
+
+              {/* Order Status History Timeline */}
+              <div>
+                <h4 className="font-display text-lg mb-4 flex items-center gap-2">
+                  <History className="h-5 w-5" />
+                  Buyurtma tarixi
+                </h4>
+                <div className="relative">
+                  {/* Timeline line */}
+                  <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
+                  
+                  <div className="space-y-4">
+                    {orderHistory && orderHistory.length > 0 ? (
+                      orderHistory.map((history, index) => {
+                        const statusInfo = getStatusInfo(history.new_status);
+                        const isLast = index === orderHistory.length - 1;
+                        
+                        return (
+                          <div key={history.id} className="relative flex gap-4 pl-2">
+                            {/* Timeline dot */}
+                            <div className={cn(
+                              "relative z-10 flex items-center justify-center w-5 h-5 rounded-full border-2 shrink-0",
+                              isLast 
+                                ? "bg-primary border-primary" 
+                                : "bg-background border-border"
+                            )}>
+                              {isLast && <CheckCircle2 className="h-3 w-3 text-primary-foreground" />}
+                            </div>
+                            
+                            {/* Content */}
+                            <div className={cn(
+                              "flex-1 pb-4 min-w-0",
+                              !isLast && "border-b border-border/50"
+                            )}>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Badge className={cn(statusInfo.color, "text-xs")}>
+                                  {statusInfo.icon} {statusInfo.label}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {format(new Date(history.changed_at), 'dd.MM.yyyy HH:mm:ss')}
+                                </span>
+                              </div>
+                              {history.notes && (
+                                <p className="text-sm text-muted-foreground mt-1">{history.notes}</p>
+                              )}
+                              {history.old_status && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {getStatusInfo(history.old_status).label} → {statusInfo.label}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm text-muted-foreground pl-10">Tarix mavjud emas</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
