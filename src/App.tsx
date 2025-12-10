@@ -14,6 +14,7 @@ import Contact from "./pages/Contact";
 import CategoryDetail from "./pages/CategoryDetail";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/menu/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryDetail />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/auth" element={<Auth />} />
             
             {/* Admin Routes */}
