@@ -4,10 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/products/ProductCard';
 import { useCartStore } from '@/lib/cart';
 import { toast } from 'sonner';
-import { ChevronRight, ArrowLeft, Minus, Plus, ShoppingCart, Clock, Flame, Scale } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Minus, Plus, ShoppingCart, Clock, Flame, Scale, Truck, Shield, Star, Heart, Share2, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 
 const ProductDetail = () => {
@@ -127,23 +128,55 @@ const ProductDetail = () => {
             {/* Product Info */}
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Image */}
-              <div className="relative aspect-square rounded-3xl overflow-hidden bg-muted shadow-xl">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name_uz || product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                    <span className="text-9xl opacity-50">🍽️</span>
-                  </div>
-                )}
-                {discountPercent && (
-                  <div className="absolute top-4 left-4 bg-destructive text-destructive-foreground px-4 py-2 rounded-full text-lg font-bold">
-                    -{discountPercent}%
-                  </div>
-                )}
+              <div className="relative group">
+                <div className="aspect-square rounded-3xl overflow-hidden bg-muted shadow-2xl ring-1 ring-border/10">
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name_uz || product.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-gold/10">
+                      <span className="text-9xl opacity-50">🍽️</span>
+                    </div>
+                  )}
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                
+                {/* Badges */}
+                <div className="absolute top-4 left-4 flex flex-col gap-2">
+                  {discountPercent && (
+                    <Badge className="bg-destructive text-destructive-foreground px-4 py-2 text-lg font-bold shadow-lg">
+                      -{discountPercent}%
+                    </Badge>
+                  )}
+                  {product.is_popular && (
+                    <Badge className="bg-gold text-gold-foreground px-3 py-1 shadow-lg">
+                      <Star className="w-3 h-3 mr-1 fill-current" />
+                      Mashhur
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Action buttons */}
+                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                  <Button 
+                    size="icon" 
+                    variant="secondary" 
+                    className="rounded-full shadow-lg bg-background/80 backdrop-blur-sm hover:bg-background"
+                  >
+                    <Heart className="w-5 h-5" />
+                  </Button>
+                  <Button 
+                    size="icon" 
+                    variant="secondary" 
+                    className="rounded-full shadow-lg bg-background/80 backdrop-blur-sm hover:bg-background"
+                  >
+                    <Share2 className="w-5 h-5" />
+                  </Button>
+                </div>
               </div>
 
               {/* Details */}
@@ -214,35 +247,79 @@ const ProductDetail = () => {
                   )}
                 </div>
 
+                {/* Ingredients */}
+                {product.ingredients && (
+                  <div className="mb-6 p-4 rounded-2xl bg-muted/50 border border-border">
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-success" />
+                      Tarkibi
+                    </h3>
+                    <p className="text-muted-foreground text-sm">{product.ingredients}</p>
+                  </div>
+                )}
+
                 {/* Quantity & Add to Cart */}
-                <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-                  <div className="flex items-center border border-border rounded-xl">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <div className="flex items-center border-2 border-border rounded-xl bg-background">
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-12 w-12"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1}
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-5 h-5" />
                     </Button>
-                    <span className="w-12 text-center font-semibold">{quantity}</span>
+                    <span className="w-14 text-center font-bold text-lg">{quantity}</span>
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-12 w-12"
                       onClick={() => setQuantity(quantity + 1)}
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-5 h-5" />
                     </Button>
                   </div>
 
                   <Button 
                     size="lg" 
-                    className="flex-1 bg-gradient-primary text-lg"
+                    className="flex-1 h-12 bg-gradient-primary text-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
                     onClick={handleAddToCart}
                   >
                     <ShoppingCart className="w-5 h-5 mr-2" />
                     Savatga qo'shish - {(Number(finalPrice) * quantity).toLocaleString()} so'm
                   </Button>
+                </div>
+
+                {/* Delivery Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-gradient-to-r from-primary/5 to-gold/5 border border-border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Truck className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Bepul yetkazib berish</p>
+                      <p className="text-xs text-muted-foreground">50,000 so'mdan</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-success" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Tez yetkazib berish</p>
+                      <p className="text-xs text-muted-foreground">30-45 daqiqa</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-gold" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Sifat kafolati</p>
+                      <p className="text-xs text-muted-foreground">100% yangi</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
