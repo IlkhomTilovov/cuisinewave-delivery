@@ -8,8 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Plus, Search, Loader2, ArrowUpCircle, ArrowDownCircle, RefreshCw, Trash } from 'lucide-react';
 import { format } from 'date-fns';
@@ -18,10 +18,10 @@ import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 
 const movementTypes = [
-  { value: 'in', label: 'Kirim', icon: ArrowUpCircle, color: 'text-green-400 bg-green-500/20' },
-  { value: 'out', label: 'Chiqim', icon: ArrowDownCircle, color: 'text-red-400 bg-red-500/20' },
-  { value: 'adjustment', label: 'Tuzatish', icon: RefreshCw, color: 'text-blue-400 bg-blue-500/20' },
-  { value: 'waste', label: 'Isrof', icon: Trash, color: 'text-orange-400 bg-orange-500/20' },
+  { value: 'in', label: 'Kirim', icon: ArrowUpCircle, color: 'text-emerald-600 bg-emerald-100' },
+  { value: 'out', label: 'Chiqim', icon: ArrowDownCircle, color: 'text-red-600 bg-red-100' },
+  { value: 'adjustment', label: 'Tuzatish', icon: RefreshCw, color: 'text-blue-600 bg-blue-100' },
+  { value: 'waste', label: 'Isrof', icon: Trash, color: 'text-orange-600 bg-orange-100' },
 ];
 
 interface StockMovement {
@@ -57,7 +57,6 @@ const StockMovements = () => {
   const [selectedIngredient, setSelectedIngredient] = useState<string>('');
   const { invalidateGroup } = useQueryInvalidation();
 
-  // Real-time subscription
   useRealtimeSubscription(['stock_movements', 'ingredients']);
 
   const { data: movements, isLoading } = useQuery({
@@ -101,9 +100,7 @@ const StockMovements = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (movement: Partial<StockMovement>) => {
-      const { error } = await supabase
-        .from('stock_movements')
-        .insert(movement as any);
+      const { error } = await supabase.from('stock_movements').insert(movement as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -112,19 +109,16 @@ const StockMovements = () => {
       setIsDialogOpen(false);
       setSelectedIngredient('');
     },
-    onError: (error: any) => {
-      toast.error("Xatolik: " + error.message);
-    },
+    onError: (error: any) => toast.error("Xatolik: " + error.message),
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
     const quantity = Number(formData.get('quantity'));
     const unitCost = Number(formData.get('unit_cost')) || null;
-    
-    const movement: Partial<StockMovement> = {
+
+    saveMutation.mutate({
       ingredient_id: formData.get('ingredient_id') as string,
       movement_type: formData.get('movement_type') as string,
       quantity,
@@ -133,84 +127,61 @@ const StockMovements = () => {
       supplier_id: formData.get('supplier_id') as string || null,
       expiry_date: formData.get('expiry_date') as string || null,
       notes: formData.get('notes') as string || null,
-    };
-
-    saveMutation.mutate(movement);
+    });
   };
 
-  // Filter movements
   const filteredMovements = movements?.filter(m => {
     const matchesSearch = m.ingredients?.name.toLowerCase().includes(search.toLowerCase()) ||
       m.notes?.toLowerCase().includes(search.toLowerCase());
-    
-    if (activeTab !== 'all') {
-      return matchesSearch && m.movement_type === activeTab;
-    }
+    if (activeTab !== 'all') return matchesSearch && m.movement_type === activeTab;
     return matchesSearch;
   });
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('uz-UZ').format(price) + " so'm";
-  };
-
-  const getMovementType = (type: string) => {
-    return movementTypes.find(t => t.value === type) || movementTypes[0];
-  };
-
+  const formatPrice = (price: number) => new Intl.NumberFormat('uz-UZ').format(price) + " so'm";
+  const getMovementType = (type: string) => movementTypes.find(t => t.value === type) || movementTypes[0];
   const selectedIng = ingredients?.find(i => i.id === selectedIngredient);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <div className="flex gap-4 flex-1 flex-wrap">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Qidirish..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-muted/50"
+              className="pl-10 bg-slate-50 border-slate-200 text-slate-900"
             />
           </div>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-            <TabsList>
-              <TabsTrigger value="all">Hammasi</TabsTrigger>
-              <TabsTrigger value="in" className="text-green-400">Kirim</TabsTrigger>
-              <TabsTrigger value="out" className="text-red-400">Chiqim</TabsTrigger>
-              <TabsTrigger value="waste" className="text-orange-400">Isrof</TabsTrigger>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="bg-slate-100">
+              <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-slate-900">Hammasi</TabsTrigger>
+              <TabsTrigger value="in" className="data-[state=active]:bg-white data-[state=active]:text-emerald-600 text-emerald-600">Kirim</TabsTrigger>
+              <TabsTrigger value="out" className="data-[state=active]:bg-white data-[state=active]:text-red-600 text-red-600">Chiqim</TabsTrigger>
+              <TabsTrigger value="waste" className="data-[state=active]:bg-white data-[state=active]:text-orange-600 text-orange-600">Isrof</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          setIsDialogOpen(open);
-          if (!open) setSelectedIngredient('');
-        }}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setSelectedIngredient(''); }}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-primary">
               <Plus className="h-4 w-4 mr-2" />
               Yangi harakat
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg glass">
+          <DialogContent className="max-w-lg bg-white border-slate-200">
             <DialogHeader>
-              <DialogTitle className="font-display text-xl">
-                Ombor harakati qo'shish
-              </DialogTitle>
+              <DialogTitle className="font-display text-xl text-slate-900">Ombor harakati qo'shish</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="ingredient_id">Mahsulot</Label>
-                <Select 
-                  name="ingredient_id" 
-                  required
-                  value={selectedIngredient}
-                  onValueChange={setSelectedIngredient}
-                >
-                  <SelectTrigger className="bg-muted/50">
+                <Label className="text-slate-700">Mahsulot</Label>
+                <Select name="ingredient_id" required value={selectedIngredient} onValueChange={setSelectedIngredient}>
+                  <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
                     <SelectValue placeholder="Mahsulotni tanlang" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border-slate-200">
                     {ingredients?.map(ing => (
                       <SelectItem key={ing.id} value={ing.id}>{ing.name}</SelectItem>
                     ))}
@@ -220,53 +191,42 @@ const StockMovements = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="movement_type">Harakat turi</Label>
+                  <Label className="text-slate-700">Harakat turi</Label>
                   <Select name="movement_type" defaultValue="in">
-                    <SelectTrigger className="bg-muted/50">
+                    <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-slate-200">
                       {movementTypes.map(type => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
+                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="quantity">
-                    Miqdor {selectedIng && `(${selectedIng.unit})`}
-                  </Label>
-                  <Input 
-                    id="quantity" 
-                    name="quantity" 
-                    type="number" 
-                    step="0.01" 
-                    required 
-                    className="bg-muted/50" 
-                  />
+                  <Label className="text-slate-700">Miqdor {selectedIng && `(${selectedIng.unit})`}</Label>
+                  <Input name="quantity" type="number" step="0.01" required className="bg-slate-50 border-slate-200 text-slate-900" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="unit_cost">Narxi (birlik)</Label>
-                  <Input id="unit_cost" name="unit_cost" type="number" className="bg-muted/50" />
+                  <Label className="text-slate-700">Narxi (birlik)</Label>
+                  <Input name="unit_cost" type="number" className="bg-slate-50 border-slate-200 text-slate-900" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="expiry_date">Yaroqlilik muddati</Label>
-                  <Input id="expiry_date" name="expiry_date" type="date" className="bg-muted/50" />
+                  <Label className="text-slate-700">Yaroqlilik muddati</Label>
+                  <Input name="expiry_date" type="date" className="bg-slate-50 border-slate-200 text-slate-900" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="supplier_id">Yetkazib beruvchi</Label>
+                <Label className="text-slate-700">Yetkazib beruvchi</Label>
                 <Select name="supplier_id">
-                  <SelectTrigger className="bg-muted/50">
+                  <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-900">
                     <SelectValue placeholder="Tanlang (ixtiyoriy)" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border-slate-200">
                     {suppliers?.map(sup => (
                       <SelectItem key={sup.id} value={sup.id}>{sup.name}</SelectItem>
                     ))}
@@ -275,8 +235,8 @@ const StockMovements = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">Izoh</Label>
-                <Textarea id="notes" name="notes" className="bg-muted/50" />
+                <Label className="text-slate-700">Izoh</Label>
+                <Textarea name="notes" className="bg-slate-50 border-slate-200 text-slate-900" />
               </div>
 
               <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
@@ -288,13 +248,12 @@ const StockMovements = () => {
         </Dialog>
       </div>
 
-      {/* Table */}
       {isLoading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <Card className="glass border-border/50 overflow-hidden">
+        <Card className="bg-white border-slate-200 overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
@@ -314,36 +273,23 @@ const StockMovements = () => {
                   {filteredMovements?.map((mov) => {
                     const typeInfo = getMovementType(mov.movement_type);
                     const TypeIcon = typeInfo.icon;
-                    
                     return (
                       <TableRow key={mov.id}>
-                        <TableCell className="text-muted-foreground whitespace-nowrap">
+                        <TableCell className="text-slate-500 whitespace-nowrap">
                           {format(new Date(mov.created_at), 'dd.MM.yyyy HH:mm')}
                         </TableCell>
-                        <TableCell className="font-medium">
-                          {mov.ingredients?.name}
-                        </TableCell>
+                        <TableCell className="font-medium text-slate-900">{mov.ingredients?.name}</TableCell>
                         <TableCell>
                           <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-full ${typeInfo.color}`}>
                             <TypeIcon className="h-3.5 w-3.5" />
                             {typeInfo.label}
                           </span>
                         </TableCell>
-                        <TableCell>
-                          {mov.quantity} {mov.ingredients?.unit}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {mov.unit_cost ? formatPrice(mov.unit_cost) : '-'}
-                        </TableCell>
-                        <TableCell className="text-secondary font-medium">
-                          {mov.total_cost ? formatPrice(mov.total_cost) : '-'}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {mov.suppliers?.name || '-'}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground max-w-[200px] truncate">
-                          {mov.notes || '-'}
-                        </TableCell>
+                        <TableCell className="text-slate-900">{mov.quantity} {mov.ingredients?.unit}</TableCell>
+                        <TableCell className="text-slate-500">{mov.unit_cost ? formatPrice(mov.unit_cost) : '-'}</TableCell>
+                        <TableCell className="text-emerald-600 font-medium">{mov.total_cost ? formatPrice(mov.total_cost) : '-'}</TableCell>
+                        <TableCell className="text-slate-500">{mov.suppliers?.name || '-'}</TableCell>
+                        <TableCell className="text-slate-500 max-w-[200px] truncate">{mov.notes || '-'}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -355,9 +301,7 @@ const StockMovements = () => {
       )}
 
       {filteredMovements?.length === 0 && !isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
-          Harakatlar topilmadi
-        </div>
+        <div className="text-center py-12 text-slate-500">Harakatlar topilmadi</div>
       )}
     </div>
   );
