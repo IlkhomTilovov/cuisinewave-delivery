@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,9 @@ import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { queryKeys } from '@/lib/queryKeys';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 
 type Category = Tables<'categories'>;
 
@@ -22,10 +25,13 @@ const Categories = () => {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   const [imageUrl, setImageUrl] = useState('');
-  const queryClient = useQueryClient();
+  const { invalidateGroup } = useQueryInvalidation();
+
+  // Real-time subscription for categories
+  useRealtimeSubscription(['categories']);
 
   const { data: categories, isLoading } = useQuery({
-    queryKey: ['admin-categories-list'],
+    queryKey: queryKeys.adminCategories,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('categories')
@@ -52,7 +58,7 @@ const Categories = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories-list'] });
+      invalidateGroup('categories');
       toast.success(editingCategory ? 'Kategoriya yangilandi' : "Kategoriya qo'shildi");
       setIsDialogOpen(false);
       setEditingCategory(null);
@@ -69,7 +75,7 @@ const Categories = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories-list'] });
+      invalidateGroup('categories');
       toast.success("Kategoriya o'chirildi");
     },
     onError: (error) => {

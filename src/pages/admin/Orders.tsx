@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,9 @@ import { toast } from 'sonner';
 import { Search, Loader2, Eye, MapPin, Phone, User, Clock, CreditCard } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { format } from 'date-fns';
+import { queryKeys } from '@/lib/queryKeys';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 
 type Order = Tables<'orders'>;
 type OrderItem = Tables<'order_items'>;
@@ -27,10 +30,13 @@ const Orders = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const queryClient = useQueryClient();
+  const { invalidateGroup } = useQueryInvalidation();
+
+  // Real-time subscription for orders
+  useRealtimeSubscription(['orders']);
 
   const { data: orders, isLoading } = useQuery({
-    queryKey: ['admin-orders', statusFilter],
+    queryKey: queryKeys.adminOrders(statusFilter),
     queryFn: async () => {
       let query = supabase
         .from('orders')
@@ -68,9 +74,15 @@ const Orders = () => {
         .update({ status })
         .eq('id', id);
       if (error) throw error;
+      
+      // If order is delivered, deduct ingredients
+      if (status === 'delivered') {
+        const { error: deductError } = await supabase.rpc('deduct_ingredients_for_order', { p_order_id: id });
+        if (deductError) console.error('Ingredient deduction error:', deductError);
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      invalidateGroup('orders');
       toast.success('Buyurtma holati yangilandi');
     },
     onError: (error) => {

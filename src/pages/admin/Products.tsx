@@ -15,6 +15,9 @@ import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Search, Loader2, LayoutGrid, LayoutList } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { queryKeys } from '@/lib/queryKeys';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 
 type Product = Tables<'products'>;
 type Category = Tables<'categories'>;
@@ -25,10 +28,13 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   const [imageUrl, setImageUrl] = useState('');
-  const queryClient = useQueryClient();
+  const { invalidateGroup } = useQueryInvalidation();
+  
+  // Real-time subscription for products and categories
+  useRealtimeSubscription(['products', 'categories']);
 
   const { data: products, isLoading } = useQuery({
-    queryKey: ['admin-products'],
+    queryKey: queryKeys.adminProducts,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
@@ -40,7 +46,7 @@ const Products = () => {
   });
 
   const { data: categories } = useQuery({
-    queryKey: ['admin-categories'],
+    queryKey: queryKeys.adminCategories,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('categories')
@@ -68,7 +74,7 @@ const Products = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      invalidateGroup('products');
       toast.success(editingProduct ? 'Mahsulot yangilandi' : "Mahsulot qo'shildi");
       setIsDialogOpen(false);
       setEditingProduct(null);
@@ -85,7 +91,7 @@ const Products = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      invalidateGroup('products');
       toast.success("Mahsulot o'chirildi");
     },
     onError: (error) => {

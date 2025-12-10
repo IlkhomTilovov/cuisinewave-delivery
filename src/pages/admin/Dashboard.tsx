@@ -1,30 +1,37 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, FolderTree, ShoppingCart, Image, TrendingUp, Clock, Users } from 'lucide-react';
+import { Package, FolderTree, ShoppingCart, TrendingUp, Clock, Users, Warehouse } from 'lucide-react';
 import { StatsChart } from '@/components/admin/StatsChart';
 import { subDays } from 'date-fns';
+import { queryKeys } from '@/lib/queryKeys';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 
 const Dashboard = () => {
+  // Real-time subscription for all relevant tables
+  useRealtimeSubscription(['orders', 'products', 'categories', 'ingredients']);
+
   const { data: stats } = useQuery({
-    queryKey: ['admin-stats'],
+    queryKey: queryKeys.dashboardStats,
     queryFn: async () => {
-      const [products, categories, orders, banners, userRoles] = await Promise.all([
+      const [products, categories, orders, ingredients, userRoles] = await Promise.all([
         supabase.from('products').select('id', { count: 'exact', head: true }),
         supabase.from('categories').select('id', { count: 'exact', head: true }),
         supabase.from('orders').select('id, status, total_price'),
-        supabase.from('banners').select('id', { count: 'exact', head: true }),
+        supabase.from('ingredients').select('id, current_stock, min_stock'),
         supabase.from('user_roles').select('id', { count: 'exact', head: true }),
       ]);
 
       const newOrders = orders.data?.filter(o => o.status === 'new').length || 0;
       const totalRevenue = orders.data?.reduce((sum, o) => sum + Number(o.total_price), 0) || 0;
+      const lowStockItems = ingredients.data?.filter(i => i.current_stock <= i.min_stock).length || 0;
 
       return {
         productsCount: products.count || 0,
         categoriesCount: categories.count || 0,
         ordersCount: orders.data?.length || 0,
-        bannersCount: banners.count || 0,
+        ingredientsCount: ingredients.data?.length || 0,
+        lowStockItems,
         usersCount: userRoles.count || 0,
         newOrders,
         totalRevenue,
@@ -62,7 +69,7 @@ const Dashboard = () => {
     { title: 'Mahsulotlar', value: stats?.productsCount || 0, icon: Package, color: 'text-primary' },
     { title: 'Kategoriyalar', value: stats?.categoriesCount || 0, icon: FolderTree, color: 'text-secondary' },
     { title: 'Buyurtmalar', value: stats?.ordersCount || 0, icon: ShoppingCart, color: 'text-green-400' },
-    { title: 'Bannerlar', value: stats?.bannersCount || 0, icon: Image, color: 'text-blue-400' },
+    { title: 'Ingredientlar', value: stats?.ingredientsCount || 0, icon: Warehouse, color: 'text-blue-400', subtext: stats?.lowStockItems ? `${stats.lowStockItems} kam qolgan` : undefined },
     { title: 'Foydalanuvchilar', value: stats?.usersCount || 0, icon: Users, color: 'text-purple-400' },
   ];
 
@@ -103,6 +110,9 @@ const Dashboard = () => {
                 <div>
                   <p className="text-xs lg:text-sm text-muted-foreground">{stat.title}</p>
                   <p className="text-2xl lg:text-3xl font-display mt-1">{stat.value}</p>
+                  {(stat as any).subtext && (
+                    <p className="text-xs text-orange-400 mt-1">{(stat as any).subtext}</p>
+                  )}
                 </div>
                 <div className={`p-2 lg:p-3 rounded-xl bg-muted ${stat.color}`}>
                   <stat.icon className="h-5 w-5 lg:h-6 lg:w-6" />
