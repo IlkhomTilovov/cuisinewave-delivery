@@ -59,6 +59,9 @@ export const invalidationGroups = {
   // When suppliers change
   suppliers: [queryKeys.suppliers],
   
+  // When couriers change
+  couriers: [['couriers'], ['dashboard-couriers'], ['dashboard-courier-orders'], ['couriers-available']],
+  
   // When site settings change
   siteSettings: [queryKeys.siteSettings],
 };

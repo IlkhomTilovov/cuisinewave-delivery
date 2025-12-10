@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { queryKeys, invalidationGroups } from '@/lib/queryKeys';
 
-type TableName = 'orders' | 'products' | 'categories' | 'ingredients' | 'stock_movements' | 'suppliers';
+type TableName = 'orders' | 'products' | 'categories' | 'ingredients' | 'stock_movements' | 'suppliers' | 'couriers';
 
 const tableToGroup: Record<TableName, keyof typeof invalidationGroups> = {
   orders: 'orders',
@@ -12,6 +12,7 @@ const tableToGroup: Record<TableName, keyof typeof invalidationGroups> = {
   ingredients: 'ingredients',
   stock_movements: 'stockMovements',
   suppliers: 'suppliers',
+  couriers: 'couriers',
 };
 
 export function useRealtimeSubscription(tables: TableName[] = ['orders', 'products', 'categories', 'ingredients', 'stock_movements']) {
