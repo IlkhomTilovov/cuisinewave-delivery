@@ -17,6 +17,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import CourierPanel from "./pages/CourierPanel";
 import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/courier" element={<CourierPanel />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
