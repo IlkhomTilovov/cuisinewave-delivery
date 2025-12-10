@@ -15,7 +15,8 @@ import {
   Users,
   Settings,
   FileText,
-  ChevronDown
+  ChevronDown,
+  Bike
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -33,6 +34,7 @@ const navItems = [
   { href: '/admin/inventory', label: 'Ombor', icon: Warehouse },
   { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
   { href: '/admin/suppliers', label: 'Yetkazuvchilar', icon: Truck },
+  { href: '/admin/couriers', label: 'Kuryerlar', icon: Bike },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
 ];
 
