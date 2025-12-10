@@ -291,7 +291,7 @@ const Categories = () => {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <p className="font-medium">{category.name}</p>
+                          <p className="font-medium text-slate-900">{category.name}</p>
                           {category.name_uz && (
                             <p className="text-xs text-slate-500">{category.name_uz}</p>
                           )}

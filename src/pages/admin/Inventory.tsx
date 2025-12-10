@@ -327,7 +327,7 @@ const Inventory = () => {
                           <div className="flex items-center gap-2">
                             {isLow && <AlertTriangle className="h-4 w-4 text-red-600" />}
                             <div>
-                              <p className="font-medium">{ing.name}</p>
+                              <p className="font-medium text-slate-900">{ing.name}</p>
                               {ing.name_uz && <p className="text-xs text-slate-500">{ing.name_uz}</p>}
                             </div>
                           </div>
@@ -336,14 +336,14 @@ const Inventory = () => {
                           {category?.label || '-'}
                         </TableCell>
                         <TableCell>
-                          <span className={isLow ? 'text-red-600 font-medium' : ''}>
+                          <span className={isLow ? 'text-red-600 font-medium' : 'text-slate-900'}>
                             {ing.current_stock} {ing.unit}
                           </span>
                         </TableCell>
                         <TableCell className="text-slate-500">
                           {ing.min_stock} {ing.unit}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-slate-900">
                           {formatPrice(ing.cost_per_unit)}/{ing.unit}
                         </TableCell>
                         <TableCell className="text-emerald-600 font-medium">
