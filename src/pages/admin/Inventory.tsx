@@ -173,11 +173,16 @@ const Inventory = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input placeholder="Qidirish..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-slate-50 border-slate-200" />
           </div>
-          <Tabs value={activeTab} onValueChange={setActiveTab}><TabsList><TabsTrigger value="all">Hammasi</TabsTrigger><TabsTrigger value="low" className="text-red-600">Kam ({lowStockItems})</TabsTrigger></TabsList></Tabs>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="bg-slate-100">
+              <TabsTrigger value="all" className="data-[state=active]:bg-white data-[state=active]:text-slate-900">Hammasi</TabsTrigger>
+              <TabsTrigger value="low" className="data-[state=active]:bg-white data-[state=active]:text-red-600 text-red-500">Kam ({lowStockItems})</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={exportToCSV}><Download className="h-4 w-4 mr-1" />Export</Button>
-          <Button variant="outline" size="sm" onClick={sendNotification} disabled={isNotifying || lowStockItems === 0} className={lowStockItems > 0 ? 'text-red-600' : ''}>
+          <Button variant="outline" size="sm" onClick={exportToCSV} className="border-slate-200 text-slate-700 hover:bg-slate-50"><Download className="h-4 w-4 mr-1" />Export</Button>
+          <Button variant="outline" size="sm" onClick={sendNotification} disabled={isNotifying || lowStockItems === 0} className={`border-slate-200 ${lowStockItems > 0 ? 'text-red-600 border-red-200 hover:bg-red-50' : 'text-slate-400'}`}>
             {isNotifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4 mr-1" />}Telegram
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditingIngredient(null); }}>
