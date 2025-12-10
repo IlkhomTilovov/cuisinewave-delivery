@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Plus, Search, Loader2, ArrowUpCircle, ArrowDownCircle, RefreshCw, Trash } from 'lucide-react';
 import { format } from 'date-fns';
+import { queryKeys } from '@/lib/queryKeys';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 
 const movementTypes = [
   { value: 'in', label: 'Kirim', icon: ArrowUpCircle, color: 'text-green-400 bg-green-500/20' },
@@ -52,10 +55,13 @@ const StockMovements = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [selectedIngredient, setSelectedIngredient] = useState<string>('');
-  const queryClient = useQueryClient();
+  const { invalidateGroup } = useQueryInvalidation();
+
+  // Real-time subscription
+  useRealtimeSubscription(['stock_movements', 'ingredients']);
 
   const { data: movements, isLoading } = useQuery({
-    queryKey: ['admin-stock-movements'],
+    queryKey: queryKeys.stockMovements,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('stock_movements')
@@ -68,7 +74,7 @@ const StockMovements = () => {
   });
 
   const { data: ingredients } = useQuery({
-    queryKey: ['ingredients-list'],
+    queryKey: queryKeys.adminIngredients,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('ingredients')
@@ -81,7 +87,7 @@ const StockMovements = () => {
   });
 
   const { data: suppliers } = useQuery({
-    queryKey: ['suppliers-list'],
+    queryKey: queryKeys.suppliers,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('suppliers')
@@ -101,8 +107,7 @@ const StockMovements = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-stock-movements'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-ingredients'] });
+      invalidateGroup('stockMovements');
       toast.success("Harakat qo'shildi");
       setIsDialogOpen(false);
       setSelectedIngredient('');
