@@ -148,6 +148,45 @@ export type Database = {
         }
         Relationships: []
       }
+      couriers: {
+        Row: {
+          created_at: string
+          current_orders_count: number | null
+          id: string
+          is_active: boolean | null
+          is_available: boolean | null
+          max_orders: number | null
+          name: string
+          notes: string | null
+          phone: string
+          vehicle_type: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_orders_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_available?: boolean | null
+          max_orders?: number | null
+          name: string
+          notes?: string | null
+          phone: string
+          vehicle_type?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_orders_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_available?: boolean | null
+          max_orders?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          vehicle_type?: string | null
+        }
+        Relationships: []
+      }
       faq_items: {
         Row: {
           answer: string
@@ -303,6 +342,7 @@ export type Database = {
       orders: {
         Row: {
           address: string
+          courier_id: string | null
           created_at: string
           delivery_zone: string | null
           id: string
@@ -315,6 +355,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          courier_id?: string | null
           created_at?: string
           delivery_zone?: string | null
           id?: string
@@ -327,6 +368,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          courier_id?: string | null
           created_at?: string
           delivery_zone?: string | null
           id?: string
@@ -337,7 +379,15 @@ export type Database = {
           total_price?: number
           user_fullname?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_courier_id_fkey"
+            columns: ["courier_id"]
+            isOneToOne: false
+            referencedRelation: "couriers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_ingredients: {
         Row: {
