@@ -10,8 +10,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Search, Plus, Loader2, Phone, User, Car, Bike, Edit, Trash2, Package } from 'lucide-react';
+import { Search, Plus, Loader2, Phone, User, Car, Bike, Edit, Trash2, Package, ChevronDown, MapPin, Clock } from 'lucide-react';
+import { format } from 'date-fns';
+import { Tables } from '@/integrations/supabase/types';
+
+type Order = Tables<'orders'>;
 
 interface Courier {
   id: string;
@@ -33,10 +38,27 @@ const vehicleTypes = [
   { value: 'walk', label: 'Piyoda', icon: User },
 ];
 
+const statusLabels: Record<string, string> = {
+  new: 'Yangi',
+  cooking: 'Tayyorlanmoqda',
+  on_the_way: "Yo'lda",
+  delivered: 'Yetkazildi',
+  cancelled: 'Bekor qilindi',
+};
+
+const statusColors: Record<string, string> = {
+  new: 'bg-blue-500/20 text-blue-400',
+  cooking: 'bg-orange-500/20 text-orange-400',
+  on_the_way: 'bg-purple-500/20 text-purple-400',
+  delivered: 'bg-green-500/20 text-green-400',
+  cancelled: 'bg-red-500/20 text-red-400',
+};
+
 const Couriers = () => {
   const [search, setSearch] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCourier, setEditingCourier] = useState<Courier | null>(null);
+  const [expandedCourier, setExpandedCourier] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '+998',
@@ -58,6 +80,32 @@ const Couriers = () => {
       return data as Courier[];
     },
   });
+
+  // Fetch all active orders with courier assignments
+  const { data: courierOrders } = useQuery({
+    queryKey: ['courier-orders-all'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .not('courier_id', 'is', null)
+        .in('status', ['new', 'cooking', 'on_the_way'])
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Order[];
+    },
+  });
+
+  // Group orders by courier
+  const ordersByCourier = courierOrders?.reduce((acc, order) => {
+    if (order.courier_id) {
+      if (!acc[order.courier_id]) {
+        acc[order.courier_id] = [];
+      }
+      acc[order.courier_id].push(order);
+    }
+    return acc;
+  }, {} as Record<string, Order[]>) || {};
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -157,6 +205,10 @@ const Couriers = () => {
 
   const getVehicleInfo = (type: string) => {
     return vehicleTypes.find(v => v.value === type) || vehicleTypes[0];
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('uz-UZ').format(price) + " so'm";
   };
 
   return (
@@ -297,9 +349,9 @@ const Couriers = () => {
         </Card>
         <Card className="glass border-border/50">
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Jami buyurtmalar</p>
+            <p className="text-sm text-muted-foreground">Faol buyurtmalar</p>
             <p className="text-2xl font-display font-bold text-secondary">
-              {couriers?.reduce((sum, c) => sum + c.current_orders_count, 0) || 0}
+              {courierOrders?.length || 0}
             </p>
           </CardContent>
         </Card>
@@ -315,7 +367,9 @@ const Couriers = () => {
           {filteredCouriers?.map((courier) => {
             const vehicleInfo = getVehicleInfo(courier.vehicle_type);
             const VehicleIcon = vehicleInfo.icon;
-            const isBusy = courier.current_orders_count >= courier.max_orders;
+            const courierOrdersList = ordersByCourier[courier.id] || [];
+            const hasOrders = courierOrdersList.length > 0;
+            const isExpanded = expandedCourier === courier.id;
             
             return (
               <Card key={courier.id} className={`glass border-border/50 ${!courier.is_active ? 'opacity-50' : ''}`}>
@@ -351,16 +405,16 @@ const Couriers = () => {
                     <Badge className={courier.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}>
                       {courier.is_active ? 'Faol' : 'Nofaol'}
                     </Badge>
-                    <Badge className={courier.is_available && !isBusy ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400'}>
-                      {isBusy ? 'Band' : courier.is_available ? 'Bo\'sh' : 'Band'}
+                    <Badge className={courier.is_available ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400'}>
+                      {courier.is_available ? 'Bo\'sh' : 'Band'}
                     </Badge>
                     <Badge variant="outline" className="ml-auto">
                       <Package className="h-3 w-3 mr-1" />
-                      {courier.current_orders_count}/{courier.max_orders}
+                      {courierOrdersList.length}/{courier.max_orders}
                     </Badge>
                   </div>
                   
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-sm mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">Faol:</span>
                       <Switch 
@@ -377,6 +431,58 @@ const Couriers = () => {
                       />
                     </div>
                   </div>
+
+                  {/* Orders Section */}
+                  {hasOrders && (
+                    <Collapsible 
+                      open={isExpanded} 
+                      onOpenChange={() => setExpandedCourier(isExpanded ? null : courier.id)}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button variant="outline" className="w-full justify-between" size="sm">
+                          <span className="flex items-center gap-2">
+                            <Package className="h-4 w-4" />
+                            Buyurtmalar ({courierOrdersList.length})
+                          </span>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-3 space-y-2">
+                        {courierOrdersList.map((order) => (
+                          <div 
+                            key={order.id} 
+                            className="p-3 rounded-lg bg-muted/50 space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-sm">{order.user_fullname}</span>
+                              <Badge className={statusColors[order.status || 'new']} >
+                                {statusLabels[order.status || 'new']}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <MapPin className="h-3 w-3" />
+                              <span className="truncate">{order.address}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="flex items-center gap-1 text-muted-foreground">
+                                <Clock className="h-3 w-3" />
+                                {format(new Date(order.created_at), 'HH:mm')}
+                              </span>
+                              <span className="font-semibold text-secondary">
+                                {formatPrice(Number(order.total_price))}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+
+                  {!hasOrders && (
+                    <div className="text-center py-2 text-xs text-muted-foreground">
+                      Faol buyurtmalar yo'q
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             );
