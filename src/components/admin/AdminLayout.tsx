@@ -83,7 +83,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   };
 
   return (
-    <div className="h-screen bg-background flex overflow-hidden">
+    <div className="h-screen bg-white flex overflow-hidden">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div 
@@ -94,25 +94,25 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed lg:relative inset-y-0 left-0 z-50 w-64 h-screen bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 lg:transform-none flex-shrink-0",
+        "fixed lg:relative inset-y-0 left-0 z-50 w-64 h-screen bg-slate-50 border-r border-slate-200 transform transition-transform duration-300 lg:transform-none flex-shrink-0",
         sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-sidebar-border">
+          <div className="p-6 border-b border-slate-200">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
                   <span className="text-lg font-display text-primary-foreground">BV</span>
                 </div>
                 <div>
-                  <h1 className="font-display text-lg text-sidebar-foreground">Bella Vista</h1>
-                  <p className="text-xs text-muted-foreground">Admin Panel</p>
+                  <h1 className="font-display text-lg text-slate-900">Bella Vista</h1>
+                  <p className="text-xs text-slate-500">Admin Panel</p>
                 </div>
               </Link>
               <button 
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-muted-foreground hover:text-foreground"
+                className="lg:hidden text-slate-500 hover:text-slate-900"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -133,12 +133,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
                       isActive 
                         ? "bg-primary/10 text-primary border-l-2 border-primary" 
-                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-l-2 border-transparent"
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-2 border-transparent"
                     )}
                   >
                     <item.icon className={cn(
                       "h-5 w-5 flex-shrink-0",
-                      isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                      isActive ? "text-primary" : "text-slate-500 group-hover:text-slate-900"
                     )} />
                     <span className="font-medium text-sm">{item.label}</span>
                   </Link>
@@ -147,7 +147,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               
               {/* Settings collapsible section */}
               <Collapsible defaultOpen={settingsItems.some(item => location.pathname === item.href)}>
-                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-muted/50 hover:text-foreground group">
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 group">
                   <div className="flex items-center gap-3">
                     <Settings className="h-5 w-5 flex-shrink-0" />
                     <span className="font-medium text-sm">Sozlamalar</span>
@@ -166,12 +166,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                           "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
                           isActive 
                             ? "bg-primary/10 text-primary border-l-2 border-primary" 
-                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-l-2 border-transparent"
+                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-2 border-transparent"
                         )}
                       >
                         <item.icon className={cn(
                           "h-5 w-5 flex-shrink-0",
-                          isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                          isActive ? "text-primary" : "text-slate-500 group-hover:text-slate-900"
                         )} />
                         <span className="font-medium text-sm">{item.label}</span>
                       </Link>
@@ -183,16 +183,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </nav>
 
           {/* User info & logout - fixed at bottom */}
-          <div className="p-4 border-t border-sidebar-border flex-shrink-0">
-            <div className="px-3 py-2 mb-2 rounded-lg bg-sidebar-accent/50">
-              <p className="text-sm text-sidebar-foreground font-medium truncate">{user.email}</p>
+          <div className="p-4 border-t border-slate-200 flex-shrink-0">
+            <div className="px-3 py-2 mb-2 rounded-lg bg-slate-100">
+              <p className="text-sm text-slate-900 font-medium truncate">{user.email}</p>
               <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-primary/20 text-primary capitalize">
                 {userRole}
               </span>
             </div>
             <Button 
               variant="ghost" 
-              className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 py-3"
+              className="w-full justify-start text-slate-600 hover:text-destructive hover:bg-destructive/10 py-3"
               onClick={handleSignOut}
             >
               <LogOut className="h-4 w-4 mr-3" />
@@ -205,14 +205,14 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Main content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top bar */}
-        <header className="h-16 border-b border-border flex items-center px-4 lg:px-8 gap-4 bg-card/50 backdrop-blur-sm">
+        <header className="h-16 border-b border-slate-200 flex items-center px-4 lg:px-8 gap-4 bg-white">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden text-muted-foreground hover:text-foreground"
+            className="lg:hidden text-slate-500 hover:text-slate-900"
           >
             <Menu className="h-6 w-6" />
           </button>
-          <h2 className="font-display text-xl">
+          <h2 className="font-display text-xl text-slate-900">
             {navItems.find(item => item.href === location.pathname)?.label || 
              settingsItems.find(item => item.href === location.pathname)?.label || 
              'Admin'}
