@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { 
@@ -11,17 +11,19 @@ import {
   X,
   Warehouse,
   ArrowRightLeft,
-  Truck
+  Truck,
+  Users,
+  Settings,
+  FileText,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
-
-import { Users } from 'lucide-react';
-
-import { Settings } from 'lucide-react';
-
-import { FileText } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -32,8 +34,11 @@ const navItems = [
   { href: '/admin/stock-movements', label: 'Harakatlar', icon: ArrowRightLeft },
   { href: '/admin/suppliers', label: 'Yetkazuvchilar', icon: Truck },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
+];
+
+const settingsItems = [
   { href: '/admin/about-content', label: 'Biz haqimizda', icon: FileText },
-  { href: '/admin/site-settings', label: 'Sozlamalar', icon: Settings },
+  { href: '/admin/site-settings', label: 'Sayt sozlamalari', icon: Settings },
 ];
 
 interface AdminLayoutProps {
@@ -139,6 +144,41 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   </Link>
                 );
               })}
+              
+              {/* Settings collapsible section */}
+              <Collapsible defaultOpen={settingsItems.some(item => location.pathname === item.href)}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-muted/50 hover:text-foreground group">
+                  <div className="flex items-center gap-3">
+                    <Settings className="h-5 w-5 flex-shrink-0" />
+                    <span className="font-medium text-sm">Sozlamalar</span>
+                  </div>
+                  <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pl-4 mt-0.5 space-y-0.5">
+                  {settingsItems.map((item) => {
+                    const isActive = location.pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
+                          isActive 
+                            ? "bg-primary/10 text-primary border-l-2 border-primary" 
+                            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-l-2 border-transparent"
+                        )}
+                      >
+                        <item.icon className={cn(
+                          "h-5 w-5 flex-shrink-0",
+                          isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                        )} />
+                        <span className="font-medium text-sm">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </CollapsibleContent>
+              </Collapsible>
             </div>
           </nav>
 
@@ -173,7 +213,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <Menu className="h-6 w-6" />
           </button>
           <h2 className="font-display text-xl">
-            {navItems.find(item => item.href === location.pathname)?.label || 'Admin'}
+            {navItems.find(item => item.href === location.pathname)?.label || 
+             settingsItems.find(item => item.href === location.pathname)?.label || 
+             'Admin'}
           </h2>
         </header>
 
