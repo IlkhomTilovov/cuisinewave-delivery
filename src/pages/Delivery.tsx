@@ -32,10 +32,10 @@ const Delivery = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
               <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-6">
-                Yetkazib berish xizmati
+                {getSetting('delivery_page_title')}
               </h1>
               <p className="text-lg text-muted-foreground mb-8">
-                Tez va ishonchli yetkazib berish xizmati. Issiq va mazali taomlarni eshigingizgacha yetkazib beramiz.
+                {getSetting('delivery_page_description')}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/menu">
@@ -53,7 +53,7 @@ const Delivery = () => {
             </div>
             <div className="animate-fade-in stagger-1">
               <img
-                src="https://images.unsplash.com/photo-1526367790999-0150786686a2?w=600&h=400&fit=crop"
+                src={getSetting('delivery_page_image')}
                 alt="Yetkazib berish"
                 className="rounded-2xl shadow-2xl w-full"
               />
@@ -111,10 +111,10 @@ const Delivery = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Yetkazib berish hududlari
+              {getSetting('delivery_zones_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Toshkent shahri bo'ylab yetkazib beramiz
+              {getSetting('delivery_zones_description')}
             </p>
           </div>
 
@@ -151,10 +151,10 @@ const Delivery = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              To'lov usullari
+              {getSetting('delivery_payment_title')}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Sizga qulay usulda to'lang
+              {getSetting('delivery_payment_description')}
             </p>
           </div>
 
@@ -183,7 +183,7 @@ const Delivery = () => {
         <div className="container">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Qanday ishlaydi?
+              {getSetting('delivery_steps_title')}
             </h2>
           </div>
 
@@ -214,10 +214,10 @@ const Delivery = () => {
       <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
         <div className="container text-center">
           <h2 className="font-display text-3xl lg:text-4xl font-bold mb-4">
-            Hoziroq buyurtma bering!
+            {getSetting('delivery_cta_title')}
           </h2>
           <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Mazali taomlarimizni uyingizda tatib ko'ring
+            {getSetting('delivery_cta_description')}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/menu">

@@ -46,10 +46,10 @@ const Promotions = () => {
               <span className="font-medium">Maxsus takliflar</span>
             </div>
             <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Aktsiyalar va chegirmalar
+              {getSetting('promotions_page_title')}
             </h1>
             <p className="text-lg text-muted-foreground">
-              Eng yaxshi narxlarda mazali taomlardan bahramand bo'ling
+              {getSetting('promotions_page_description')}
             </p>
           </div>
         </div>
@@ -121,10 +121,10 @@ const Promotions = () => {
                 <Percent className="w-10 h-10 text-muted-foreground" />
               </div>
               <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-                Hozircha aktsiyalar yo'q
+                {getSetting('promotions_empty_title')}
               </h2>
               <p className="text-muted-foreground mb-6">
-                Tez orada yangi takliflar bilan qaytamiz!
+                {getSetting('promotions_empty_description')}
               </p>
               <Link to="/menu">
                 <Button variant="default" size="lg">
@@ -141,7 +141,7 @@ const Promotions = () => {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-              Nima uchun bizni tanlashadi?
+              {getSetting('promotions_benefits_title')}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">

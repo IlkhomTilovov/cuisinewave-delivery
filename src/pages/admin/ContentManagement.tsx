@@ -90,6 +90,41 @@ const socialSettings = [
   { key: 'facebook_url', title: 'Facebook URL', type: 'input' },
 ];
 
+// Yetkazib berish sahifasi kontenti
+const deliveryPageSettings = {
+  hero: [
+    { key: 'delivery_page_image', title: 'Hero rasmi', type: 'image' },
+    { key: 'delivery_page_title', title: 'Sahifa sarlavhasi', type: 'input' },
+    { key: 'delivery_page_description', title: 'Sahifa tavsifi', type: 'textarea' },
+  ],
+  sections: [
+    { key: 'delivery_zones_title', title: 'Hududlar bo\'limi sarlavhasi', type: 'input' },
+    { key: 'delivery_zones_description', title: 'Hududlar bo\'limi tavsifi', type: 'textarea' },
+    { key: 'delivery_payment_title', title: 'To\'lov bo\'limi sarlavhasi', type: 'input' },
+    { key: 'delivery_payment_description', title: 'To\'lov bo\'limi tavsifi', type: 'textarea' },
+    { key: 'delivery_steps_title', title: 'Qadamlar bo\'limi sarlavhasi', type: 'input' },
+  ],
+  cta: [
+    { key: 'delivery_cta_title', title: 'CTA sarlavhasi', type: 'input' },
+    { key: 'delivery_cta_description', title: 'CTA tavsifi', type: 'textarea' },
+  ],
+};
+
+// Aksiyalar sahifasi kontenti
+const promotionsPageSettings = {
+  hero: [
+    { key: 'promotions_page_title', title: 'Sahifa sarlavhasi', type: 'input' },
+    { key: 'promotions_page_description', title: 'Sahifa tavsifi', type: 'textarea' },
+  ],
+  empty: [
+    { key: 'promotions_empty_title', title: 'Bo\'sh holat sarlavhasi', type: 'input' },
+    { key: 'promotions_empty_description', title: 'Bo\'sh holat tavsifi', type: 'textarea' },
+  ],
+  benefits: [
+    { key: 'promotions_benefits_title', title: 'Afzalliklar bo\'limi sarlavhasi', type: 'input' },
+  ],
+};
+
 export default function ContentManagement() {
   const queryClient = useQueryClient();
   const [localSettings, setLocalSettings] = useState<Record<string, string>>({});
@@ -242,7 +277,7 @@ export default function ContentManagement() {
         </div>
 
         <Tabs defaultValue="home" className="space-y-6">
-          <TabsList className="bg-slate-100 border border-slate-200 p-1">
+          <TabsList className="bg-slate-100 border border-slate-200 p-1 flex-wrap h-auto gap-1">
             <TabsTrigger value="home" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Home className="w-4 h-4" />
               Bosh sahifa
@@ -254,6 +289,14 @@ export default function ContentManagement() {
             <TabsTrigger value="about" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Info className="w-4 h-4" />
               Biz haqimizda
+            </TabsTrigger>
+            <TabsTrigger value="delivery" className="flex items-center gap-2 data-[state=active]:bg-white">
+              <Truck className="w-4 h-4" />
+              Yetkazib berish
+            </TabsTrigger>
+            <TabsTrigger value="promotions" className="flex items-center gap-2 data-[state=active]:bg-white">
+              <Gift className="w-4 h-4" />
+              Aksiyalar
             </TabsTrigger>
             <TabsTrigger value="contact" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Phone className="w-4 h-4" />
@@ -330,6 +373,72 @@ export default function ContentManagement() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {aboutPageSettings.map(renderField)}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Yetkazib berish sahifasi */}
+          <TabsContent value="delivery" className="space-y-6">
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Hero bo'limi</CardTitle>
+                <CardDescription className="text-slate-500">Sahifaning yuqori qismi</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {deliveryPageSettings.hero.map(renderField)}
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Bo'limlar</CardTitle>
+                <CardDescription className="text-slate-500">Sahifadagi bo'limlar sarlavhalari</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {deliveryPageSettings.sections.map(renderField)}
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">CTA bo'limi</CardTitle>
+                <CardDescription className="text-slate-500">Harakatga chaqiruvchi bo'lim</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {deliveryPageSettings.cta.map(renderField)}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Aksiyalar sahifasi */}
+          <TabsContent value="promotions" className="space-y-6">
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Hero bo'limi</CardTitle>
+                <CardDescription className="text-slate-500">Sahifaning yuqori qismi</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {promotionsPageSettings.hero.map(renderField)}
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Bo'sh holat</CardTitle>
+                <CardDescription className="text-slate-500">Aksiyalar bo'lmaganda ko'rsatiladigan matn</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {promotionsPageSettings.empty.map(renderField)}
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Afzalliklar bo'limi</CardTitle>
+                <CardDescription className="text-slate-500">Nima uchun bizni tanlashadi</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {promotionsPageSettings.benefits.map(renderField)}
               </CardContent>
             </Card>
           </TabsContent>
