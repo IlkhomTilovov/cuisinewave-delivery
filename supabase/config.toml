@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.check-low-stock]
 verify_jwt = false
+
+[functions.setup-courier-accounts]
+verify_jwt = true
