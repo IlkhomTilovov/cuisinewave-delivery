@@ -12,7 +12,7 @@ import { ImageUpload } from '@/components/admin/ImageUpload';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Loader2, Save, Home, UtensilsCrossed, Info, Truck, Gift, Phone, Share2, Plus, Pencil, Trash2, Users, HelpCircle, Award } from 'lucide-react';
+import { Loader2, Save, Home, UtensilsCrossed, Info, Truck, Gift, Phone, Share2, Plus, Pencil, Trash2, Users, HelpCircle, Award, LayoutGrid } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface SiteSetting {
@@ -154,6 +154,16 @@ const promotionsPageSettings = {
     { key: 'promotions_benefits_title', title: 'Afzalliklar bo\'limi sarlavhasi', type: 'input' },
   ],
 };
+
+// Footer kontenti
+const footerSettings = [
+  { key: 'footer_brand_description', title: 'Brand tavsifi', type: 'textarea' },
+  { key: 'footer_links_title', title: 'Havolalar sarlavhasi', type: 'input' },
+  { key: 'footer_contact_title', title: 'Bog\'lanish sarlavhasi', type: 'input' },
+  { key: 'footer_social_title', title: 'Ijtimoiy tarmoqlar sarlavhasi', type: 'input' },
+  { key: 'footer_social_description', title: 'Ijtimoiy tarmoqlar tavsifi', type: 'textarea' },
+  { key: 'footer_copyright', title: 'Copyright matni', type: 'input' },
+];
 
 export default function ContentManagement() {
   const queryClient = useQueryClient();
@@ -332,6 +342,10 @@ export default function ContentManagement() {
               <Phone className="w-4 h-4" />
               Kontakt
             </TabsTrigger>
+            <TabsTrigger value="footer" className="flex items-center gap-2 data-[state=active]:bg-white">
+              <LayoutGrid className="w-4 h-4" />
+              Footer
+            </TabsTrigger>
             <TabsTrigger value="social" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Share2 className="w-4 h-4" />
               Ijtimoiy
@@ -491,6 +505,19 @@ export default function ContentManagement() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {contactPageSettings.map(renderField)}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Footer */}
+          <TabsContent value="footer" className="space-y-6">
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Footer sozlamalari</CardTitle>
+                <CardDescription className="text-slate-500">Saytning pastki qismi (footer) matni</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {footerSettings.map(renderField)}
               </CardContent>
             </Card>
           </TabsContent>
