@@ -14,18 +14,12 @@ import {
   Users,
   Settings,
   FileText,
-  ChevronDown,
   Bike,
   ClipboardCheck,
   BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -38,9 +32,6 @@ const navItems = [
   { href: '/admin/inventory-reports', label: 'Hisobotlar', icon: BarChart3 },
   { href: '/admin/couriers', label: 'Kuryerlar', icon: Bike },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
-];
-
-const settingsItems = [
   { href: '/admin/about-content', label: 'Biz haqimizda', icon: FileText },
   { href: '/admin/site-settings', label: 'Sayt sozlamalari', icon: Settings },
 ];
@@ -148,41 +139,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   </Link>
                 );
               })}
-              
-              {/* Settings collapsible section */}
-              <Collapsible defaultOpen={settingsItems.some(item => location.pathname === item.href)}>
-                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 group">
-                  <div className="flex items-center gap-3">
-                    <Settings className="h-5 w-5 flex-shrink-0" />
-                    <span className="font-medium text-sm">Sozlamalar</span>
-                  </div>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="pl-4 mt-0.5 space-y-0.5">
-                  {settingsItems.map((item) => {
-                    const isActive = location.pathname === item.href;
-                    return (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        onClick={() => setSidebarOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
-                          isActive 
-                            ? "bg-primary/10 text-primary border-l-2 border-primary" 
-                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-2 border-transparent"
-                        )}
-                      >
-                        <item.icon className={cn(
-                          "h-5 w-5 flex-shrink-0",
-                          isActive ? "text-primary" : "text-slate-500 group-hover:text-slate-900"
-                        )} />
-                        <span className="font-medium text-sm">{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                </CollapsibleContent>
-              </Collapsible>
             </div>
           </nav>
 
@@ -217,9 +173,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <Menu className="h-6 w-6" />
           </button>
           <h2 className="font-display text-xl text-slate-900">
-            {navItems.find(item => item.href === location.pathname)?.label || 
-             settingsItems.find(item => item.href === location.pathname)?.label || 
-             'Admin'}
+            {navItems.find(item => item.href === location.pathname)?.label || 'Admin'}
           </h2>
         </header>
 
