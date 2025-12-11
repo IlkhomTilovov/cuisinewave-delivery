@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, MapPin, Clock, Package, User, ChevronRight, LogOut } from "lucide-react";
+import { Phone, MapPin, Package, User, LogOut, Loader2, Eye, EyeOff, Mail } from "lucide-react";
 import { format } from "date-fns";
+import { User as SupabaseUser, Session } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 const statusLabels: Record<string, string> = {
   new: "Yangi",
   cooking: "Tayyorlanmoqda",
+  ready: "Tayyor",
   on_the_way: "Yo'lda",
   delivered: "Yetkazildi",
   cancelled: "Bekor qilindi",
@@ -19,31 +23,58 @@ const statusLabels: Record<string, string> = {
 const statusColors: Record<string, string> = {
   new: "bg-blue-500",
   cooking: "bg-yellow-500",
+  ready: "bg-green-500",
   on_the_way: "bg-purple-500",
-  delivered: "bg-green-500",
+  delivered: "bg-emerald-600",
   cancelled: "bg-red-500",
 };
 
 export default function CourierPanel() {
-  const [phone, setPhone] = useState("");
-  const [verifiedPhone, setVerifiedPhone] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
-  // Check if courier exists with this phone
+  // Set up auth state listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Fetch courier data linked to this user
   const { data: courier, isLoading: courierLoading } = useQuery({
-    queryKey: ["courier-by-phone", verifiedPhone],
+    queryKey: ["courier-profile", user?.id],
     queryFn: async () => {
-      if (!verifiedPhone) return null;
+      if (!user?.id) return null;
+      
       const { data, error } = await supabase
         .from("couriers")
         .select("*")
-        .eq("phone", verifiedPhone)
+        .eq("user_id", user.id)
         .eq("is_active", true)
-        .single();
+        .maybeSingle();
+      
       if (error) throw error;
       return data;
     },
-    enabled: !!verifiedPhone,
+    enabled: !!user?.id,
   });
 
   // Fetch orders assigned to this courier
@@ -53,15 +84,23 @@ export default function CourierPanel() {
       if (!courier?.id) return [];
       const { data, error } = await supabase
         .from("orders")
-        .select("*")
+        .select(`
+          *,
+          order_items (
+            id,
+            product_name,
+            quantity,
+            price
+          )
+        `)
         .eq("courier_id", courier.id)
-        .in("status", ["new", "cooking", "on_the_way"])
+        .not("status", "in", '("delivered","cancelled")')
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
     enabled: !!courier?.id,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000,
   });
 
   // Fetch completed orders for today
@@ -84,70 +123,109 @@ export default function CourierPanel() {
     enabled: !!courier?.id,
   });
 
-  const handleLogin = async () => {
-    setError("");
-    
-    // Validate phone format
-    const phoneRegex = /^\+998\d{9}$/;
-    if (!phoneRegex.test(phone)) {
-      setError("Telefon raqam formati: +998XXXXXXXXX");
-      return;
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Email yoki parol noto'g'ri");
+        } else {
+          toast.error(error.message);
+        }
+        return;
+      }
+
+      toast.success("Muvaffaqiyatli kirildi");
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      toast.error("Xatolik yuz berdi");
+    } finally {
+      setIsLoading(false);
     }
-
-    // Check if courier exists
-    const { data, error } = await supabase
-      .from("couriers")
-      .select("id")
-      .eq("phone", phone)
-      .eq("is_active", true)
-      .single();
-
-    if (error || !data) {
-      setError("Bunday telefon raqamli kuryer topilmadi");
-      return;
-    }
-
-    setVerifiedPhone(phone);
-    localStorage.setItem("courier_phone", phone);
   };
 
-  const handleLogout = () => {
-    setVerifiedPhone(null);
-    setPhone("");
-    localStorage.removeItem("courier_phone");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Tizimdan chiqildi");
   };
 
-  // Check for saved phone on mount
-  useState(() => {
-    const savedPhone = localStorage.getItem("courier_phone");
-    if (savedPhone) {
-      setVerifiedPhone(savedPhone);
-    }
-  });
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   // Login screen
-  if (!verifiedPhone) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Kuryer Paneli</CardTitle>
-            <p className="text-muted-foreground">Telefon raqamingizni kiriting</p>
+            <p className="text-muted-foreground">Hisobingizga kiring</p>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Input
-                type="tel"
-                placeholder="+998901234567"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="text-lg"
-              />
-              {error && <p className="text-sm text-destructive">{error}</p>}
-            </div>
-            <Button onClick={handleLogin} className="w-full" size="lg">
-              Kirish
-            </Button>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="email@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Parol</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                    required
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Kirish...
+                  </>
+                ) : (
+                  "Kirish"
+                )}
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>
@@ -158,20 +236,27 @@ export default function CourierPanel() {
   if (courierLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p>Yuklanmoqda...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  // Courier not found
+  // Courier not found - user is authenticated but not a courier
   if (!courier) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center space-y-4">
-            <p className="text-destructive">Kuryer topilmadi yoki faol emas</p>
+            <User className="h-12 w-12 mx-auto text-muted-foreground" />
+            <div>
+              <p className="font-medium text-destructive">Kuryer topilmadi</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Bu hisob kuryer sifatida ro'yxatdan o'tmagan yoki faol emas.
+              </p>
+            </div>
             <Button onClick={handleLogout} variant="outline">
-              Qayta urinish
+              <LogOut className="mr-2 h-4 w-4" />
+              Chiqish
             </Button>
           </CardContent>
         </Card>
@@ -218,10 +303,12 @@ export default function CourierPanel() {
         <h2 className="font-semibold text-lg mb-4">Faol buyurtmalar</h2>
         
         {ordersLoading ? (
-          <p className="text-center text-muted-foreground py-8">Yuklanmoqda...</p>
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
         ) : orders && orders.length > 0 ? (
           <div className="space-y-4">
-            {orders.map((order) => (
+            {orders.map((order: any) => (
               <Card key={order.id} className="overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
@@ -259,6 +346,20 @@ export default function CourierPanel() {
                     )}
                   </div>
 
+                  {order.order_items && order.order_items.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Mahsulotlar:</p>
+                      <div className="space-y-1">
+                        {order.order_items.map((item: any) => (
+                          <div key={item.id} className="flex justify-between text-sm">
+                            <span>{item.product_name} x{item.quantity}</span>
+                            <span>{(item.price * item.quantity).toLocaleString()} so'm</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="mt-4 pt-3 border-t flex items-center justify-between">
                     <p className="font-semibold">
                       {Number(order.total_price).toLocaleString()} so'm
@@ -287,7 +388,7 @@ export default function CourierPanel() {
           <div className="mt-8">
             <h2 className="font-semibold text-lg mb-4">Bugun yetkazilgan</h2>
             <div className="space-y-2">
-              {completedOrders.map((order) => (
+              {completedOrders.map((order: any) => (
                 <Card key={order.id}>
                   <CardContent className="p-3 flex items-center justify-between">
                     <div>
