@@ -30,7 +30,7 @@ import InventoryCount from "./pages/admin/InventoryCount";
 import InventoryReports from "./pages/admin/InventoryReports";
 import Suppliers from "./pages/admin/Suppliers";
 import Couriers from "./pages/admin/Couriers";
-import SiteSettings from "./pages/admin/SiteSettings";
+import ContentManagement from "./pages/admin/ContentManagement";
 import AboutContent from "./pages/admin/AboutContent";
 
 const queryClient = new QueryClient();
@@ -70,7 +70,7 @@ const App = () => (
             <Route path="/admin/couriers" element={<AdminLayout><Couriers /></AdminLayout>} />
             <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
             <Route path="/admin/about-content" element={<AboutContent />} />
-            <Route path="/admin/site-settings" element={<SiteSettings />} />
+            <Route path="/admin/content" element={<ContentManagement />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
