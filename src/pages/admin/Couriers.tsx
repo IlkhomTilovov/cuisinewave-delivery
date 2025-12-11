@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Search, Plus, Loader2, Phone, User, Car, Bike, Edit, Trash2, Package, ChevronDown, MapPin, Clock, Link2, Link2Off } from 'lucide-react';
+import { Search, Plus, Loader2, Phone, User, Car, Bike, Edit, Trash2, Package, ChevronDown, MapPin, Clock, Link2, Link2Off, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -63,6 +63,8 @@ const statusColors: Record<string, string> = {
 const Couriers = () => {
   const [search, setSearch] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSetupDialogOpen, setIsSetupDialogOpen] = useState(false);
+  const [setupPassword, setSetupPassword] = useState('');
   const [editingCourier, setEditingCourier] = useState<Courier | null>(null);
   const [expandedCourier, setExpandedCourier] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -180,6 +182,42 @@ const Couriers = () => {
     },
   });
 
+  // Setup courier accounts mutation
+  const setupMutation = useMutation({
+    mutationFn: async (password: string) => {
+      const { data, error } = await supabase.functions.invoke('setup-courier-accounts', {
+        body: { defaultPassword: password },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['couriers'] });
+      queryClient.invalidateQueries({ queryKey: ['courier-users'] });
+      if (data.created > 0) {
+        toast.success(data.message);
+      } else {
+        toast.info(data.message);
+      }
+      if (data.errors?.length > 0) {
+        data.errors.forEach((err: string) => toast.error(err));
+      }
+      setIsSetupDialogOpen(false);
+      setSetupPassword('');
+    },
+    onError: (error) => {
+      toast.error("Xatolik: " + error.message);
+    },
+  });
+
+  const handleSetup = () => {
+    if (setupPassword.length < 6) {
+      toast.error("Parol kamida 6 ta belgidan iborat bo'lishi kerak");
+      return;
+    }
+    setupMutation.mutate(setupPassword);
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -254,13 +292,65 @@ const Couriers = () => {
           />
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
-          <DialogTrigger asChild>
-            <Button variant="gold">
-              <Plus className="h-4 w-4 mr-2" />
-              Kuryer qo'shish
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          {/* Setup accounts dialog */}
+          <Dialog open={isSetupDialogOpen} onOpenChange={setIsSetupDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Users className="h-4 w-4 mr-2" />
+                Hisoblarni sozlash
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-white border-slate-200">
+              <DialogHeader>
+                <DialogTitle className="font-display">
+                  Kuryer hisoblarini avtomatik yaratish
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Bu funksiya bog'lanmagan barcha kuryerlar uchun avtomatik ravishda foydalanuvchi hisobi yaratadi.
+                  Har bir kuryer uchun email: <code className="bg-slate-100 px-1 rounded">courier_PHONE@bellavista.local</code>
+                </p>
+                <div className="space-y-2">
+                  <Label htmlFor="setup-password">Standart parol *</Label>
+                  <Input
+                    id="setup-password"
+                    type="password"
+                    value={setupPassword}
+                    onChange={(e) => setSetupPassword(e.target.value)}
+                    placeholder="Kamida 6 ta belgi"
+                    minLength={6}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Barcha yangi hisoblar uchun boshlang'ich parol
+                  </p>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" onClick={() => setIsSetupDialogOpen(false)}>
+                    Bekor qilish
+                  </Button>
+                  <Button 
+                    variant="gold" 
+                    onClick={handleSetup}
+                    disabled={setupMutation.isPending || setupPassword.length < 6}
+                  >
+                    {setupMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    Yaratish
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Add courier dialog */}
+          <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button variant="gold">
+                <Plus className="h-4 w-4 mr-2" />
+                Kuryer qo'shish
+              </Button>
+            </DialogTrigger>
           <DialogContent className="bg-white border-slate-200">
             <DialogHeader>
               <DialogTitle className="font-display">
@@ -373,6 +463,7 @@ const Couriers = () => {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Stats */}
