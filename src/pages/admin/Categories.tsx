@@ -164,22 +164,22 @@ const Categories = () => {
                 Yangi kategoriya
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-white border-slate-200">
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto !bg-white border-slate-200">
               <DialogHeader>
-                <DialogTitle className="font-display text-xl">
+                <DialogTitle className="font-display text-xl text-slate-900">
                   {editingCategory ? "Kategoriyani tahrirlash" : "Yangi kategoriya qo'shish"}
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nomi (RU)</Label>
+                    <Label htmlFor="name" className="text-slate-700">Nomi (RU)</Label>
                     <Input 
                       id="name" 
                       name="name" 
                       defaultValue={editingCategory?.name} 
                       required 
-                      className="bg-slate-50 border-slate-200"
+                      className="bg-white border-slate-300 text-slate-900"
                       onChange={(e) => {
                         if (!editingCategory) {
                           const slugInput = document.getElementById('slug') as HTMLInputElement;
@@ -189,28 +189,28 @@ const Categories = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="name_uz">Nomi (UZ)</Label>
-                    <Input id="name_uz" name="name_uz" defaultValue={editingCategory?.name_uz || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="name_uz" className="text-slate-700">Nomi (UZ)</Label>
+                    <Input id="name_uz" name="name_uz" defaultValue={editingCategory?.name_uz || ''} className="bg-white border-slate-300 text-slate-900" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="slug">Slug</Label>
-                    <Input id="slug" name="slug" defaultValue={editingCategory?.slug} required className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="slug" className="text-slate-700">Slug</Label>
+                    <Input id="slug" name="slug" defaultValue={editingCategory?.slug} required className="bg-white border-slate-300 text-slate-900" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="sort_order">Tartib</Label>
-                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingCategory?.sort_order || 0} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="sort_order" className="text-slate-700">Tartib</Label>
+                    <Input id="sort_order" name="sort_order" type="number" defaultValue={editingCategory?.sort_order || 0} className="bg-white border-slate-300 text-slate-900" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Rasm</Label>
+                  <Label className="text-slate-700">Rasm</Label>
                   <Tabs defaultValue="upload" className="w-full">
-                    <TabsList className="w-full">
-                      <TabsTrigger value="upload" className="flex-1">Yuklash</TabsTrigger>
-                      <TabsTrigger value="url" className="flex-1">URL</TabsTrigger>
+                    <TabsList className="w-full bg-slate-100">
+                      <TabsTrigger value="upload" className="flex-1 data-[state=active]:bg-white">Yuklash</TabsTrigger>
+                      <TabsTrigger value="url" className="flex-1 data-[state=active]:bg-white">URL</TabsTrigger>
                     </TabsList>
                     <TabsContent value="upload" className="mt-2">
                       <ImageUpload
@@ -225,7 +225,7 @@ const Categories = () => {
                         placeholder="https://..."
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
-                        className="bg-slate-50 border-slate-200"
+                        className="bg-white border-slate-300 text-slate-900"
                       />
                     </TabsContent>
                   </Tabs>
@@ -233,18 +233,18 @@ const Categories = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="meta_title">Meta sarlavha</Label>
-                    <Input id="meta_title" name="meta_title" defaultValue={editingCategory?.meta_title || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="meta_title" className="text-slate-700">Meta sarlavha</Label>
+                    <Input id="meta_title" name="meta_title" defaultValue={editingCategory?.meta_title || ''} className="bg-white border-slate-300 text-slate-900" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="meta_description">Meta tavsif</Label>
-                    <Input id="meta_description" name="meta_description" defaultValue={editingCategory?.meta_description || ''} className="bg-slate-50 border-slate-200" />
+                    <Label htmlFor="meta_description" className="text-slate-700">Meta tavsif</Label>
+                    <Input id="meta_description" name="meta_description" defaultValue={editingCategory?.meta_description || ''} className="bg-white border-slate-300 text-slate-900" />
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Switch id="is_active" name="is_active" defaultChecked={editingCategory?.is_active ?? true} />
-                  <Label htmlFor="is_active">Faol</Label>
+                  <Label htmlFor="is_active" className="text-slate-700">Faol</Label>
                 </div>
 
                 <Button type="submit" className="w-full bg-gradient-primary" disabled={saveMutation.isPending}>
