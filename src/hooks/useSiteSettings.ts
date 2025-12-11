@@ -80,6 +80,13 @@ const defaultSettings: Record<string, string> = {
   promotions_empty_title: 'Hozircha aktsiyalar yo\'q',
   promotions_empty_description: 'Tez orada yangi takliflar bilan qaytamiz!',
   promotions_benefits_title: 'Nima uchun bizni tanlashadi?',
+  // Footer
+  footer_brand_description: 'Eng mazali milliy taomlar va zamonaviy fast food – premium xizmat bilan.',
+  footer_links_title: 'Havolalar',
+  footer_contact_title: 'Bog\'lanish',
+  footer_social_title: 'Ijtimoiy tarmoqlar',
+  footer_social_description: 'Bizni kuzating va aksiyalardan xabardor bo\'ling!',
+  footer_copyright: '© 2024 Bella Vista. Barcha huquqlar himoyalangan.',
 };
 
 export function useSiteSettings() {

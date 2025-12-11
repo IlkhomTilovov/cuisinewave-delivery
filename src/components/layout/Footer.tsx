@@ -11,6 +11,12 @@ export function Footer() {
   const instagram = getSetting('instagram_url');
   const telegram = getSetting('telegram_url');
   const facebook = getSetting('facebook_url');
+  const brandDescription = getSetting('footer_brand_description');
+  const linksTitle = getSetting('footer_links_title');
+  const contactTitle = getSetting('footer_contact_title');
+  const socialTitle = getSetting('footer_social_title');
+  const socialDescription = getSetting('footer_social_description');
+  const copyright = getSetting('footer_copyright');
 
   return (
     <footer className="bg-card border-t border-border">
@@ -28,13 +34,13 @@ export function Footer() {
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Eng mazali milliy taomlar va zamonaviy fast food – premium xizmat bilan.
+              {brandDescription}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-display font-semibold text-lg text-foreground mb-6">Havolalar</h4>
+            <h4 className="font-display font-semibold text-lg text-foreground mb-6">{linksTitle}</h4>
             <ul className="space-y-3">
               {[
                 { href: '/menu', label: 'Menyu' },
@@ -57,7 +63,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-semibold text-lg text-foreground mb-6">Bog'lanish</h4>
+            <h4 className="font-display font-semibold text-lg text-foreground mb-6">{contactTitle}</h4>
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
                 <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
@@ -88,7 +94,7 @@ export function Footer() {
 
           {/* Social */}
           <div>
-            <h4 className="font-display font-semibold text-lg text-foreground mb-6">Ijtimoiy tarmoqlar</h4>
+            <h4 className="font-display font-semibold text-lg text-foreground mb-6">{socialTitle}</h4>
             <div className="flex gap-3">
               {[
                 { icon: Instagram, href: instagram, label: 'Instagram' },
@@ -108,14 +114,14 @@ export function Footer() {
               ))}
             </div>
             <p className="mt-6 text-sm text-muted-foreground">
-              Bizni kuzating va aksiyalardan xabardor bo'ling!
+              {socialDescription}
             </p>
           </div>
         </div>
 
         <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 Bella Vista. Barcha huquqlar himoyalangan.
+            {copyright}
           </p>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link to="/privacy" className="hover:text-secondary transition-colors">
