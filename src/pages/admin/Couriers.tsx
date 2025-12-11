@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Search, Plus, Loader2, Phone, User, Car, Bike, Edit, Trash2, Package, ChevronDown, MapPin, Clock } from 'lucide-react';
+import { Search, Plus, Loader2, Phone, User, Car, Bike, Edit, Trash2, Package, ChevronDown, MapPin, Clock, Link2, Link2Off } from 'lucide-react';
 import { format } from 'date-fns';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -29,6 +29,12 @@ interface Courier {
   max_orders: number;
   notes: string | null;
   created_at: string;
+  user_id: string | null;
+}
+
+interface CourierUser {
+  user_id: string;
+  email: string;
 }
 
 const vehicleTypes = [
@@ -65,6 +71,7 @@ const Couriers = () => {
     vehicle_type: 'car',
     max_orders: 5,
     notes: '',
+    user_id: '',
   });
   
   const queryClient = useQueryClient();
@@ -78,6 +85,22 @@ const Couriers = () => {
         .order('name');
       if (error) throw error;
       return data as Courier[];
+    },
+  });
+
+  // Fetch users with courier role for linking
+  const { data: courierUsers } = useQuery({
+    queryKey: ['courier-users'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'courier');
+      if (error) throw error;
+      
+      // Get user emails from auth admin API is not possible client-side
+      // So we return user_ids only - admins will need to know which user to link
+      return data.map(r => ({ user_id: r.user_id })) as { user_id: string }[];
     },
   });
 
@@ -164,6 +187,7 @@ const Couriers = () => {
       vehicle_type: 'car',
       max_orders: 5,
       notes: '',
+      user_id: '',
     });
     setEditingCourier(null);
     setIsDialogOpen(false);
@@ -171,10 +195,14 @@ const Couriers = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const submitData = {
+      ...formData,
+      user_id: formData.user_id || null,
+    };
     if (editingCourier) {
-      updateMutation.mutate({ id: editingCourier.id, data: formData });
+      updateMutation.mutate({ id: editingCourier.id, data: submitData });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(submitData);
     }
   };
 
@@ -186,6 +214,7 @@ const Couriers = () => {
       vehicle_type: courier.vehicle_type,
       max_orders: courier.max_orders,
       notes: courier.notes || '',
+      user_id: courier.user_id || '',
     });
     setIsDialogOpen(true);
   };
@@ -309,6 +338,29 @@ const Couriers = () => {
                 />
               </div>
               
+              <div className="space-y-2">
+                <Label>Foydalanuvchi hisobi</Label>
+                <Select 
+                  value={formData.user_id} 
+                  onValueChange={(value) => setFormData({ ...formData, user_id: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Foydalanuvchi tanlash (ixtiyoriy)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Bog'lanmagan</SelectItem>
+                    {courierUsers?.map((user) => (
+                      <SelectItem key={user.user_id} value={user.user_id}>
+                        {user.user_id.slice(0, 8)}...
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Kuryer panelga kirish uchun foydalanuvchi hisobini bog'lang
+                </p>
+              </div>
+              
               <div className="flex gap-2 justify-end">
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Bekor qilish
@@ -401,12 +453,19 @@ const Couriers = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
                     <Badge className={courier.is_active ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}>
                       {courier.is_active ? 'Faol' : 'Nofaol'}
                     </Badge>
                     <Badge className={courier.is_available ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}>
                       {courier.is_available ? 'Bo\'sh' : 'Band'}
+                    </Badge>
+                    <Badge className={courier.user_id ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500'}>
+                      {courier.user_id ? (
+                        <><Link2 className="h-3 w-3 mr-1" /> Bog'langan</>
+                      ) : (
+                        <><Link2Off className="h-3 w-3 mr-1" /> Bog'lanmagan</>
+                      )}
                     </Badge>
                     <Badge variant="outline" className="ml-auto">
                       <Package className="h-3 w-3 mr-1" />

@@ -127,6 +127,7 @@ export type Database = {
           name: string
           notes: string | null
           phone: string
+          user_id: string | null
           vehicle_type: string | null
         }
         Insert: {
@@ -139,6 +140,7 @@ export type Database = {
           name: string
           notes?: string | null
           phone: string
+          user_id?: string | null
           vehicle_type?: string | null
         }
         Update: {
@@ -151,6 +153,7 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string
+          user_id?: string | null
           vehicle_type?: string | null
         }
         Relationships: []
