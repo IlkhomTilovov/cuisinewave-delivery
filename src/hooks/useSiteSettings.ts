@@ -63,6 +63,23 @@ const defaultSettings: Record<string, string> = {
   faq_section_title: "Ko'p beriladigan savollar",
   faq_section_description: 'Savollaringizga javoblar',
   map_section_title: 'Bizning manzil',
+  // Delivery page
+  delivery_page_title: 'Yetkazib berish xizmati',
+  delivery_page_description: 'Tez va ishonchli yetkazib berish xizmati. Issiq va mazali taomlarni eshigingizgacha yetkazib beramiz.',
+  delivery_page_image: 'https://images.unsplash.com/photo-1526367790999-0150786686a2?w=600&h=400&fit=crop',
+  delivery_zones_title: 'Yetkazib berish hududlari',
+  delivery_zones_description: 'Toshkent shahri bo\'ylab yetkazib beramiz',
+  delivery_payment_title: 'To\'lov usullari',
+  delivery_payment_description: 'Sizga qulay usulda to\'lang',
+  delivery_steps_title: 'Qanday ishlaydi?',
+  delivery_cta_title: 'Hoziroq buyurtma bering!',
+  delivery_cta_description: 'Mazali taomlarimizni uyingizda tatib ko\'ring',
+  // Promotions page
+  promotions_page_title: 'Aktsiyalar va chegirmalar',
+  promotions_page_description: 'Eng yaxshi narxlarda mazali taomlardan bahramand bo\'ling',
+  promotions_empty_title: 'Hozircha aktsiyalar yo\'q',
+  promotions_empty_description: 'Tez orada yangi takliflar bilan qaytamiz!',
+  promotions_benefits_title: 'Nima uchun bizni tanlashadi?',
 };
 
 export function useSiteSettings() {
