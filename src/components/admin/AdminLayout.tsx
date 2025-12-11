@@ -32,7 +32,6 @@ const navItems = [
   { href: '/admin/inventory-reports', label: 'Hisobotlar', icon: BarChart3 },
   { href: '/admin/couriers', label: 'Kuryerlar', icon: Bike },
   { href: '/admin/users', label: 'Foydalanuvchilar', icon: Users },
-  { href: '/admin/about-content', label: 'Biz haqimizda', icon: FileText },
   { href: '/admin/content', label: 'Kontent', icon: FileText },
 ];
 
