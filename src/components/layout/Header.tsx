@@ -6,6 +6,7 @@ import { useCartStore } from '@/lib/cart';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const navLinks = [
   { href: '/menu', label: 'Menyu' },
@@ -21,6 +22,11 @@ export function Header() {
   const location = useLocation();
   const totalItems = useCartStore((state) => state.getTotalItems());
   const { isAdmin } = useAuth();
+  const { getSetting } = useSiteSettings();
+
+  const siteLogo = getSetting('site_logo');
+  const siteName = getSetting('site_name') || 'Bella Vista';
+  const siteTagline = getSetting('site_tagline') || 'Restaurant';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-dark">
@@ -28,14 +34,22 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
-              <span className="text-primary-foreground font-display font-bold text-2xl">B</span>
-            </div>
+            {siteLogo ? (
+              <img 
+                src={siteLogo} 
+                alt={siteName}
+                className="w-12 h-12 rounded-2xl object-cover shadow-glow group-hover:scale-105 transition-transform"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
+                <span className="text-primary-foreground font-display font-bold text-2xl">{siteName.charAt(0)}</span>
+              </div>
+            )}
             <div>
               <h1 className="font-display font-bold text-xl text-foreground leading-tight tracking-wide">
-                Bella Vista
+                {siteName}
               </h1>
-              <p className="text-xs text-secondary">Restaurant</p>
+              <p className="text-xs text-secondary">{siteTagline}</p>
             </div>
           </Link>
 
