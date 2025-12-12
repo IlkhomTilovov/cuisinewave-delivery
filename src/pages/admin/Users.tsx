@@ -9,13 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import { 
   Plus, Trash2, Search, Loader2, Shield, UserCog, User, Download, 
-  Users as UsersIcon, Ban, CheckCircle, Info, Bike, Calendar, Clock,
-  Mail, Filter, HelpCircle
+  Users as UsersIcon, Info, Bike, Calendar, Eye, EyeOff,
+  Filter, HelpCircle
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
@@ -30,8 +29,6 @@ interface UserRole {
   email?: string;
   full_name?: string;
   phone?: string;
-  is_blocked?: boolean;
-  last_sign_in?: string;
 }
 
 interface Profile {
@@ -77,14 +74,12 @@ const Users = () => {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState('');
   const [newUserRole, setNewUserRole] = useState<AppRole>('operator');
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [searchMode, setSearchMode] = useState<'uuid' | 'select'>('select');
-  const [userSearchQuery, setUserSearchQuery] = useState('');
-  const [foundUser, setFoundUser] = useState<Profile | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserFullName, setNewUserFullName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
   const { userRole } = useAuth();
 
@@ -121,97 +116,6 @@ const Users = () => {
     enabled: userRole === 'superadmin',
   });
 
-  // Fetch all profiles for user selection
-  const { data: allProfiles } = useQuery({
-    queryKey: ['all-profiles'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data as Profile[];
-    },
-    enabled: userRole === 'superadmin',
-  });
-
-  // Search user by UUID or email
-  const searchUserById = async (userId: string) => {
-    setIsSearching(true);
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
-      if (error) throw error;
-      setFoundUser(data);
-      if (!data) {
-        toast.error("Foydalanuvchi topilmadi");
-      }
-    } catch (error: any) {
-      toast.error("Qidirish xatosi: " + error.message);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  // Filter profiles that don't have the selected role yet
-  const availableProfiles = useMemo(() => {
-    if (!allProfiles || !userRoles) return [];
-    const existingUserIds = userRoles.map(ur => ur.user_id);
-    return allProfiles.filter(p => !existingUserIds.includes(p.user_id));
-  }, [allProfiles, userRoles]);
-
-  // Filtered profiles based on search
-  const filteredProfiles = useMemo(() => {
-    if (!userSearchQuery) return availableProfiles.slice(0, 10);
-    return availableProfiles.filter(p => 
-      p.full_name?.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-      p.phone?.includes(userSearchQuery) ||
-      p.user_id.includes(userSearchQuery)
-    ).slice(0, 10);
-  }, [availableProfiles, userSearchQuery]);
-
-  const addRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: AppRole }) => {
-      // Check if user already has a role
-      const { data: existing } = await supabase
-        .from('user_roles')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
-      if (existing) {
-        // Update existing role
-        const { error } = await supabase
-          .from('user_roles')
-          .update({ role: role as any })
-          .eq('user_id', userId);
-        if (error) throw error;
-      } else {
-        // Insert new role
-        const { error } = await supabase
-          .from('user_roles')
-          .insert({ user_id: userId, role: role as any });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-user-roles'] });
-      toast.success("Foydalanuvchi roli qo'shildi");
-      setIsDialogOpen(false);
-      setSelectedUserId('');
-      setNewUserRole('operator');
-      setFoundUser(null);
-      setUserSearchQuery('');
-    },
-    onError: (error: any) => {
-      toast.error("Xatolik: " + error.message);
-    },
-  });
-
   const deleteRoleMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -229,13 +133,83 @@ const Users = () => {
     },
   });
 
-  const handleAddRole = async (e: React.FormEvent) => {
+  // Create new user with role
+  const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedUserId.trim()) {
-      toast.error("Foydalanuvchi tanlang");
+    
+    if (!newUserEmail.trim() || !newUserPassword.trim()) {
+      toast.error("Email va parol kiritilishi shart");
       return;
     }
-    addRoleMutation.mutate({ userId: selectedUserId.trim(), role: newUserRole });
+
+    if (newUserPassword.length < 6) {
+      toast.error("Parol kamida 6 ta belgidan iborat bo'lishi kerak");
+      return;
+    }
+
+    setIsCreating(true);
+    
+    try {
+      // Create user via Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: newUserEmail.trim(),
+        password: newUserPassword,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: newUserFullName.trim() || null
+          }
+        }
+      });
+
+      if (authError) throw authError;
+      
+      if (!authData.user) {
+        throw new Error("Foydalanuvchi yaratilmadi");
+      }
+
+      // Create profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: authData.user.id,
+          full_name: newUserFullName.trim() || null
+        });
+
+      if (profileError) {
+        console.error("Profile error:", profileError);
+      }
+
+      // Add role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: authData.user.id,
+          role: newUserRole as any
+        });
+
+      if (roleError) throw roleError;
+
+      queryClient.invalidateQueries({ queryKey: ['admin-user-roles'] });
+      toast.success("Foydalanuvchi muvaffaqiyatli yaratildi");
+      
+      // Reset form
+      setIsDialogOpen(false);
+      setNewUserEmail('');
+      setNewUserPassword('');
+      setNewUserFullName('');
+      setNewUserRole('operator');
+      
+    } catch (error: any) {
+      console.error("Create user error:", error);
+      if (error.message?.includes('already registered')) {
+        toast.error("Bu email allaqachon ro'yxatdan o'tgan");
+      } else {
+        toast.error("Xatolik: " + error.message);
+      }
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   // Export users to CSV
@@ -340,106 +314,75 @@ const Users = () => {
             <DialogTrigger asChild>
               <Button className="bg-gradient-primary">
                 <Plus className="h-4 w-4 mr-2" />
-                Rol qo'shish
+                Foydalanuvchi qo'shish
               </Button>
             </DialogTrigger>
-            <DialogContent className="!bg-white border-slate-200 max-w-lg">
+            <DialogContent className="!bg-white border-slate-200 max-w-md">
               <DialogHeader>
                 <DialogTitle className="font-display text-xl text-slate-900">
-                  Foydalanuvchiga rol qo'shish
+                  Yangi foydalanuvchi
                 </DialogTitle>
                 <DialogDescription className="text-slate-600">
-                  Ro'yxatdan o'tgan foydalanuvchini tanlang va unga rol bering
+                  Email va parol orqali yangi foydalanuvchi yarating
                 </DialogDescription>
               </DialogHeader>
               
-              <Tabs value={searchMode} onValueChange={(v) => setSearchMode(v as 'uuid' | 'select')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="select">Ro'yxatdan tanlash</TabsTrigger>
-                  <TabsTrigger value="uuid">UUID kiritish</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="select" className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <Label className="text-slate-700">Foydalanuvchini qidirish</Label>
-                    <Input
-                      placeholder="Ism yoki telefon..."
-                      value={userSearchQuery}
-                      onChange={(e) => setUserSearchQuery(e.target.value)}
-                      className="bg-white border-slate-300 text-slate-900"
-                    />
-                  </div>
-                  
-                  <div className="max-h-48 overflow-y-auto space-y-2">
-                    {filteredProfiles.length > 0 ? (
-                      filteredProfiles.map(profile => (
-                        <div
-                          key={profile.id}
-                          onClick={() => {
-                            setSelectedUserId(profile.user_id);
-                            setFoundUser(profile);
-                          }}
-                          className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                            selectedUserId === profile.user_id 
-                              ? 'border-blue-500 bg-blue-50' 
-                              : 'border-slate-200 hover:border-blue-300 bg-white'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium text-slate-900">{profile.full_name || 'Noma\'lum'}</p>
-                              <p className="text-sm text-slate-500">{profile.phone || '-'}</p>
-                            </div>
-                            {selectedUserId === profile.user_id && (
-                              <CheckCircle className="h-5 w-5 text-blue-600" />
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-4 text-slate-500">
-                        {userSearchQuery ? "Topilmadi" : "Yangi foydalanuvchilar yo'q"}
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="uuid" className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="userId" className="text-slate-700">Foydalanuvchi ID (UUID)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="userId"
-                        value={selectedUserId}
-                        onChange={(e) => setSelectedUserId(e.target.value)}
-                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                        className="bg-white border-slate-300 text-slate-900"
-                      />
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        className="border-slate-300 text-slate-700 hover:bg-slate-100"
-                        onClick={() => searchUserById(selectedUserId)}
-                        disabled={isSearching || !selectedUserId}
-                      >
-                        {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {foundUser && (
-                    <div className="p-3 rounded-lg bg-green-50 border border-green-200">
-                      <p className="text-sm text-green-600 mb-1">Foydalanuvchi topildi:</p>
-                      <p className="font-medium text-slate-900">{foundUser.full_name || 'Noma\'lum'}</p>
-                      <p className="text-sm text-slate-500">{foundUser.phone || '-'}</p>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-
-              <form onSubmit={handleAddRole} className="space-y-4 mt-4">
+              <form onSubmit={handleCreateUser} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="role" className="text-slate-700">Rol</Label>
+                  <Label htmlFor="fullName" className="text-slate-700">Ism (ixtiyoriy)</Label>
+                  <Input
+                    id="fullName"
+                    value={newUserFullName}
+                    onChange={(e) => setNewUserFullName(e.target.value)}
+                    placeholder="Foydalanuvchi ismi"
+                    className="bg-white border-slate-300 text-slate-900"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-slate-700">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    placeholder="foydalanuvchi@example.com"
+                    className="bg-white border-slate-300 text-slate-900"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-slate-700">Parol *</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={newUserPassword}
+                      onChange={(e) => setNewUserPassword(e.target.value)}
+                      placeholder="Kamida 6 ta belgi"
+                      className="bg-white border-slate-300 text-slate-900 pr-10"
+                      required
+                      minLength={6}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-slate-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-slate-400" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="role" className="text-slate-700">Rol *</Label>
                   <Select value={newUserRole} onValueChange={(v) => setNewUserRole(v as AppRole)}>
                     <SelectTrigger className="bg-white border-slate-300 text-slate-900">
                       <SelectValue placeholder="Rolni tanlang" />
@@ -464,12 +407,12 @@ const Users = () => {
                 <Button
                   type="submit"
                   className="w-full bg-gradient-primary"
-                  disabled={addRoleMutation.isPending || !selectedUserId}
+                  disabled={isCreating}
                 >
-                  {addRoleMutation.isPending && (
+                  {isCreating && (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   )}
-                  Qo'shish
+                  Yaratish
                 </Button>
               </form>
             </DialogContent>
