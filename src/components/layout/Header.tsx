@@ -106,13 +106,6 @@ export function Header() {
               </Link>
             )}
 
-            {/* CTA Button */}
-            <Link to="/reservation" className="hidden md:block">
-              <Button variant="hero" size="default">
-                Stol band qilish
-              </Button>
-            </Link>
-
             {/* Mobile Menu Toggle */}
             <Button
               variant="glass"
@@ -144,13 +137,6 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <div className="pt-4 mt-2 border-t border-white/10">
-                <Link to="/reservation" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="hero" size="lg" className="w-full">
-                    Stol band qilish
-                  </Button>
-                </Link>
-              </div>
             </div>
           </nav>
         )}
