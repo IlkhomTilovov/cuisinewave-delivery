@@ -159,10 +159,24 @@ const Users = () => {
         }
       });
 
-      if (error) throw error;
+      // Handle edge function errors (including 400 responses)
+      if (error) {
+        const errorMessage = error.message || 'Xatolik yuz berdi';
+        if (errorMessage.includes('already registered') || errorMessage.includes('already been registered')) {
+          toast.error("Bu email allaqachon ro'yxatdan o'tgan");
+        } else {
+          toast.error("Xatolik: " + errorMessage);
+        }
+        return;
+      }
       
       if (data?.error) {
-        throw new Error(data.error);
+        if (data.error.includes('already registered') || data.error.includes('already been registered')) {
+          toast.error("Bu email allaqachon ro'yxatdan o'tgan");
+        } else {
+          toast.error("Xatolik: " + data.error);
+        }
+        return;
       }
 
       queryClient.invalidateQueries({ queryKey: ['admin-user-roles'] });
