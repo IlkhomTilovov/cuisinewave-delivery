@@ -17,6 +17,11 @@ export function Footer() {
   const socialTitle = getSetting('footer_social_title');
   const socialDescription = getSetting('footer_social_description');
   const copyright = getSetting('footer_copyright');
+  
+  // Dynamic logo & branding
+  const siteLogo = getSetting('site_logo');
+  const siteName = getSetting('site_name') || 'Bella Vista';
+  const siteTagline = getSetting('site_tagline') || 'Restaurant';
 
   return (
     <footer className="bg-card border-t border-border">
@@ -25,12 +30,20 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
-                <span className="text-primary-foreground font-display font-bold text-2xl">B</span>
-              </div>
+              {siteLogo ? (
+                <img 
+                  src={siteLogo} 
+                  alt={siteName}
+                  className="w-12 h-12 rounded-2xl object-cover shadow-glow"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow">
+                  <span className="text-primary-foreground font-display font-bold text-2xl">{siteName.charAt(0)}</span>
+                </div>
+              )}
               <div>
-                <h3 className="font-display font-bold text-xl text-foreground">Bella Vista</h3>
-                <p className="text-xs text-secondary">Restaurant</p>
+                <h3 className="font-display font-bold text-xl text-foreground">{siteName}</h3>
+                <p className="text-xs text-secondary">{siteTagline}</p>
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
