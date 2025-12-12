@@ -1,5 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Phone, Mail, MapPin, Clock, Instagram, Send, Facebook, Award, Users, Utensils, Star, ChefHat, Quote, Play } from 'lucide-react';
@@ -51,6 +52,7 @@ const timelineEvents = [
 ];
 
 const About = () => {
+  useDynamicTitle('Biz haqimizda');
   const { getSetting } = useSiteSettings();
   const [activeImage, setActiveImage] = useState<string | null>(null);
 

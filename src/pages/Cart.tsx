@@ -3,8 +3,10 @@ import { Layout } from '@/components/layout/Layout';
 import { useCartStore } from '@/lib/cart';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const Cart = () => {
+  useDynamicTitle('Savat');
   const { items, updateQuantity, removeItem, getTotalPrice, clearCart } = useCartStore();
 
   if (items.length === 0) {

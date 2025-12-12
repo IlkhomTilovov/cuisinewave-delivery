@@ -9,7 +9,8 @@ import { ProductCard } from '@/components/products/ProductCard';
 import { useCartStore } from '@/lib/cart';
 import { toast } from 'sonner';
 import { ChevronRight, ArrowLeft, Minus, Plus, ShoppingCart, Clock, Flame, Scale, Truck, Shield, Star, Heart, Share2, CheckCircle2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +30,9 @@ const ProductDetail = () => {
       return data;
     },
   });
+
+  // Dynamic title with product name
+  useDynamicTitle(product?.name);
 
   const { data: relatedProducts } = useQuery({
     queryKey: ['related-products', product?.category_id],

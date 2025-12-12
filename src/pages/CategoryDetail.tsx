@@ -6,6 +6,7 @@ import { ProductCard } from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const CategoryDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -23,6 +24,9 @@ const CategoryDetail = () => {
       return data;
     },
   });
+
+  // Dynamic title with category name
+  useDynamicTitle(category?.name);
 
   const { data: products, isLoading: productsLoading } = useQuery({
     queryKey: ['category-products', slug],

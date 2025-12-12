@@ -1,5 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 const Contact = () => {
+  useDynamicTitle('Aloqa');
   const { getSetting } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',

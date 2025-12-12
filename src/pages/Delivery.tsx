@@ -1,5 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -22,6 +23,7 @@ const paymentMethods = [
 ];
 
 const Delivery = () => {
+  useDynamicTitle('Yetkazib berish');
   const { getSetting } = useSiteSettings();
 
   return (
