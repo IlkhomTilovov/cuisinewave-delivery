@@ -1,5 +1,6 @@
 import { Layout } from '@/components/layout/Layout';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { Percent, Clock, Gift, Sparkles } from 'lucide-react';
 
 const Promotions = () => {
+  useDynamicTitle('Aksiyalar');
   const { getSetting } = useSiteSettings();
 
   // Fetch products with discounts

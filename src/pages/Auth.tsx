@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const authSchema = z.object({
   email: z.string().email("Noto'g'ri email formati"),
@@ -15,6 +16,7 @@ const authSchema = z.object({
 });
 
 const Auth = () => {
+  useDynamicTitle('Kirish');
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

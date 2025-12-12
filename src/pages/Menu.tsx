@@ -10,8 +10,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const Menu = () => {
+  useDynamicTitle('Menyu');
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const selectedCategory = searchParams.get('category');
