@@ -11,6 +11,18 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // API secret tekshiruvi
+    const apiSecret = Deno.env.get('LOW_STOCK_API_SECRET')
+    const authHeader = req.headers.get('x-api-secret')
+    
+    if (!apiSecret || authHeader !== apiSecret) {
+      console.error('Unauthorized access attempt to check-low-stock')
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const telegramToken = Deno.env.get('TELEGRAM_BOT_TOKEN')
