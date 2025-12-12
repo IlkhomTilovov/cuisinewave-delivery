@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.setup-courier-accounts]
 verify_jwt = true
+
+[functions.create-admin-user]
+verify_jwt = true
