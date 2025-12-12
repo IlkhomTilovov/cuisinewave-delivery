@@ -20,14 +20,14 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, isAdmin, loading, roleLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    if (!loading && !roleLoading && user && isAdmin) {
       navigate('/admin');
     }
-  }, [user, navigate]);
+  }, [user, isAdmin, loading, roleLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +51,6 @@ const Auth = () => {
           }
         } else {
           toast.success("Muvaffaqiyatli kirdingiz!");
-          navigate('/admin');
         }
       } else {
         const { error } = await signUp(email, password);
