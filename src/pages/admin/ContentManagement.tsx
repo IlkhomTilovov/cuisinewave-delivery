@@ -12,7 +12,7 @@ import { ImageUpload } from '@/components/admin/ImageUpload';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Loader2, Save, Home, UtensilsCrossed, Info, Truck, Gift, Phone, Share2, Plus, Pencil, Trash2, Users, HelpCircle, Award, LayoutGrid } from 'lucide-react';
+import { Loader2, Save, Home, UtensilsCrossed, Info, Truck, Gift, Phone, Share2, Plus, Pencil, Trash2, Users, HelpCircle, Award, LayoutGrid, ImageIcon } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface SiteSetting {
@@ -48,6 +48,14 @@ interface AwardItem {
   sort_order: number;
   is_active: boolean;
 }
+
+// Logo va branding sozlamalari
+const brandingSettings = [
+  { key: 'site_logo', title: 'Sayt logosi', type: 'image' },
+  { key: 'site_favicon', title: 'Favicon (32x32)', type: 'image' },
+  { key: 'site_name', title: 'Sayt nomi', type: 'input' },
+  { key: 'site_tagline', title: 'Tagline', type: 'input' },
+];
 
 // Bosh sahifa kontenti
 const homePageSettings = {
@@ -316,8 +324,12 @@ export default function ContentManagement() {
           )}
         </div>
 
-        <Tabs defaultValue="home" className="space-y-6">
+        <Tabs defaultValue="branding" className="space-y-6">
           <TabsList className="bg-slate-100 border border-slate-200 p-1 flex-wrap h-auto gap-1">
+            <TabsTrigger value="branding" className="flex items-center gap-2 data-[state=active]:bg-white">
+              <ImageIcon className="w-4 h-4" />
+              Logo & Branding
+            </TabsTrigger>
             <TabsTrigger value="home" className="flex items-center gap-2 data-[state=active]:bg-white">
               <Home className="w-4 h-4" />
               Bosh sahifa
@@ -351,6 +363,22 @@ export default function ContentManagement() {
               Ijtimoiy
             </TabsTrigger>
           </TabsList>
+
+          {/* Logo & Branding */}
+          <TabsContent value="branding" className="space-y-6">
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-900">Logo va Branding</CardTitle>
+                <CardDescription className="text-slate-500">Sayt logosi, favicon va branding sozlamalari</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {brandingSettings.map(renderField)}
+                <p className="text-sm text-slate-500 mt-4">
+                  * Favicon o'zgarishi uchun sahifani yangilang
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Bosh sahifa */}
           <TabsContent value="home" className="space-y-6">
