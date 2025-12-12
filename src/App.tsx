@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "next-themes";
 import { useDynamicFavicon } from "@/hooks/useDynamicFavicon";
+import { useDynamicTitle } from "@/hooks/useDynamicTitle";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import About from "./pages/About";
@@ -36,8 +37,9 @@ import ContentManagement from "./pages/admin/ContentManagement";
 const queryClient = new QueryClient();
 
 function AppContent() {
-  // Dynamic favicon based on site settings
+  // Dynamic favicon and title based on site settings
   useDynamicFavicon();
+  useDynamicTitle();
 
   return (
     <>
