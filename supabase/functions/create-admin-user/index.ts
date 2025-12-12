@@ -13,6 +13,54 @@ serve(async (req) => {
   }
 
   try {
+    // Create admin client with service role
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    );
+
+    // Verify caller is authenticated and is superadmin
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error("No authorization header provided");
+      return new Response(
+        JSON.stringify({ error: "Autentifikatsiya talab qilinadi" }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user: callerUser }, error: authError } = await supabaseAdmin.auth.getUser(token);
+
+    if (authError || !callerUser) {
+      console.error("Invalid token:", authError);
+      return new Response(
+        JSON.stringify({ error: "Yaroqsiz token" }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if caller has superadmin role
+    const { data: callerRole, error: roleError } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', callerUser.id)
+      .single();
+
+    if (roleError || callerRole?.role !== 'superadmin') {
+      console.error("Caller is not superadmin:", callerUser.id, callerRole?.role);
+      return new Response(
+        JSON.stringify({ error: "Faqat superadmin foydalanuvchi yaratishi mumkin" }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { email, password, fullName, role } = await req.json();
 
     // Validate inputs
@@ -38,20 +86,8 @@ serve(async (req) => {
       );
     }
 
-    // Create admin client with service role
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
-
     // Create user
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    const { data: authData, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
       email: email.trim(),
       password: password,
       email_confirm: true,
@@ -60,10 +96,10 @@ serve(async (req) => {
       }
     });
 
-    if (authError) {
-      console.error("Auth error:", authError);
+    if (createUserError) {
+      console.error("Auth error:", createUserError);
       return new Response(
-        JSON.stringify({ error: authError.message }),
+        JSON.stringify({ error: createUserError.message }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -88,17 +124,17 @@ serve(async (req) => {
     }
 
     // Add role
-    const { error: roleError } = await supabaseAdmin
+    const { error: addRoleError } = await supabaseAdmin
       .from('user_roles')
       .insert({
         user_id: authData.user.id,
         role: role || 'operator'
       });
 
-    if (roleError) {
-      console.error("Role error:", roleError);
+    if (addRoleError) {
+      console.error("Role error:", addRoleError);
       return new Response(
-        JSON.stringify({ error: "Rol qo'shishda xatolik: " + roleError.message }),
+        JSON.stringify({ error: "Rol qo'shishda xatolik: " + addRoleError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
