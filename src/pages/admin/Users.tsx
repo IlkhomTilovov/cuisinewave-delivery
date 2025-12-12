@@ -133,7 +133,7 @@ const Users = () => {
     },
   });
 
-  // Create new user with role
+  // Create new user with role via edge function
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -150,45 +150,20 @@ const Users = () => {
     setIsCreating(true);
     
     try {
-      // Create user via Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newUserEmail.trim(),
-        password: newUserPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: newUserFullName.trim() || null
-          }
+      const { data, error } = await supabase.functions.invoke('create-admin-user', {
+        body: {
+          email: newUserEmail.trim(),
+          password: newUserPassword,
+          fullName: newUserFullName.trim() || null,
+          role: newUserRole
         }
       });
 
-      if (authError) throw authError;
+      if (error) throw error;
       
-      if (!authData.user) {
-        throw new Error("Foydalanuvchi yaratilmadi");
+      if (data?.error) {
+        throw new Error(data.error);
       }
-
-      // Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authData.user.id,
-          full_name: newUserFullName.trim() || null
-        });
-
-      if (profileError) {
-        console.error("Profile error:", profileError);
-      }
-
-      // Add role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: authData.user.id,
-          role: newUserRole as any
-        });
-
-      if (roleError) throw roleError;
 
       queryClient.invalidateQueries({ queryKey: ['admin-user-roles'] });
       toast.success("Foydalanuvchi muvaffaqiyatli yaratildi");
@@ -200,12 +175,13 @@ const Users = () => {
       setNewUserFullName('');
       setNewUserRole('operator');
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Create user error:", error);
-      if (error.message?.includes('already registered')) {
+      const errorMessage = error instanceof Error ? error.message : "Xatolik yuz berdi";
+      if (errorMessage.includes('already registered') || errorMessage.includes('already been registered')) {
         toast.error("Bu email allaqachon ro'yxatdan o'tgan");
       } else {
-        toast.error("Xatolik: " + error.message);
+        toast.error("Xatolik: " + errorMessage);
       }
     } finally {
       setIsCreating(false);
