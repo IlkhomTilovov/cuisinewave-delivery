@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,7 @@ export default function CourierPanel() {
   const [authLoading, setAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("orders");
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Set up auth state listener
   useEffect(() => {
@@ -378,7 +380,40 @@ export default function CourierPanel() {
     );
   }
 
-  // Courier not found - user is authenticated but not a courier
+  // Check if user is an admin - redirect them to admin panel
+  const { data: userRole, isLoading: roleLoading } = useQuery({
+    queryKey: ["user-role-check", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.role;
+    },
+    enabled: !!user?.id && !courier,
+  });
+
+  // Redirect admins to admin panel
+  useEffect(() => {
+    if (userRole && ['superadmin', 'manager', 'operator'].includes(userRole)) {
+      toast.info("Admin paneliga yo'naltirilmoqda...");
+      navigate('/admin');
+    }
+  }, [userRole, navigate]);
+
+  // Show loading while checking role
+  if (roleLoading && !courier) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Courier not found - user is authenticated but not a courier (and not an admin)
   if (!courier) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
