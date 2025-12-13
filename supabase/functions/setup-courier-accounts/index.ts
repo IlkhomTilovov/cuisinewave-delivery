@@ -30,6 +30,43 @@ Deno.serve(async (req) => {
       },
     });
 
+    // Verify caller is superadmin or manager
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization header majburiy' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user: caller }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    
+    if (authError || !caller) {
+      return new Response(
+        JSON.stringify({ error: 'Autentifikatsiya xatosi' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check caller's role
+    const { data: callerRole } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', caller.id)
+      .in('role', ['superadmin', 'manager'])
+      .maybeSingle();
+
+    if (!callerRole) {
+      console.log(`Unauthorized access attempt by user: ${caller.id}`);
+      return new Response(
+        JSON.stringify({ error: 'Bu amalni bajarish uchun ruxsatingiz yo\'q' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`Authorized user ${caller.id} with role ${callerRole.role} initiating courier setup`);
+
     // Get request body
     const { defaultPassword } = await req.json();
     
