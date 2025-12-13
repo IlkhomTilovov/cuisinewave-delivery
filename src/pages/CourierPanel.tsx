@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, MapPin, Package, User, LogOut, Loader2, Eye, EyeOff, Mail } from "lucide-react";
+import { Phone, MapPin, Package, User, LogOut, Loader2, Eye, EyeOff, Mail, Check, Truck } from "lucide-react";
 import { format } from "date-fns";
 import { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
@@ -37,6 +37,7 @@ export default function CourierPanel() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   // Set up auth state listener
   useEffect(() => {
@@ -122,6 +123,60 @@ export default function CourierPanel() {
     },
     enabled: !!courier?.id,
   });
+
+  // Update order status mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ orderId, newStatus, oldStatus }: { orderId: string; newStatus: string; oldStatus: string }) => {
+      // Update order status
+      const { error: orderError } = await supabase
+        .from("orders")
+        .update({ status: newStatus })
+        .eq("id", orderId);
+      
+      if (orderError) throw orderError;
+
+      // Record status history
+      const { error: historyError } = await supabase
+        .from("order_status_history")
+        .insert({
+          order_id: orderId,
+          old_status: oldStatus,
+          new_status: newStatus,
+          changed_by: user?.id,
+        });
+      
+      if (historyError) throw historyError;
+    },
+    onSuccess: (_, variables) => {
+      const statusMessages: Record<string, string> = {
+        on_the_way: "Buyurtma qabul qilindi va yo'lga chiqildi",
+        delivered: "Buyurtma muvaffaqiyatli yetkazildi",
+      };
+      toast.success(statusMessages[variables.newStatus] || "Status yangilandi");
+      queryClient.invalidateQueries({ queryKey: ["courier-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["courier-completed-orders"] });
+    },
+    onError: (error) => {
+      console.error("Status update error:", error);
+      toast.error("Xatolik yuz berdi");
+    },
+  });
+
+  const handleAcceptOrder = (orderId: string, currentStatus: string) => {
+    updateStatusMutation.mutate({ 
+      orderId, 
+      newStatus: "on_the_way", 
+      oldStatus: currentStatus 
+    });
+  };
+
+  const handleDeliverOrder = (orderId: string, currentStatus: string) => {
+    updateStatusMutation.mutate({ 
+      orderId, 
+      newStatus: "delivered", 
+      oldStatus: currentStatus 
+    });
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -360,15 +415,49 @@ export default function CourierPanel() {
                     </div>
                   )}
 
-                  <div className="mt-4 pt-3 border-t flex items-center justify-between">
-                    <p className="font-semibold">
-                      {Number(order.total_price).toLocaleString()} so'm
-                    </p>
-                    {order.notes && (
-                      <p className="text-sm text-muted-foreground truncate max-w-[150px]">
-                        {order.notes}
+                  <div className="mt-4 pt-3 border-t">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="font-semibold">
+                        {Number(order.total_price).toLocaleString()} so'm
                       </p>
-                    )}
+                      {order.notes && (
+                        <p className="text-sm text-muted-foreground truncate max-w-[150px]">
+                          {order.notes}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* Action buttons */}
+                    <div className="flex gap-2">
+                      {(order.status === "ready" || order.status === "new" || order.status === "cooking") && (
+                        <Button
+                          onClick={() => handleAcceptOrder(order.id, order.status)}
+                          disabled={updateStatusMutation.isPending}
+                          className="flex-1 bg-purple-600 hover:bg-purple-700"
+                        >
+                          {updateStatusMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Truck className="h-4 w-4 mr-2" />
+                          )}
+                          Qabul qildim
+                        </Button>
+                      )}
+                      {order.status === "on_the_way" && (
+                        <Button
+                          onClick={() => handleDeliverOrder(order.id, order.status)}
+                          disabled={updateStatusMutation.isPending}
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          {updateStatusMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Check className="h-4 w-4 mr-2" />
+                          )}
+                          Yetkazib berdim
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
