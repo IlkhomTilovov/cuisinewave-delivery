@@ -150,7 +150,7 @@ const Users = () => {
     setIsCreating(true);
     
     try {
-      const { data, error } = await supabase.functions.invoke('create-admin-user', {
+      const response = await supabase.functions.invoke('create-admin-user', {
         body: {
           email: newUserEmail.trim(),
           password: newUserPassword,
@@ -159,23 +159,35 @@ const Users = () => {
         }
       });
 
-      // Handle edge function errors (including 400 responses)
-      if (error) {
-        const errorMessage = error.message || 'Xatolik yuz berdi';
-        if (errorMessage.includes('already registered') || errorMessage.includes('already been registered')) {
+      const { data, error } = response;
+
+      // Handle edge function errors (including non-2xx responses)
+      if (error || data?.error) {
+        const errorMessage = error?.message || data?.error || 'Xatolik yuz berdi';
+        
+        if (errorMessage.includes('already registered') || 
+            errorMessage.includes('already been registered') ||
+            errorMessage.includes('email_exists')) {
           toast.error("Bu email allaqachon ro'yxatdan o'tgan");
+        } else if (errorMessage.includes('non-2xx')) {
+          // Edge function returned error status - check data for actual error
+          if (data?.error) {
+            if (data.error.includes('already registered') || data.error.includes('already been registered')) {
+              toast.error("Bu email allaqachon ro'yxatdan o'tgan");
+            } else {
+              toast.error("Xatolik: " + data.error);
+            }
+          } else {
+            toast.error("Bu email allaqachon ro'yxatdan o'tgan yoki boshqa xatolik yuz berdi");
+          }
         } else {
           toast.error("Xatolik: " + errorMessage);
         }
         return;
       }
       
-      if (data?.error) {
-        if (data.error.includes('already registered') || data.error.includes('already been registered')) {
-          toast.error("Bu email allaqachon ro'yxatdan o'tgan");
-        } else {
-          toast.error("Xatolik: " + data.error);
-        }
+      if (!data?.success) {
+        toast.error("Xatolik: " + (data?.error || "Noma'lum xatolik"));
         return;
       }
 
