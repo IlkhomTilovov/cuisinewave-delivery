@@ -430,15 +430,15 @@ const Couriers = () => {
               
               <div className="space-y-2">
                 <Label>Foydalanuvchi hisobi</Label>
-                <Select 
-                  value={formData.user_id} 
-                  onValueChange={(value) => setFormData({ ...formData, user_id: value })}
+              <Select 
+                  value={formData.user_id || "none"} 
+                  onValueChange={(value) => setFormData({ ...formData, user_id: value === "none" ? "" : value })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Foydalanuvchi tanlash (ixtiyoriy)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Bog'lanmagan</SelectItem>
+                    <SelectItem value="none">Bog'lanmagan</SelectItem>
                     {courierUsers?.map((user) => (
                       <SelectItem key={user.user_id} value={user.user_id}>
                         {user.user_id.slice(0, 8)}...
