@@ -22,14 +22,18 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, user, isAdmin, loading, roleLoading } = useAuth();
+  const { signIn, signUp, user, isAdmin, loading, roleLoading, userRole } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !roleLoading && user && isAdmin) {
-      navigate('/admin');
+    if (!loading && !roleLoading && user) {
+      if (isAdmin) {
+        navigate('/admin');
+      } else if (userRole === 'courier') {
+        navigate('/courier');
+      }
     }
-  }, [user, isAdmin, loading, roleLoading, navigate]);
+  }, [user, isAdmin, userRole, loading, roleLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
