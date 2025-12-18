@@ -71,12 +71,6 @@ Eng mazali burgerlar va fast food mahsulotlari sizni kutmoqda.
                 url: WEBSITE_URL,
               },
             ],
-            [
-              {
-                text: '📞 Bog\'lanish',
-                url: 'tel:+998901234567',
-              },
-            ],
           ],
         };
 
