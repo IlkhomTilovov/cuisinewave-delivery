@@ -11,3 +11,6 @@ verify_jwt = true
 
 [functions.create-admin-user]
 verify_jwt = true
+
+[functions.telegram-bot]
+verify_jwt = false
