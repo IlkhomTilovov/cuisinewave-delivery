@@ -13,6 +13,9 @@ const MAX_REQUESTS = 5 // 5 orders per minute per IP
 // Uzbekistan phone validation
 const phoneRegex = /^\+998[0-9]{9}$/
 
+const TELEGRAM_BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN')
+const TELEGRAM_GROUP_CHAT_ID = Deno.env.get('TELEGRAM_GROUP_CHAT_ID')
+
 interface OrderItem {
   product_id: string
   product_name: string
@@ -31,7 +34,6 @@ interface OrderRequest {
 }
 
 function validatePhone(phone: string): boolean {
-  // Remove spaces and dashes
   const cleaned = phone.replace(/[\s-]/g, '')
   return phoneRegex.test(cleaned)
 }
@@ -43,8 +45,6 @@ function cleanPhone(phone: string): string {
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const timestamps = rateLimitMap.get(ip) || []
-  
-  // Remove old timestamps
   const recentTimestamps = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW)
   
   if (recentTimestamps.length >= MAX_REQUESTS) {
@@ -56,21 +56,78 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
+function formatPrice(price: number): string {
+  return price.toLocaleString('uz-UZ') + ' so\'m'
+}
+
+function getPaymentTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    'cash': '💵 Naqd',
+    'card': '💳 Karta',
+    'payme': '📱 Payme',
+    'click': '📱 Click'
+  }
+  return labels[type] || type
+}
+
+async function sendTelegramNotification(order: any, items: OrderItem[]) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_GROUP_CHAT_ID) {
+    console.log('Telegram credentials not configured, skipping notification')
+    return
+  }
+
+  try {
+    const itemsList = items.map((item, i) => 
+      `   ${i + 1}. ${item.product_name} x${item.quantity} = ${formatPrice(item.price * item.quantity)}`
+    ).join('\n')
+
+    const message = `🆕 <b>YANGI BUYURTMA #${order.id.slice(0, 8)}</b>
+
+👤 <b>Mijoz:</b> ${order.user_fullname}
+📞 <b>Telefon:</b> ${order.phone}
+📍 <b>Manzil:</b> ${order.address}
+${order.delivery_zone ? `🗺 <b>Hudud:</b> ${order.delivery_zone}` : ''}
+
+📦 <b>Mahsulotlar:</b>
+${itemsList}
+
+💰 <b>Jami:</b> ${formatPrice(order.total_price)}
+💳 <b>To'lov:</b> ${getPaymentTypeLabel(order.payment_type)}
+${order.notes ? `📝 <b>Izoh:</b> ${order.notes}` : ''}
+
+⏰ <b>Vaqt:</b> ${new Date().toLocaleString('uz-UZ', { timeZone: 'Asia/Tashkent' })}`
+
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_GROUP_CHAT_ID,
+        text: message,
+        parse_mode: 'HTML',
+      }),
+    })
+
+    const result = await response.json()
+    console.log('Telegram notification result:', result)
+  } catch (error) {
+    console.error('Error sending Telegram notification:', error)
+  }
+}
+
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Get client IP for rate limiting
     const clientIP = req.headers.get('x-forwarded-for') || 
                      req.headers.get('x-real-ip') || 
                      'unknown'
     
     console.log(`Order request from IP: ${clientIP}`)
 
-    // Check rate limit
     if (!checkRateLimit(clientIP)) {
       console.log(`Rate limit exceeded for IP: ${clientIP}`)
       return new Response(
@@ -88,7 +145,6 @@ Deno.serve(async (req) => {
     const body: OrderRequest = await req.json()
     console.log('Order request body:', JSON.stringify(body, null, 2))
 
-    // Validate required fields
     const errors: string[] = []
 
     if (!body.user_fullname || body.user_fullname.trim().length < 2) {
@@ -117,7 +173,6 @@ Deno.serve(async (req) => {
       errors.push('Buyurtma bo\'sh bo\'lmasligi kerak')
     }
 
-    // Validate order items
     if (body.items && Array.isArray(body.items)) {
       for (let i = 0; i < body.items.length; i++) {
         const item = body.items[i]
@@ -133,13 +188,11 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Validate payment type
     const validPaymentTypes = ['cash', 'card', 'payme', 'click']
     if (body.payment_type && !validPaymentTypes.includes(body.payment_type)) {
       errors.push('To\'lov turi noto\'g\'ri')
     }
 
-    // Validate notes length
     if (body.notes && body.notes.length > 500) {
       errors.push('Izoh 500 ta belgidan oshmasligi kerak')
     }
@@ -155,16 +208,13 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Create Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Calculate total price
     const totalPrice = body.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
-    // Create order
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -193,7 +243,6 @@ Deno.serve(async (req) => {
 
     console.log('Order created:', order.id)
 
-    // Create order items
     const orderItems = body.items.map(item => ({
       order_id: order.id,
       product_id: item.product_id || null,
@@ -208,7 +257,6 @@ Deno.serve(async (req) => {
 
     if (itemsError) {
       console.error('Order items creation error:', itemsError)
-      // Rollback - delete the order
       await supabase.from('orders').delete().eq('id', order.id)
       return new Response(
         JSON.stringify({ success: false, error: 'Buyurtma mahsulotlarini saqlashda xatolik' }),
@@ -220,6 +268,11 @@ Deno.serve(async (req) => {
     }
 
     console.log('Order items created successfully')
+
+    // Send Telegram notification in background
+    sendTelegramNotification(order, body.items).catch(err => 
+      console.error('Failed to send Telegram notification:', err)
+    )
 
     return new Response(
       JSON.stringify({ 
