@@ -49,15 +49,10 @@ export function HeroSection() {
             {heroDescription}
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3">
-            <Link to="/reservation">
-              <Button variant="hero" size="xl" className="min-w-[200px]">
-                Stol band qilish
-              </Button>
-            </Link>
+          {/* CTA Button */}
+          <div className="flex items-center justify-center animate-fade-in stagger-3">
             <Link to="/menu">
-              <Button variant="outline" size="xl" className="min-w-[200px] border-secondary/50 text-secondary hover:bg-secondary/10">
+              <Button variant="hero" size="xl" className="min-w-[200px]">
                 Menyuni ko'rish
               </Button>
             </Link>
