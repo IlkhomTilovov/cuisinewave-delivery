@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/lib/cart';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const navLinks = [
@@ -73,8 +72,6 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
-            <ThemeToggle />
 
             {/* Language Switcher */}
             <button
