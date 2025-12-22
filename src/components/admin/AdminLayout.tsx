@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { 
   LayoutDashboard, 
   Package, 
@@ -41,9 +42,12 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { user, loading, roleLoading, signOut, isAdmin, userRole } = useAuth();
+  const { getSetting } = useSiteSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const siteName = getSetting('site_name') || 'Burger Plus';
 
   const isAuthLoading = loading || roleLoading;
 
@@ -96,10 +100,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-                  <span className="text-lg font-display text-primary-foreground">BV</span>
+                  <span className="text-lg font-display text-primary-foreground">{siteName.substring(0, 2).toUpperCase()}</span>
                 </div>
                 <div>
-                  <h1 className="font-display text-lg text-slate-900">Bella Vista</h1>
+                  <h1 className="font-display text-lg text-slate-900">{siteName}</h1>
                   <p className="text-xs text-slate-500">Admin Panel</p>
                 </div>
               </Link>
