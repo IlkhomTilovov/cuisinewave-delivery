@@ -18,9 +18,12 @@ const defaultSettings: Record<string, string> = {
   working_hours: '10:00 - 23:00',
   restaurant_email: 'info@bellavista.uz',
   // Hero text
-  hero_title: 'Bella Vista',
-  hero_subtitle: 'Restaurant',
+  hero_title: 'Burger Plus',
+  hero_subtitle: 'Fast Food',
   hero_description: "Eng yaxshi taomlar va mukammal xizmat ko'rsatish bilan sizni kutamiz. Unutilmas lazzat va atmosfera.",
+  hero_badge_text: 'Premium Fast Food',
+  hero_discount_percent: '-20%',
+  hero_discount_text: 'Birinchi buyurtma',
   // About text
   about_title: 'Biz haqimizda',
   about_text_1: "Bella Vista – bu nafaqat restoran, balki mazali taomlar va iliq muhit uyg'unligi. Biz 15 yildan ortiq vaqt davomida mijozlarimizga eng yaxshi xizmat ko'rsatib kelmoqdamiz.",
