@@ -13,6 +13,9 @@ export function HeroSection() {
   const heroTitle = getSetting('hero_title');
   const heroSubtitle = getSetting('hero_subtitle');
   const heroDescription = getSetting('hero_description');
+  const heroBadgeText = getSetting('hero_badge_text') || 'Premium Fast Food';
+  const heroDiscountPercent = getSetting('hero_discount_percent') || '-20%';
+  const heroDiscountText = getSetting('hero_discount_text') || 'Birinchi buyurtma';
   const address = getSetting('restaurant_address');
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a0a]">
@@ -40,7 +43,7 @@ export function HeroSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-6 animate-fade-in">
               <Star className="w-4 h-4 text-orange-400 fill-orange-400" />
-              <span className="text-sm font-medium text-orange-400">Premium Fast Food</span>
+              <span className="text-sm font-medium text-orange-400">{heroBadgeText}</span>
             </div>
 
             {/* Main Title */}
@@ -112,8 +115,8 @@ export function HeroSection() {
               />
               {/* Floating badge */}
               <div className="absolute -bottom-4 -left-4 bg-[#1a1a1a] border border-gray-800 rounded-2xl px-5 py-3 shadow-xl z-20">
-                <p className="text-orange-400 font-bold text-xl">-20%</p>
-                <p className="text-gray-400 text-sm">Birinchi buyurtma</p>
+                <p className="text-orange-400 font-bold text-xl">{heroDiscountPercent}</p>
+                <p className="text-gray-400 text-sm">{heroDiscountText}</p>
               </div>
             </div>
           </div>
