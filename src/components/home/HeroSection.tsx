@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Star, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import heroBurgerDefault from '@/assets/hero-burger.jpg';
@@ -14,65 +14,106 @@ export function HeroSection() {
   const address = getSetting('restaurant_address');
 
   return (
-    <section className="dark relative min-h-screen flex items-center justify-center overflow-hidden bg-[hsl(350,30%,4%)]">
-      {/* Background Image with Overlay */}
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a0a]">
+      {/* Background Image with Dark Overlay */}
       <div className="absolute inset-0">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
           style={{
             backgroundImage: `url('${heroImage}')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(340,100%,27%,0.9)] via-[hsl(340,100%,20%,0.95)] to-[hsl(350,30%,4%)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(350,30%,4%)] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/50" />
       </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-1/4 left-10 w-64 h-64 bg-secondary/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-primary-glow/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+      {/* Decorative Elements - Orange/Yellow Glow */}
+      <div className="absolute top-1/3 right-0 w-[600px] h-[600px] bg-orange-500/10 rounded-full blur-[150px]" />
+      <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-yellow-500/10 rounded-full blur-[120px]" />
 
       {/* Content */}
-      <div className="container relative z-10 pt-20">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Premium Badge */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 mb-8 animate-fade-in">
-            <Star className="w-4 h-4 text-secondary fill-secondary" />
-            <span className="text-sm font-medium text-secondary">Premium Dining Experience</span>
-          </div>
-
-          {/* Main Title */}
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight mb-6 animate-slide-up tracking-wide">
-            {heroTitle}
-            <span className="block text-secondary mt-2">{heroSubtitle}</span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg lg:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-fade-in stagger-2 leading-relaxed">
-            {heroDescription}
-          </p>
-
-          {/* CTA Button */}
-          <div className="flex items-center justify-center animate-fade-in stagger-3">
-            <Link to="/menu">
-              <Button variant="hero" size="xl" className="min-w-[200px]">
-                Menyuni ko'rish
-              </Button>
-            </Link>
-          </div>
-
-          {/* Location & Rating */}
-          <div className="flex flex-wrap items-center justify-center gap-8 mt-16 animate-fade-in stagger-4">
-            <div className="flex items-center gap-2 text-white/60">
-              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-secondary" />
-              </div>
-              <span className="text-sm font-medium">{address.split(',')[0]}</span>
+      <div className="container relative z-10 pt-20 pb-12">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-left">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-6 animate-fade-in">
+              <Star className="w-4 h-4 text-orange-400 fill-orange-400" />
+              <span className="text-sm font-medium text-orange-400">Premium Fast Food</span>
             </div>
-            <div className="flex items-center gap-2 text-white/60">
-              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-center">
-                <Star className="w-5 h-5 text-secondary fill-secondary" />
+
+            {/* Main Title */}
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight mb-6 animate-slide-up">
+              <span className="text-white">{heroTitle}</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 mt-2">
+                {heroSubtitle}
+              </span>
+            </h1>
+
+            {/* Description */}
+            <p className="text-lg text-gray-400 mb-8 max-w-lg animate-fade-in leading-relaxed">
+              {heroDescription}
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap items-center gap-4 animate-fade-in">
+              <Link to="/menu">
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold px-8 py-6 text-lg rounded-full shadow-lg shadow-orange-500/25 transition-all hover:shadow-orange-500/40 hover:scale-105"
+                >
+                  Menyuni ko'rish
+                </Button>
+              </Link>
+              <Link to="/delivery">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="border-2 border-gray-700 text-white hover:bg-gray-800 hover:border-gray-600 px-8 py-6 text-lg rounded-full transition-all"
+                >
+                  Yetkazib berish
+                </Button>
+              </Link>
+            </div>
+
+            {/* Stats */}
+            <div className="flex flex-wrap items-center gap-8 mt-12 animate-fade-in">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-orange-400" />
+                </div>
+                <div>
+                  <p className="text-white font-medium">{address?.split(',')[0]}</p>
+                  <p className="text-gray-500 text-sm">Manzil</p>
+                </div>
               </div>
-              <span className="text-sm font-medium">4.9 (200+ baho)</span>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                </div>
+                <div>
+                  <p className="text-white font-medium">4.9 (200+ baho)</p>
+                  <p className="text-gray-500 text-sm">Reyting</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right - Hero Image */}
+          <div className="hidden lg:flex justify-center items-center relative">
+            <div className="relative">
+              {/* Glowing circle behind burger */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-full blur-3xl scale-110" />
+              <img 
+                src={heroImage} 
+                alt="Delicious Burger" 
+                className="relative z-10 w-full max-w-lg rounded-3xl shadow-2xl shadow-orange-500/10 object-cover"
+              />
+              {/* Floating badge */}
+              <div className="absolute -bottom-4 -left-4 bg-[#1a1a1a] border border-gray-800 rounded-2xl px-5 py-3 shadow-xl z-20">
+                <p className="text-orange-400 font-bold text-xl">-20%</p>
+                <p className="text-gray-400 text-sm">Birinchi buyurtma</p>
+              </div>
             </div>
           </div>
         </div>
@@ -80,8 +121,9 @@ export function HeroSection() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 bg-secondary rounded-full animate-pulse" />
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-gray-500 text-xs uppercase tracking-widest">Pastga</span>
+          <ChevronDown className="w-5 h-5 text-orange-400" />
         </div>
       </div>
     </section>
