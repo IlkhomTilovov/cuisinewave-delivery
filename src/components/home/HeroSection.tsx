@@ -6,13 +6,14 @@ import heroBurgerDefault from '@/assets/hero-burger.jpg';
 
 export function HeroSection() {
   const { getSetting } = useSiteSettings();
-  const heroImageSetting = getSetting('hero_background_image');
-  const heroImage = heroImageSetting && heroImageSetting !== '/placeholder.svg' ? heroImageSetting : heroBurgerDefault;
+  const heroBackgroundSetting = getSetting('hero_background_image');
+  const heroMainImageSetting = getSetting('hero_main_image');
+  const heroBackground = heroBackgroundSetting && heroBackgroundSetting !== '/placeholder.svg' ? heroBackgroundSetting : heroBurgerDefault;
+  const heroMainImage = heroMainImageSetting && heroMainImageSetting !== '/placeholder.svg' ? heroMainImageSetting : heroBurgerDefault;
   const heroTitle = getSetting('hero_title');
   const heroSubtitle = getSetting('hero_subtitle');
   const heroDescription = getSetting('hero_description');
   const address = getSetting('restaurant_address');
-
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0a0a]">
       {/* Background Image with Dark Overlay */}
@@ -20,7 +21,7 @@ export function HeroSection() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
           style={{
-            backgroundImage: `url('${heroImage}')`,
+            backgroundImage: `url('${heroBackground}')`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/90 to-transparent" />
@@ -105,7 +106,7 @@ export function HeroSection() {
               {/* Glowing circle behind burger */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-full blur-3xl scale-110" />
               <img 
-                src={heroImage} 
+                src={heroMainImage} 
                 alt="Delicious Burger" 
                 className="relative z-10 w-full max-w-lg rounded-3xl shadow-2xl shadow-orange-500/10 object-cover"
               />

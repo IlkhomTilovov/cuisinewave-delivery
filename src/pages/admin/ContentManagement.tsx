@@ -61,6 +61,7 @@ const brandingSettings = [
 const homePageSettings = {
   hero: [
     { key: 'hero_background_image', title: 'Hero fon rasmi', type: 'image' },
+    { key: 'hero_main_image', title: 'Hero asosiy rasm (o\'ng tomon)', type: 'image' },
     { key: 'hero_title', title: 'Sarlavha', type: 'input' },
     { key: 'hero_subtitle', title: 'Ikkinchi sarlavha', type: 'input' },
     { key: 'hero_description', title: 'Tavsif matni', type: 'textarea' },
