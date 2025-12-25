@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 import { MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
+import heroBurgerDefault from '@/assets/hero-burger.jpg';
 
 export function HeroSection() {
   const { getSetting } = useSiteSettings();
-  const heroImage = getSetting('hero_background_image');
+  const heroImageSetting = getSetting('hero_background_image');
+  const heroImage = heroImageSetting && heroImageSetting !== '/placeholder.svg' ? heroImageSetting : heroBurgerDefault;
   const heroTitle = getSetting('hero_title');
   const heroSubtitle = getSetting('hero_subtitle');
   const heroDescription = getSetting('hero_description');
